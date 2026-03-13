@@ -247,17 +247,20 @@ def _build_html(data: dict[str, Any]) -> str:
     <div class="container">
         <header>
             <h1><span>AI/ML Job Market</span> — Netherlands</h1>
-            <p>Live tracker &middot; Updated {last_updated} &middot; {total_runs} scrape runs</p>
+            <p style="max-width:640px;margin:0.75rem auto 0;color:var(--text-muted);font-size:0.95rem;line-height:1.6;">
+                Automated tracker that scrapes Dutch job sites weekly, classifies each listing by category, seniority, skills, and remote status using keyword-based NLP, and visualises market trends over time.
+            </p>
+            <p style="margin-top:0.5rem;color:var(--text-muted);font-size:0.85rem;">Updated {last_updated} &middot; {total_runs} scrape runs</p>
         </header>
 
         <div class="stats">
             <div class="stat-card">
                 <div class="value">{total_tracked}</div>
-                <div class="label">Jobs Tracked</div>
+                <div class="label">Total Tracked</div>
             </div>
             <div class="stat-card">
                 <div class="value">{latest_total}</div>
-                <div class="label">Latest Run</div>
+                <div class="label">Available This Week</div>
             </div>
             <div class="stat-card">
                 <div class="value" style="font-size:1.1rem;">{top_skill}</div>
