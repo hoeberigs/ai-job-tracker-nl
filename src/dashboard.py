@@ -381,6 +381,29 @@ def _build_html(data: dict[str, Any]) -> str:
         }});
     }}
 
+    // --- Doughnut percentage plugin ---
+    const pctPlugin = {{
+        id: 'doughnutPct',
+        afterDraw(chart) {{
+            const {{ ctx, data }} = chart;
+            const total = data.datasets[0].data.reduce((a, b) => a + b, 0);
+            if (!total) return;
+            chart.getDatasetMeta(0).data.forEach((arc, i) => {{
+                const val = data.datasets[0].data[i];
+                const pct = Math.round(val / total * 100);
+                if (pct < 5) return; // skip tiny slices
+                const {{ x, y }} = arc.tooltipPosition();
+                ctx.save();
+                ctx.fillStyle = '#1e1b2e';
+                ctx.font = "600 11px 'Inter', sans-serif";
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(pct + '%', x, y);
+                ctx.restore();
+            }});
+        }}
+    }};
+
     // --- Category (Doughnut) ---
     const cats = (DATA.latestSnapshot || {{}}).by_category || [];
     if (cats.length > 0) {{
@@ -395,6 +418,7 @@ def _build_html(data: dict[str, Any]) -> str:
                     hoverOffset: 8
                 }}]
             }},
+            plugins: [pctPlugin],
             options: {{
                 ...chartDefaults,
                 cutout: '55%',
@@ -410,7 +434,8 @@ def _build_html(data: dict[str, Any]) -> str:
     }}
 
     // --- Seniority (Horizontal Bar) ---
-    const seniority = (DATA.latestSnapshot || {{}}).by_seniority || [];
+    const seniorityRaw = (DATA.latestSnapshot || {{}}).by_seniority || [];
+    const seniority = seniorityRaw.filter(s => s.name !== 'unknown');
     if (seniority.length > 0) {{
         new Chart(document.getElementById('seniorityChart'), {{
             type: 'bar',
@@ -455,6 +480,7 @@ def _build_html(data: dict[str, Any]) -> str:
                     hoverOffset: 8
                 }}]
             }},
+            plugins: [pctPlugin],
             options: {{
                 ...chartDefaults,
                 cutout: '55%',
