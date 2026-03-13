@@ -2,6 +2,7 @@
 """AI/ML Job Market Tracker — Netherlands.
 
 Scrapes, classifies, and analyses AI/ML job listings from Dutch job sites.
+Supports historical tracking via SQLite and dashboard generation.
 """
 
 from __future__ import annotations
@@ -56,7 +57,31 @@ def main():
         action="store_true",
         help="Run with sample data (no scraping)",
     )
+    parser.add_argument(
+        "--update",
+        action="store_true",
+        help="Full pipeline: scrape → classify → save to DB → regenerate dashboard",
+    )
+    parser.add_argument(
+        "--dashboard",
+        action="store_true",
+        help="Regenerate dashboard from existing database (no scraping)",
+    )
+    parser.add_argument(
+        "--db",
+        default="data/jobs.db",
+        help="SQLite database path (default: data/jobs.db)",
+    )
     args = parser.parse_args()
+
+    # Dashboard-only mode: regenerate from existing DB
+    if args.dashboard and not args.update:
+        console.print()
+        console.print("[bold bright_blue]AI/ML Job Market Tracker — Netherlands[/]")
+        console.print("[dim]Regenerating dashboard from database...[/]")
+        console.print()
+        _regenerate_dashboard(args.db)
+        return
 
     console.print()
     console.print("[bold bright_blue]AI/ML Job Market Tracker — Netherlands[/]")
@@ -93,6 +118,34 @@ def main():
         csv_path = export_csv(jobs, args.csv)
         json_path = export_json(jobs, analysis, args.json)
         console.print(f"[green]Exported to {csv_path} and {json_path}[/]")
+
+    # Save to database and regenerate dashboard
+    if args.update and jobs:
+        _save_and_update(args.db, jobs, source="demo" if args.demo else "manual")
+
+
+def _save_and_update(db_path: str, jobs: list, source: str = "manual"):
+    """Save jobs to database and regenerate dashboard."""
+    from src.database import init_db, save_run
+
+    with console.status("[bold green]Saving to database..."):
+        conn = init_db(db_path)
+        run_id = save_run(conn, jobs, source=source)
+        conn.close()
+
+    console.print(f"  Saved run #{run_id} to [bold]{db_path}[/]")
+    _regenerate_dashboard(db_path)
+
+
+def _regenerate_dashboard(db_path: str):
+    """Regenerate the dashboard HTML and JSON from the database."""
+    from src.dashboard import generate_dashboard
+
+    with console.status("[bold green]Generating dashboard..."):
+        html_path, json_path = generate_dashboard(db_path=db_path)
+
+    console.print(f"  Dashboard generated: [bold]{html_path}[/]")
+    console.print(f"  Data JSON: [bold]{json_path}[/]")
 
 
 def _demo_jobs():

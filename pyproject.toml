@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ai-job-tracker-nl"
-version = "0.1.0"
-description = "Track and classify AI/ML/Data Science jobs in the Netherlands"
+version = "0.2.0"
+description = "Track, classify, and visualise AI/ML/Data Science jobs in the Netherlands over time"
 readme = "README.md"
 license = {text = "MIT"}
 authors = [{name = "Linda Hoeberigs", email = "l.hoeberigs+site@gmail.com"}]

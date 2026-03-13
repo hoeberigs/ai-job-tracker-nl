@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Job Market Dashboard — Netherlands</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+    <style>
+        :root {
+            --accent: #6b5ce7;
+            --accent-light: #8b7cf0;
+            --teal: #2dd4bf;
+            --warm: #f59e0b;
+            --rose: #f43f5e;
+            --sky: #38bdf8;
+            --emerald: #34d399;
+            --violet: #a78bfa;
+            --orange: #fb923c;
+            --charcoal: #1e1b2e;
+            --dark: #2a2742;
+            --card-bg: #ffffff;
+            --bg: #f8f7fc;
+            --text: #1e1b2e;
+            --text-muted: #6b7280;
+            --border: #e5e7eb;
+            --radius: 16px;
+            --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--charcoal);
+            margin-bottom: 0.25rem;
+        }
+
+        header h1 span {
+            background: linear-gradient(135deg, var(--accent), var(--teal));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* Stat Cards */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            box-shadow: var(--shadow);
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        .stat-card .value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--accent);
+            line-height: 1.2;
+        }
+
+        .stat-card .label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 0.25rem;
+        }
+
+        /* Chart Grid */
+        .charts {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .chart-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .chart-card.wide {
+            grid-column: 1 / -1;
+        }
+
+        .chart-card h3 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--charcoal);
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 300px;
+        }
+
+        .chart-container.short {
+            height: 250px;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            margin-top: 2.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .charts {
+                grid-template-columns: 1fr;
+            }
+            header h1 {
+                font-size: 1.5rem;
+            }
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-muted);
+        }
+
+        .empty-state h2 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: var(--charcoal);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><span>AI/ML Job Market</span> — Netherlands</h1>
+            <p>Live tracker &middot; Updated 2026-03-13 &middot; 3 scrape runs</p>
+        </header>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="value">75</div>
+                <div class="label">Jobs Tracked</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">25</div>
+                <div class="label">Latest Run</div>
+            </div>
+            <div class="stat-card">
+                <div class="value" style="font-size:1.1rem;">Python</div>
+                <div class="label">Top Skill</div>
+            </div>
+            <div class="stat-card">
+                <div class="value" style="font-size:1.1rem;">data-scientist</div>
+                <div class="label">Top Category</div>
+            </div>
+        </div>
+
+        <div class="charts">
+            <div class="chart-card wide">
+                <h3>Most In-Demand Skills Over Time</h3>
+                <div class="chart-container">
+                    <canvas id="skillsTrend"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <h3>Job Categories</h3>
+                <div class="chart-container">
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <h3>Seniority Distribution</h3>
+                <div class="chart-container">
+                    <canvas id="seniorityChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <h3>Work Arrangement</h3>
+                <div class="chart-container short">
+                    <canvas id="remoteChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <h3>Top Companies Hiring</h3>
+                <div class="chart-container short">
+                    <canvas id="companiesChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card wide">
+                <h3>Jobs Per Scrape Run</h3>
+                <div class="chart-container short">
+                    <canvas id="runsChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>
+                Built by <a href="https://lindahoeberigs.com">Linda Hoeberigs</a> &middot;
+                <a href="https://github.com/hoeberigs/ai-job-tracker-nl">View on GitHub</a>
+            </p>
+        </footer>
+    </div>
+
+    <script>
+    const DATA = {"lastUpdated": "2026-03-13", "totalJobsTracked": 75, "totalRuns": 3, "latestSnapshot": {"total": 25, "by_category": [{"name": "data-scientist", "count": 6, "pct": 24.0}, {"name": "ml-engineer", "count": 4, "pct": 16.0}, {"name": "ai-engineer", "count": 4, "pct": 16.0}, {"name": "nlp-engineer", "count": 4, "pct": 16.0}, {"name": "data-analyst", "count": 2, "pct": 8.0}, {"name": "data-engineer", "count": 2, "pct": 8.0}, {"name": "ai-general", "count": 2, "pct": 8.0}, {"name": "cv-engineer", "count": 1, "pct": 4.0}], "by_seniority": [{"name": "unknown", "count": 13, "pct": 52.0}, {"name": "senior", "count": 5, "pct": 20.0}, {"name": "junior", "count": 3, "pct": 12.0}, {"name": "lead", "count": 2, "pct": 8.0}, {"name": "head", "count": 1, "pct": 4.0}, {"name": "mid", "count": 1, "pct": 4.0}], "by_remote": [{"name": "unknown", "count": 22, "pct": 88.0}, {"name": "hybrid", "count": 2, "pct": 8.0}, {"name": "remote", "count": 1, "pct": 4.0}], "by_sector": [{"name": "finance", "count": 13, "pct": 52.0}, {"name": "tech", "count": 7, "pct": 28.0}, {"name": "retail", "count": 2, "pct": 8.0}, {"name": "other", "count": 1, "pct": 4.0}, {"name": "logistics", "count": 1, "pct": 4.0}, {"name": "government", "count": 1, "pct": 4.0}], "by_source": [{"name": "indeed.nl", "count": 22, "pct": 88.0}, {"name": "werkenbijdeoverheid.nl", "count": 3, "pct": 12.0}], "by_location": [{"name": "Amsterdam", "count": 13, "pct": 52.0}, {"name": "Utrecht", "count": 3, "pct": 12.0}, {"name": "Den Haag", "count": 3, "pct": 12.0}, {"name": "Eindhoven", "count": 1, "pct": 4.0}, {"name": "Rotterdam", "count": 1, "pct": 4.0}, {"name": "Zaandam", "count": 1, "pct": 4.0}, {"name": "Schiphol", "count": 1, "pct": 4.0}, {"name": "Veldhoven", "count": 1, "pct": 4.0}, {"name": "Apeldoorn", "count": 1, "pct": 4.0}], "top_skills": [{"name": "Python", "count": 21, "pct": 84.0}, {"name": "Deep Learning", "count": 7, "pct": 28.0}, {"name": "LLM", "count": 5, "pct": 20.0}, {"name": "NLP", "count": 5, "pct": 20.0}, {"name": "Kubernetes", "count": 4, "pct": 16.0}, {"name": "Azure", "count": 4, "pct": 16.0}, {"name": "AWS", "count": 3, "pct": 12.0}, {"name": "PyTorch", "count": 3, "pct": 12.0}, {"name": "RAG", "count": 3, "pct": 12.0}, {"name": "Computer Vision", "count": 3, "pct": 12.0}, {"name": "TensorFlow", "count": 3, "pct": 12.0}, {"name": "SQL", "count": 3, "pct": 12.0}, {"name": "Spark", "count": 3, "pct": 12.0}, {"name": "Power BI", "count": 2, "pct": 8.0}, {"name": "Tableau", "count": 2, "pct": 8.0}], "top_companies": [{"name": "Booking.com", "count": 1, "pct": 4.0}, {"name": "ING Bank", "count": 1, "pct": 4.0}, {"name": "Philips", "count": 1, "pct": 4.0}, {"name": "Coolblue", "count": 1, "pct": 4.0}, {"name": "Adyen", "count": 1, "pct": 4.0}, {"name": "Ahold Delhaize", "count": 1, "pct": 4.0}, {"name": "bol.com", "count": 1, "pct": 4.0}, {"name": "TomTom", "count": 1, "pct": 4.0}, {"name": "Rabobank", "count": 1, "pct": 4.0}, {"name": "KLM", "count": 1, "pct": 4.0}]}, "trends": {"dates": ["2026-03-13", "2026-03-13", "2026-03-13"], "skills": {"Python": [21, 21, 21], "Deep Learning": [7, 7, 7], "NLP": [5, 5, 5], "LLM": [5, 5, 5], "Kubernetes": [4, 4, 4], "Azure": [4, 4, 4], "Spark": [3, 3, 3], "PyTorch": [3, 3, 3]}, "categories": {"ai-engineer": [4, 4, 4], "nlp-engineer": [4, 4, 4], "ml-engineer": [4, 4, 4], "ai-general": [2, 2, 2], "cv-engineer": [1, 1, 1], "data-analyst": [2, 2, 2], "data-engineer": [2, 2, 2], "data-scientist": [6, 6, 6]}, "remote": {"remote": [1, 1, 1], "hybrid": [2, 2, 2], "unknown": [22, 22, 22]}, "totalPerRun": [25, 25, 25]}, "topCompanies": [{"name": "Booking.com", "count": 3}, {"name": "ING Bank", "count": 3}, {"name": "Philips", "count": 3}, {"name": "Coolblue", "count": 3}, {"name": "Adyen", "count": 3}, {"name": "Ahold Delhaize", "count": 3}, {"name": "bol.com", "count": 3}, {"name": "TomTom", "count": 3}, {"name": "Rabobank", "count": 3}, {"name": "KLM", "count": 3}]};
+
+    const COLORS = [
+        '#6b5ce7', '#2dd4bf', '#f59e0b', '#f43f5e',
+        '#38bdf8', '#34d399', '#a78bfa', '#fb923c',
+        '#ec4899', '#14b8a6'
+    ];
+
+    const chartDefaults = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                labels: {
+                    font: { family: "'Inter', sans-serif", size: 11 },
+                    usePointStyle: true,
+                    pointStyle: 'circle',
+                    padding: 16
+                }
+            }
+        }
+    };
+
+    // --- Skills Trend (Line) ---
+    const skillsTrend = DATA.trends || {};
+    const skillNames = Object.keys(skillsTrend.skills || {});
+
+    if (skillNames.length > 0 && (skillsTrend.dates || []).length > 0) {
+        new Chart(document.getElementById('skillsTrend'), {
+            type: 'line',
+            data: {
+                labels: skillsTrend.dates,
+                datasets: skillNames.map((name, i) => ({
+                    label: name,
+                    data: skillsTrend.skills[name],
+                    borderColor: COLORS[i % COLORS.length],
+                    backgroundColor: COLORS[i % COLORS.length] + '20',
+                    tension: 0.3,
+                    fill: false,
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                    borderWidth: 2.5
+                }))
+            },
+            options: {
+                ...chartDefaults,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { font: { size: 11 }, stepSize: 1 }
+                    },
+                    x: {
+                        ticks: { font: { size: 11 } }
+                    }
+                }
+            }
+        });
+    }
+
+    // --- Category (Doughnut) ---
+    const cats = (DATA.latestSnapshot || {}).by_category || [];
+    if (cats.length > 0) {
+        new Chart(document.getElementById('categoryChart'), {
+            type: 'doughnut',
+            data: {
+                labels: cats.map(c => c.name),
+                datasets: [{
+                    data: cats.map(c => c.count),
+                    backgroundColor: COLORS.slice(0, cats.length),
+                    borderWidth: 0,
+                    hoverOffset: 8
+                }]
+            },
+            options: {
+                ...chartDefaults,
+                cutout: '55%',
+                plugins: {
+                    ...chartDefaults.plugins,
+                    legend: {
+                        ...chartDefaults.plugins.legend,
+                        position: 'right'
+                    }
+                }
+            }
+        });
+    }
+
+    // --- Seniority (Horizontal Bar) ---
+    const seniority = (DATA.latestSnapshot || {}).by_seniority || [];
+    if (seniority.length > 0) {
+        new Chart(document.getElementById('seniorityChart'), {
+            type: 'bar',
+            data: {
+                labels: seniority.map(s => s.name),
+                datasets: [{
+                    data: seniority.map(s => s.count),
+                    backgroundColor: COLORS.slice(0, seniority.length),
+                    borderRadius: 6,
+                    borderSkipped: false
+                }]
+            },
+            options: {
+                ...chartDefaults,
+                indexAxis: 'y',
+                plugins: { ...chartDefaults.plugins, legend: { display: false } },
+                scales: {
+                    x: { beginAtZero: true, ticks: { stepSize: 1, font: { size: 11 } } },
+                    y: { ticks: { font: { size: 12 } } }
+                }
+            }
+        });
+    }
+
+    // --- Remote (Doughnut) ---
+    const remote = (DATA.latestSnapshot || {}).by_remote || [];
+    if (remote.length > 0) {
+        const remoteColors = {
+            'remote': '#34d399',
+            'hybrid': '#38bdf8',
+            'onsite': '#f59e0b',
+            'unknown': '#d1d5db'
+        };
+        new Chart(document.getElementById('remoteChart'), {
+            type: 'doughnut',
+            data: {
+                labels: remote.map(r => r.name),
+                datasets: [{
+                    data: remote.map(r => r.count),
+                    backgroundColor: remote.map(r => remoteColors[r.name] || '#d1d5db'),
+                    borderWidth: 0,
+                    hoverOffset: 8
+                }]
+            },
+            options: {
+                ...chartDefaults,
+                cutout: '55%',
+                plugins: {
+                    ...chartDefaults.plugins,
+                    legend: {
+                        ...chartDefaults.plugins.legend,
+                        position: 'right'
+                    }
+                }
+            }
+        });
+    }
+
+    // --- Top Companies (Horizontal Bar) ---
+    const companies = DATA.topCompanies || [];
+    if (companies.length > 0) {
+        new Chart(document.getElementById('companiesChart'), {
+            type: 'bar',
+            data: {
+                labels: companies.map(c => c.name),
+                datasets: [{
+                    data: companies.map(c => c.count),
+                    backgroundColor: '#6b5ce7',
+                    borderRadius: 6,
+                    borderSkipped: false
+                }]
+            },
+            options: {
+                ...chartDefaults,
+                indexAxis: 'y',
+                plugins: { ...chartDefaults.plugins, legend: { display: false } },
+                scales: {
+                    x: { beginAtZero: true, ticks: { stepSize: 1, font: { size: 11 } } },
+                    y: { ticks: { font: { size: 11 } } }
+                }
+            }
+        });
+    }
+
+    // --- Jobs Per Run (Bar) ---
+    const runDates = (skillsTrend.dates || []);
+    const runTotals = (skillsTrend.totalPerRun || []);
+    if (runDates.length > 0) {
+        new Chart(document.getElementById('runsChart'), {
+            type: 'bar',
+            data: {
+                labels: runDates,
+                datasets: [{
+                    label: 'Jobs found',
+                    data: runTotals,
+                    backgroundColor: '#6b5ce7',
+                    borderRadius: 8,
+                    borderSkipped: false
+                }]
+            },
+            options: {
+                ...chartDefaults,
+                plugins: { ...chartDefaults.plugins, legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, ticks: { stepSize: 5, font: { size: 11 } } },
+                    x: { ticks: { font: { size: 11 } } }
+                }
+            }
+        });
+    }
+    </script>
+</body>
+</html>
