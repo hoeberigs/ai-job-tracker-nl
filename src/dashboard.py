@@ -295,13 +295,6 @@ def _build_html(data: dict[str, Any]) -> str:
             </div>
 
             <div class="chart-card">
-                <h3>Work Arrangement</h3>
-                <div class="chart-container short">
-                    <canvas id="remoteChart"></canvas>
-                </div>
-            </div>
-
-            <div class="chart-card">
                 <h3>Top Companies Hiring</h3>
                 <div class="chart-container short">
                     <canvas id="companiesChart"></canvas>
@@ -458,41 +451,6 @@ def _build_html(data: dict[str, Any]) -> str:
                 scales: {{
                     x: {{ beginAtZero: true, ticks: {{ stepSize: 1, font: {{ size: 11 }} }} }},
                     y: {{ ticks: {{ font: {{ size: 12 }} }} }}
-                }}
-            }}
-        }});
-    }}
-
-    // --- Remote (Doughnut) ---
-    const remote = (DATA.latestSnapshot || {{}}).by_remote || [];
-    if (remote.length > 0) {{
-        const remoteColors = {{
-            'remote': '#34d399',
-            'hybrid': '#38bdf8',
-            'onsite': '#f59e0b',
-            'unknown': '#d1d5db'
-        }};
-        new Chart(document.getElementById('remoteChart'), {{
-            type: 'doughnut',
-            data: {{
-                labels: remote.map(r => r.name),
-                datasets: [{{
-                    data: remote.map(r => r.count),
-                    backgroundColor: remote.map(r => remoteColors[r.name] || '#d1d5db'),
-                    borderWidth: 0,
-                    hoverOffset: 8
-                }}]
-            }},
-            plugins: [pctPlugin],
-            options: {{
-                ...chartDefaults,
-                cutout: '55%',
-                plugins: {{
-                    ...chartDefaults.plugins,
-                    legend: {{
-                        ...chartDefaults.plugins.legend,
-                        position: 'right'
-                    }}
                 }}
             }}
         }});

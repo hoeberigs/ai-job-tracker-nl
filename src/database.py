@@ -54,11 +54,21 @@ def init_db(db_path: str = "data/jobs.db") -> sqlite3.Connection:
 
 
 def save_run(conn: sqlite3.Connection, jobs: list[Job], source: str = "manual") -> int:
-    """Save a scrape run and all its jobs. Returns the run ID."""
+    """Save a scrape run and all its jobs. Keeps only one run per day."""
     now = datetime.now()
+    today = now.strftime("%Y-%m-%d")
+
+    # Delete any existing runs for today (keep one run per day)
+    existing = conn.execute(
+        "SELECT id FROM scrape_runs WHERE run_date = ?", (today,)
+    ).fetchall()
+    for row in existing:
+        conn.execute("DELETE FROM jobs WHERE run_id = ?", (row["id"],))
+        conn.execute("DELETE FROM scrape_runs WHERE id = ?", (row["id"],))
+
     cur = conn.execute(
         "INSERT INTO scrape_runs (run_date, run_timestamp, total_jobs, source) VALUES (?, ?, ?, ?)",
-        (now.strftime("%Y-%m-%d"), now.isoformat(), len(jobs), source),
+        (today, now.isoformat(), len(jobs), source),
     )
     run_id = cur.lastrowid
 

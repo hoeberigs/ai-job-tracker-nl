@@ -190,16 +190,16 @@
             <p style="max-width:640px;margin:0.75rem auto 0;color:var(--text-muted);font-size:0.95rem;line-height:1.6;">
                 Automated tracker that scrapes Dutch job sites weekly, classifies each listing by category, seniority, skills, and remote status using keyword-based NLP, and visualises market trends over time.
             </p>
-            <p style="margin-top:0.5rem;color:var(--text-muted);font-size:0.85rem;">Updated 2026-03-20 &middot; 5 scrape runs</p>
+            <p style="margin-top:0.5rem;color:var(--text-muted);font-size:0.85rem;">Updated 2026-03-20 &middot; 1 scrape runs</p>
         </header>
 
         <div class="stats">
             <div class="stat-card">
-                <div class="value">442</div>
+                <div class="value">214</div>
                 <div class="label">Total Tracked</div>
             </div>
             <div class="stat-card">
-                <div class="value">153</div>
+                <div class="value">214</div>
                 <div class="label">Available This Week</div>
             </div>
             <div class="stat-card">
@@ -235,13 +235,6 @@
             </div>
 
             <div class="chart-card">
-                <h3>Work Arrangement</h3>
-                <div class="chart-container short">
-                    <canvas id="remoteChart"></canvas>
-                </div>
-            </div>
-
-            <div class="chart-card">
                 <h3>Top Companies Hiring</h3>
                 <div class="chart-container short">
                     <canvas id="companiesChart"></canvas>
@@ -265,7 +258,7 @@
     </div>
 
     <script>
-    const DATA = {"lastUpdated": "2026-03-20", "totalJobsTracked": 442, "totalRuns": 5, "latestSnapshot": {"total": 153, "by_category": [{"name": "other", "count": 83, "pct": 54.2}, {"name": "ai-engineer", "count": 20, "pct": 13.1}, {"name": "data-scientist", "count": 17, "pct": 11.1}, {"name": "ai-general", "count": 15, "pct": 9.8}, {"name": "ml-engineer", "count": 14, "pct": 9.2}, {"name": "data-general", "count": 2, "pct": 1.3}, {"name": "cv-engineer", "count": 1, "pct": 0.7}, {"name": "ai-manager", "count": 1, "pct": 0.7}], "by_seniority": [{"name": "unknown", "count": 130, "pct": 85.0}, {"name": "junior", "count": 8, "pct": 5.2}, {"name": "senior", "count": 8, "pct": 5.2}, {"name": "lead", "count": 6, "pct": 3.9}, {"name": "head", "count": 1, "pct": 0.7}], "by_remote": [{"name": "unknown", "count": 151, "pct": 98.7}, {"name": "remote", "count": 2, "pct": 1.3}], "by_sector": [{"name": "other", "count": 68, "pct": 44.4}, {"name": "tech", "count": 48, "pct": 31.4}, {"name": "finance", "count": 27, "pct": 17.6}, {"name": "academia", "count": 4, "pct": 2.6}, {"name": "consulting", "count": 3, "pct": 2.0}, {"name": "retail", "count": 2, "pct": 1.3}, {"name": "healthcare", "count": 1, "pct": 0.7}], "by_source": [{"name": "linkedin.com", "count": 78, "pct": 51.0}, {"name": "jobbird.com", "count": 75, "pct": 49.0}], "by_location": [{"name": "Amsterdam", "count": 41, "pct": 26.8}, {"name": "Rotterdam", "count": 15, "pct": 9.8}, {"name": "Utrecht", "count": 11, "pct": 7.2}, {"name": "Den Haag", "count": 8, "pct": 5.2}, {"name": "Deurne", "count": 5, "pct": 3.3}, {"name": "Leusden", "count": 4, "pct": 2.6}, {"name": "Zeewolde", "count": 4, "pct": 2.6}, {"name": "Amsterdam Area", "count": 3, "pct": 2.0}, {"name": "Eindhoven", "count": 3, "pct": 2.0}, {"name": "Groningen", "count": 3, "pct": 2.0}], "top_skills": [{"name": "LLM", "count": 4, "pct": 2.6}, {"name": "Python", "count": 3, "pct": 2.0}, {"name": "Deep Learning", "count": 2, "pct": 1.3}, {"name": "RAG", "count": 2, "pct": 1.3}, {"name": "Agile", "count": 1, "pct": 0.7}, {"name": "Computer Vision", "count": 1, "pct": 0.7}], "top_companies": [{"name": "Nationale Nederlanden", "count": 10, "pct": 6.5}, {"name": "Synsel Techniek", "count": 8, "pct": 5.2}, {"name": "In Person", "count": 6, "pct": 3.9}, {"name": "Pon", "count": 5, "pct": 3.3}, {"name": "Uitzendbureau", "count": 4, "pct": 2.6}, {"name": "Booking.com", "count": 3, "pct": 2.0}, {"name": "pinely", "count": 3, "pct": 2.0}, {"name": "PostNL Hoofdkantoor", "count": 3, "pct": 2.0}, {"name": "Luba", "count": 3, "pct": 2.0}, {"name": "Start People", "count": 3, "pct": 2.0}]}, "trends": {"dates": ["2026-03-13", "2026-03-13", "2026-03-13", "2026-03-20", "2026-03-20"], "skills": {"Python": [21, 21, 21, 4, 3], "Deep Learning": [7, 7, 7, 2, 2], "LLM": [5, 5, 5, 5, 4], "NLP": [5, 5, 5, 0, 0], "RAG": [3, 3, 3, 3, 2], "Azure": [4, 4, 4, 1, 0], "Kubernetes": [4, 4, 4, 0, 0], "Computer Vision": [3, 3, 3, 2, 1]}, "categories": {"data-scientist": [6, 6, 6, 22, 17], "ai-engineer": [4, 4, 4, 27, 20], "ml-engineer": [4, 4, 4, 22, 14], "cv-engineer": [1, 1, 1, 2, 1], "data-engineer": [2, 2, 2, 1, 0], "other": [0, 0, 0, 112, 83], "data-general": [0, 0, 0, 4, 2], "nlp-engineer": [4, 4, 4, 0, 0], "ai-manager": [0, 0, 0, 1, 1], "data-analyst": [2, 2, 2, 1, 0], "ai-researcher": [0, 0, 0, 1, 0], "ai-general": [2, 2, 2, 21, 15]}, "remote": {"hybrid": [2, 2, 2, 0, 0], "unknown": [22, 22, 22, 211, 151], "remote": [1, 1, 1, 3, 2]}, "totalPerRun": [25, 25, 25, 214, 153]}, "topCompanies": [{"name": "Synsel Techniek", "count": 23}, {"name": "Nationale Nederlanden", "count": 21}, {"name": "Uitzendbureau", "count": 16}, {"name": "In Person", "count": 12}, {"name": "Pon", "count": 11}, {"name": "Booking.com", "count": 9}, {"name": "pinely", "count": 7}, {"name": "PostNL Hoofdkantoor", "count": 7}, {"name": "Uber", "count": 6}, {"name": "Luba", "count": 6}]};
+    const DATA = {"lastUpdated": "2026-03-20", "totalJobsTracked": 214, "totalRuns": 1, "latestSnapshot": {"total": 214, "by_category": [{"name": "other", "count": 112, "pct": 52.3}, {"name": "ai-engineer", "count": 27, "pct": 12.6}, {"name": "ml-engineer", "count": 22, "pct": 10.3}, {"name": "data-scientist", "count": 22, "pct": 10.3}, {"name": "ai-general", "count": 21, "pct": 9.8}, {"name": "data-general", "count": 4, "pct": 1.9}, {"name": "cv-engineer", "count": 2, "pct": 0.9}, {"name": "data-engineer", "count": 1, "pct": 0.5}, {"name": "data-analyst", "count": 1, "pct": 0.5}, {"name": "ai-researcher", "count": 1, "pct": 0.5}, {"name": "ai-manager", "count": 1, "pct": 0.5}], "by_seniority": [{"name": "unknown", "count": 167, "pct": 78.0}, {"name": "senior", "count": 19, "pct": 8.9}, {"name": "junior", "count": 16, "pct": 7.5}, {"name": "lead", "count": 9, "pct": 4.2}, {"name": "head", "count": 2, "pct": 0.9}, {"name": "mid", "count": 1, "pct": 0.5}], "by_remote": [{"name": "unknown", "count": 211, "pct": 98.6}, {"name": "remote", "count": 3, "pct": 1.4}], "by_sector": [{"name": "other", "count": 92, "pct": 43.0}, {"name": "tech", "count": 73, "pct": 34.1}, {"name": "finance", "count": 34, "pct": 15.9}, {"name": "academia", "count": 6, "pct": 2.8}, {"name": "consulting", "count": 4, "pct": 1.9}, {"name": "retail", "count": 4, "pct": 1.9}, {"name": "healthcare", "count": 1, "pct": 0.5}], "by_source": [{"name": "linkedin.com", "count": 107, "pct": 50.0}, {"name": "jobbird.com", "count": 107, "pct": 50.0}], "by_location": [{"name": "Amsterdam", "count": 60, "pct": 28.0}, {"name": "Rotterdam", "count": 19, "pct": 8.9}, {"name": "Utrecht", "count": 11, "pct": 5.1}, {"name": "Den Haag", "count": 11, "pct": 5.1}, {"name": "Leusden", "count": 6, "pct": 2.8}, {"name": "Deurne", "count": 6, "pct": 2.8}, {"name": "Amsterdam Area", "count": 5, "pct": 2.3}, {"name": "Eindhoven", "count": 5, "pct": 2.3}, {"name": "Randstad", "count": 5, "pct": 2.3}, {"name": "Tilburg", "count": 4, "pct": 1.9}], "top_skills": [{"name": "LLM", "count": 5, "pct": 2.3}, {"name": "Python", "count": 4, "pct": 1.9}, {"name": "RAG", "count": 3, "pct": 1.4}, {"name": "Deep Learning", "count": 2, "pct": 0.9}, {"name": "Computer Vision", "count": 2, "pct": 0.9}, {"name": "Azure", "count": 1, "pct": 0.5}, {"name": "Agile", "count": 1, "pct": 0.5}], "top_companies": [{"name": "Synsel Techniek", "count": 15, "pct": 7.0}, {"name": "Uitzendbureau", "count": 12, "pct": 5.6}, {"name": "Nationale Nederlanden", "count": 11, "pct": 5.1}, {"name": "Pon", "count": 6, "pct": 2.8}, {"name": "In Person", "count": 6, "pct": 2.8}, {"name": "pinely", "count": 4, "pct": 1.9}, {"name": "PostNL Hoofdkantoor", "count": 4, "pct": 1.9}, {"name": "Booking.com", "count": 3, "pct": 1.4}, {"name": "Sopra Steria", "count": 3, "pct": 1.4}, {"name": "Luba", "count": 3, "pct": 1.4}]}, "trends": {"dates": ["2026-03-20"], "skills": {"LLM": [5], "Python": [4], "RAG": [3], "Deep Learning": [2], "Computer Vision": [2], "Azure": [1], "Agile": [1]}, "categories": {"data-engineer": [1], "ai-general": [21], "data-scientist": [22], "ml-engineer": [22], "ai-manager": [1], "data-analyst": [1], "other": [112], "cv-engineer": [2], "ai-engineer": [27], "data-general": [4], "ai-researcher": [1]}, "remote": {"remote": [3], "unknown": [211]}, "totalPerRun": [214]}, "topCompanies": [{"name": "Synsel Techniek", "count": 15}, {"name": "Uitzendbureau", "count": 12}, {"name": "Nationale Nederlanden", "count": 11}, {"name": "Pon", "count": 6}, {"name": "In Person", "count": 6}, {"name": "pinely", "count": 4}, {"name": "PostNL Hoofdkantoor", "count": 4}, {"name": "Booking.com", "count": 3}, {"name": "Sopra Steria", "count": 3}, {"name": "Luba", "count": 3}]};
 
     const COLORS = [
         '#6b5ce7', '#2dd4bf', '#f59e0b', '#f43f5e',
@@ -398,41 +391,6 @@
                 scales: {
                     x: { beginAtZero: true, ticks: { stepSize: 1, font: { size: 11 } } },
                     y: { ticks: { font: { size: 12 } } }
-                }
-            }
-        });
-    }
-
-    // --- Remote (Doughnut) ---
-    const remote = (DATA.latestSnapshot || {}).by_remote || [];
-    if (remote.length > 0) {
-        const remoteColors = {
-            'remote': '#34d399',
-            'hybrid': '#38bdf8',
-            'onsite': '#f59e0b',
-            'unknown': '#d1d5db'
-        };
-        new Chart(document.getElementById('remoteChart'), {
-            type: 'doughnut',
-            data: {
-                labels: remote.map(r => r.name),
-                datasets: [{
-                    data: remote.map(r => r.count),
-                    backgroundColor: remote.map(r => remoteColors[r.name] || '#d1d5db'),
-                    borderWidth: 0,
-                    hoverOffset: 8
-                }]
-            },
-            plugins: [pctPlugin],
-            options: {
-                ...chartDefaults,
-                cutout: '55%',
-                plugins: {
-                    ...chartDefaults.plugins,
-                    legend: {
-                        ...chartDefaults.plugins.legend,
-                        position: 'right'
-                    }
                 }
             }
         });
