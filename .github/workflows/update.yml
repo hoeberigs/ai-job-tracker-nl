@@ -1,8 +1,8 @@
-name: Weekly AI Job Tracker Update
+name: Daily AI Job Tracker Update
 
 on:
   schedule:
-    - cron: '0 8 * * 1'  # Every Monday at 08:00 UTC (09:00 CET)
+    - cron: '0 8 * * *'  # Every day at 08:00 UTC (09:00 CET)
   workflow_dispatch:       # Manual trigger from GitHub UI
 
 permissions:
