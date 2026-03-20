@@ -1,7 +1,7 @@
 {
   "lastUpdated": "2026-03-20",
-  "totalJobsTracked": 228,
-  "totalRuns": 4,
+  "totalJobsTracked": 442,
+  "totalRuns": 5,
   "latestSnapshot": {
     "total": 153,
     "by_category": [
@@ -276,6 +276,7 @@
       "2026-03-13",
       "2026-03-13",
       "2026-03-13",
+      "2026-03-20",
       "2026-03-20"
     ],
     "skills": {
@@ -283,15 +284,18 @@
         21,
         21,
         21,
+        4,
         3
       ],
       "Deep Learning": [
         7,
         7,
         7,
+        2,
         2
       ],
       "LLM": [
+        5,
         5,
         5,
         5,
@@ -301,168 +305,195 @@
         5,
         5,
         5,
-        0
-      ],
-      "Azure": [
-        4,
-        4,
-        4,
-        0
-      ],
-      "Kubernetes": [
-        4,
-        4,
-        4,
+        0,
         0
       ],
       "RAG": [
         3,
         3,
         3,
+        3,
         2
+      ],
+      "Azure": [
+        4,
+        4,
+        4,
+        1,
+        0
+      ],
+      "Kubernetes": [
+        4,
+        4,
+        4,
+        0,
+        0
       ],
       "Computer Vision": [
         3,
         3,
         3,
+        2,
         1
       ]
     },
     "categories": {
-      "data-analyst": [
-        2,
-        2,
-        2,
-        0
+      "data-scientist": [
+        6,
+        6,
+        6,
+        22,
+        17
+      ],
+      "ai-engineer": [
+        4,
+        4,
+        4,
+        27,
+        20
       ],
       "ml-engineer": [
         4,
         4,
         4,
+        22,
         14
+      ],
+      "cv-engineer": [
+        1,
+        1,
+        1,
+        2,
+        1
       ],
       "data-engineer": [
         2,
         2,
         2,
+        1,
         0
       ],
       "other": [
         0,
         0,
         0,
+        112,
         83
       ],
-      "ai-engineer": [
+      "data-general": [
+        0,
+        0,
+        0,
         4,
-        4,
-        4,
-        20
-      ],
-      "ai-general": [
-        2,
-        2,
-        2,
-        15
-      ],
-      "data-scientist": [
-        6,
-        6,
-        6,
-        17
-      ],
-      "cv-engineer": [
-        1,
-        1,
-        1,
-        1
+        2
       ],
       "nlp-engineer": [
         4,
         4,
         4,
+        0,
         0
       ],
       "ai-manager": [
         0,
         0,
         0,
+        1,
         1
       ],
-      "data-general": [
+      "data-analyst": [
+        2,
+        2,
+        2,
+        1,
+        0
+      ],
+      "ai-researcher": [
         0,
         0,
         0,
-        2
+        1,
+        0
+      ],
+      "ai-general": [
+        2,
+        2,
+        2,
+        21,
+        15
       ]
     },
     "remote": {
-      "remote": [
-        1,
-        1,
-        1,
-        2
-      ],
       "hybrid": [
         2,
         2,
         2,
+        0,
         0
       ],
       "unknown": [
         22,
         22,
         22,
+        211,
         151
+      ],
+      "remote": [
+        1,
+        1,
+        1,
+        3,
+        2
       ]
     },
     "totalPerRun": [
       25,
       25,
       25,
+      214,
       153
     ]
   },
   "topCompanies": [
     {
-      "name": "Nationale Nederlanden",
-      "count": 10
-    },
-    {
       "name": "Synsel Techniek",
-      "count": 8
+      "count": 23
     },
     {
-      "name": "Booking.com",
-      "count": 6
-    },
-    {
-      "name": "In Person",
-      "count": 6
-    },
-    {
-      "name": "Pon",
-      "count": 5
-    },
-    {
-      "name": "Universiteit van Amsterdam",
-      "count": 4
-    },
-    {
-      "name": "Uber",
-      "count": 4
+      "name": "Nationale Nederlanden",
+      "count": 21
     },
     {
       "name": "Uitzendbureau",
-      "count": 4
+      "count": 16
     },
     {
-      "name": "ING Bank",
-      "count": 3
+      "name": "In Person",
+      "count": 12
     },
     {
-      "name": "Philips",
-      "count": 3
+      "name": "Pon",
+      "count": 11
+    },
+    {
+      "name": "Booking.com",
+      "count": 9
+    },
+    {
+      "name": "pinely",
+      "count": 7
+    },
+    {
+      "name": "PostNL Hoofdkantoor",
+      "count": 7
+    },
+    {
+      "name": "Uber",
+      "count": 6
+    },
+    {
+      "name": "Luba",
+      "count": 6
     }
   ]
 }
