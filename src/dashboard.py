@@ -50,8 +50,10 @@ def _build_html(data: dict[str, Any]) -> str:
 
     top_category = "—"
     cat_list = snapshot.get("by_category", [])
-    if cat_list:
-        top_category = cat_list[0]["name"] if isinstance(cat_list[0], dict) else cat_list[0][0]
+    # Skip "other" for the top category display
+    cat_list_filtered = [c for c in cat_list if (c["name"] if isinstance(c, dict) else c[0]) != "other"]
+    if cat_list_filtered:
+        top_category = cat_list_filtered[0]["name"] if isinstance(cat_list_filtered[0], dict) else cat_list_filtered[0][0]
 
     latest_total = snapshot.get("total", 0)
 
@@ -400,8 +402,9 @@ def _build_html(data: dict[str, Any]) -> str:
         }}
     }};
 
-    // --- Category (Doughnut) ---
-    const cats = (DATA.latestSnapshot || {{}}).by_category || [];
+    // --- Category (Doughnut) --- filter out "other"
+    const catsRaw = (DATA.latestSnapshot || {{}}).by_category || [];
+    const cats = catsRaw.filter(c => c.name !== 'other');
     if (cats.length > 0) {{
         new Chart(document.getElementById('categoryChart'), {{
             type: 'doughnut',

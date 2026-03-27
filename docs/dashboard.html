@@ -207,7 +207,7 @@
                 <div class="label">Top Skill</div>
             </div>
             <div class="stat-card">
-                <div class="value" style="font-size:1.1rem;">other</div>
+                <div class="value" style="font-size:1.1rem;">ai-engineer</div>
                 <div class="label">Top Category</div>
             </div>
         </div>
@@ -340,8 +340,9 @@
         }
     };
 
-    // --- Category (Doughnut) ---
-    const cats = (DATA.latestSnapshot || {}).by_category || [];
+    // --- Category (Doughnut) --- filter out "other"
+    const catsRaw = (DATA.latestSnapshot || {}).by_category || [];
+    const cats = catsRaw.filter(c => c.name !== 'other');
     if (cats.length > 0) {
         new Chart(document.getElementById('categoryChart'), {
             type: 'doughnut',
