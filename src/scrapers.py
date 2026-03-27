@@ -38,6 +38,25 @@ SEARCH_QUERIES = [
 ]
 
 
+def _fetch_description(url: str, selectors: list[str]) -> str:
+    """Fetch a job's detail page and extract description text."""
+    if not url:
+        return ""
+    try:
+        time.sleep(random.uniform(0.8, 1.5))
+        resp = requests.get(url, headers=HEADERS, timeout=15)
+        if resp.status_code != 200:
+            return ""
+        soup = BeautifulSoup(resp.text, "html.parser")
+        for sel in selectors:
+            el = soup.select_one(sel)
+            if el:
+                return el.get_text(separator=" ", strip=True)[:2000]
+        return ""
+    except Exception:
+        return ""
+
+
 class BaseScraper(ABC):
     """Base class for job scrapers."""
 
@@ -83,6 +102,17 @@ class LinkedInScraper(BaseScraper):
 
             if len(jobs) >= max_results:
                 break
+
+        # Fetch descriptions from detail pages
+        print(f"  [linkedin] Fetching descriptions for {len(jobs)} jobs...")
+        for job in jobs:
+            desc = _fetch_description(job.url, [
+                "div.description__text",
+                "div.show-more-less-html__markup",
+                "section.description",
+            ])
+            if desc:
+                job.description = desc
 
         return jobs[:max_results]
 
@@ -152,6 +182,21 @@ class JobbirdScraper(BaseScraper):
 
             if len(jobs) >= max_results:
                 break
+
+        # Fetch descriptions from detail pages
+        print(f"  [jobbird] Fetching descriptions for {len(jobs)} jobs...")
+        for job in jobs:
+            full_url = job.url
+            if full_url and not full_url.startswith("http"):
+                full_url = f"https://www.jobbird.com{full_url}"
+            desc = _fetch_description(full_url, [
+                "div.job-description",
+                "div.vacancy-body",
+                "div.job-content",
+                "article",
+            ])
+            if desc:
+                job.description = desc
 
         return jobs[:max_results]
 
