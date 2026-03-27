@@ -183,21 +183,7 @@ class JobbirdScraper(BaseScraper):
             if len(jobs) >= max_results:
                 break
 
-        # Fetch descriptions from detail pages
-        print(f"  [jobbird] Fetching descriptions for {len(jobs)} jobs...")
-        for job in jobs:
-            full_url = job.url
-            if full_url and not full_url.startswith("http"):
-                full_url = f"https://www.jobbird.com{full_url}"
-            desc = _fetch_description(full_url, [
-                "div.job-description",
-                "div.vacancy-body",
-                "div.job-content",
-                "article",
-            ])
-            if desc:
-                job.description = desc
-
+        # Jobbird renders descriptions via JS, can't scrape with requests
         return jobs[:max_results]
 
     def _parse_card(self, card) -> Optional[Job]:
