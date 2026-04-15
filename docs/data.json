@@ -1,64 +1,59 @@
 {
-  "lastUpdated": "2026-04-14",
-  "totalJobsTracked": 5534,
-  "totalRuns": 26,
+  "lastUpdated": "2026-04-15",
+  "totalJobsTracked": 5748,
+  "totalRuns": 27,
   "latestSnapshot": {
-    "total": 223,
+    "total": 214,
     "by_category": [
       {
         "name": "other",
         "count": 79,
-        "pct": 35.4
-      },
-      {
-        "name": "ml-engineer",
-        "count": 28,
-        "pct": 12.6
+        "pct": 36.9
       },
       {
         "name": "data-scientist",
         "count": 28,
-        "pct": 12.6
+        "pct": 13.1
+      },
+      {
+        "name": "ml-engineer",
+        "count": 26,
+        "pct": 12.1
       },
       {
         "name": "ai-engineer",
-        "count": 26,
+        "count": 25,
         "pct": 11.7
       },
       {
         "name": "ai-general",
         "count": 23,
-        "pct": 10.3
-      },
-      {
-        "name": "ai-product",
-        "count": 8,
-        "pct": 3.6
+        "pct": 10.7
       },
       {
         "name": "ai-researcher",
         "count": 8,
-        "pct": 3.6
+        "pct": 3.7
+      },
+      {
+        "name": "ai-product",
+        "count": 7,
+        "pct": 3.3
       },
       {
         "name": "data-general",
-        "count": 8,
-        "pct": 3.6
+        "count": 7,
+        "pct": 3.3
       },
       {
         "name": "cv-engineer",
-        "count": 5,
-        "pct": 2.2
-      },
-      {
-        "name": "data-engineer",
-        "count": 3,
-        "pct": 1.3
+        "count": 4,
+        "pct": 1.9
       },
       {
         "name": "data-analyst",
         "count": 3,
-        "pct": 1.3
+        "pct": 1.4
       },
       {
         "name": "nlp-engineer",
@@ -67,94 +62,99 @@
       },
       {
         "name": "ai-manager",
-        "count": 2,
-        "pct": 0.9
+        "count": 1,
+        "pct": 0.5
+      },
+      {
+        "name": "data-engineer",
+        "count": 1,
+        "pct": 0.5
       }
     ],
     "by_seniority": [
       {
         "name": "unknown",
         "count": 113,
-        "pct": 50.7
-      },
-      {
-        "name": "lead",
-        "count": 32,
-        "pct": 14.3
+        "pct": 52.8
       },
       {
         "name": "senior",
-        "count": 32,
-        "pct": 14.3
+        "count": 35,
+        "pct": 16.4
       },
       {
-        "name": "junior",
-        "count": 18,
-        "pct": 8.1
+        "name": "lead",
+        "count": 26,
+        "pct": 12.1
       },
       {
         "name": "head",
-        "count": 16,
-        "pct": 7.2
+        "count": 15,
+        "pct": 7.0
+      },
+      {
+        "name": "junior",
+        "count": 14,
+        "pct": 6.5
       },
       {
         "name": "mid",
-        "count": 12,
-        "pct": 5.4
+        "count": 11,
+        "pct": 5.1
       }
     ],
     "by_remote": [
       {
         "name": "unknown",
-        "count": 197,
+        "count": 189,
         "pct": 88.3
       },
       {
         "name": "remote",
-        "count": 12,
-        "pct": 5.4
+        "count": 14,
+        "pct": 6.5
       },
       {
         "name": "hybrid",
-        "count": 10,
-        "pct": 4.5
+        "count": 9,
+        "pct": 4.2
       },
       {
         "name": "onsite",
-        "count": 4,
-        "pct": 1.8
+        "count": 2,
+        "pct": 0.9
       }
     ],
     "by_sector": [
       {
         "name": "tech",
-        "count": 151,
-        "pct": 67.7
+        "count": 142,
+        "pct": 66.4
       },
       {
         "name": "other",
-        "count": 46,
-        "pct": 20.6
+        "count": 47,
+        "pct": 22.0
       },
       {
         "name": "finance",
-        "count": 9,
-        "pct": 4.0
+        "count": 8,
+        "pct": 3.7
       },
       {
         "name": "consulting",
         "count": 7,
-        "pct": 3.1
+        "pct": 3.3
       },
       {
         "name": "government",
         "count": 4,
-        "pct": 1.8
+        "pct": 1.9
       },
       {
         "name": "academia",
         "count": 3,
-        "pct": 1.3
+        "pct": 1.4
       },
       {
         "name": "retail",
@@ -164,200 +164,200 @@
       {
         "name": "logistics",
         "count": 1,
-        "pct": 0.4
+        "pct": 0.5
       }
     ],
     "by_source": [
       {
         "name": "jobbird.com",
-        "count": 115,
-        "pct": 51.6
+        "count": 116,
+        "pct": 54.2
       },
       {
         "name": "linkedin.com",
-        "count": 108,
-        "pct": 48.4
+        "count": 98,
+        "pct": 45.8
       }
     ],
     "by_location": [
       {
         "name": "Amsterdam",
-        "count": 71,
-        "pct": 31.8
+        "count": 74,
+        "pct": 34.6
       },
       {
         "name": "Rotterdam",
-        "count": 25,
-        "pct": 11.2
-      },
-      {
-        "name": "Utrecht",
-        "count": 15,
-        "pct": 6.7
+        "count": 22,
+        "pct": 10.3
       },
       {
         "name": "Nederland",
         "count": 15,
-        "pct": 6.7
+        "pct": 7.0
       },
       {
         "name": "Den Haag",
-        "count": 13,
-        "pct": 5.8
+        "count": 12,
+        "pct": 5.6
+      },
+      {
+        "name": "Utrecht",
+        "count": 11,
+        "pct": 5.1
       },
       {
         "name": "Eindhoven",
-        "count": 7,
-        "pct": 3.1
+        "count": 9,
+        "pct": 4.2
       },
       {
         "name": "'s-Hertogenbosch",
         "count": 7,
-        "pct": 3.1
-      },
-      {
-        "name": "Groningen",
-        "count": 6,
-        "pct": 2.7
+        "pct": 3.3
       },
       {
         "name": "Nieuwegein",
         "count": 5,
-        "pct": 2.2
+        "pct": 2.3
+      },
+      {
+        "name": "Groningen",
+        "count": 5,
+        "pct": 2.3
       },
       {
         "name": "Amsterdam Area",
-        "count": 4,
-        "pct": 1.8
+        "count": 3,
+        "pct": 1.4
       }
     ],
     "top_skills": [
       {
         "name": "Python",
-        "count": 31,
-        "pct": 13.9
+        "count": 32,
+        "pct": 15.0
       },
       {
         "name": "LLM",
         "count": 26,
-        "pct": 11.7
-      },
-      {
-        "name": "Azure",
-        "count": 21,
-        "pct": 9.4
+        "pct": 12.1
       },
       {
         "name": "CI/CD",
         "count": 19,
-        "pct": 8.5
+        "pct": 8.9
       },
       {
-        "name": "Deep Learning",
-        "count": 14,
-        "pct": 6.3
+        "name": "Azure",
+        "count": 17,
+        "pct": 7.9
       },
       {
-        "name": "AWS",
+        "name": "Kubernetes",
         "count": 12,
-        "pct": 5.4
+        "pct": 5.6
       },
       {
         "name": "RAG",
         "count": 11,
-        "pct": 4.9
+        "pct": 5.1
       },
       {
-        "name": "Kubernetes",
-        "count": 10,
-        "pct": 4.5
+        "name": "AWS",
+        "count": 11,
+        "pct": 5.1
       },
       {
         "name": "Databricks",
         "count": 10,
-        "pct": 4.5
+        "pct": 4.7
       },
       {
-        "name": "Computer Vision",
+        "name": "Deep Learning",
         "count": 10,
-        "pct": 4.5
+        "pct": 4.7
       },
       {
         "name": "NLP",
         "count": 10,
-        "pct": 4.5
+        "pct": 4.7
       },
       {
-        "name": "Agile",
-        "count": 8,
-        "pct": 3.6
+        "name": "SQL",
+        "count": 9,
+        "pct": 4.2
       },
       {
         "name": "GCP",
         "count": 8,
-        "pct": 3.6
+        "pct": 3.7
       },
       {
-        "name": "SQL",
-        "count": 7,
-        "pct": 3.1
+        "name": "Docker",
+        "count": 8,
+        "pct": 3.7
       },
       {
         "name": "Spark",
-        "count": 7,
-        "pct": 3.1
+        "count": 8,
+        "pct": 3.7
+      },
+      {
+        "name": "Computer Vision",
+        "count": 8,
+        "pct": 3.7
       }
     ],
     "top_companies": [
       {
         "name": "Enexis",
         "count": 7,
-        "pct": 3.1
+        "pct": 3.3
       },
       {
         "name": "Ministerie van Defensie",
         "count": 7,
-        "pct": 3.1
-      },
-      {
-        "name": "Uitzendbureau",
-        "count": 5,
-        "pct": 2.2
+        "pct": 3.3
       },
       {
         "name": "Nationale Nederlanden",
         "count": 5,
-        "pct": 2.2
-      },
-      {
-        "name": "Sopra Steria",
-        "count": 4,
-        "pct": 1.8
+        "pct": 2.3
       },
       {
         "name": "Sia",
         "count": 3,
-        "pct": 1.3
+        "pct": 1.4
       },
       {
         "name": "pinely",
         "count": 3,
-        "pct": 1.3
+        "pct": 1.4
       },
       {
-        "name": "Harnham",
+        "name": "Sopra Steria",
         "count": 3,
-        "pct": 1.3
+        "pct": 1.4
+      },
+      {
+        "name": "Uitzendbureau",
+        "count": 3,
+        "pct": 1.4
       },
       {
         "name": "Karlstad University",
         "count": 3,
-        "pct": 1.3
+        "pct": 1.4
       },
       {
         "name": "Qabird",
         "count": 3,
-        "pct": 1.3
+        "pct": 1.4
+      },
+      {
+        "name": "RevoData",
+        "count": 2,
+        "pct": 0.9
       }
     ]
   },
@@ -388,7 +388,8 @@
       "2026-04-11",
       "2026-04-12",
       "2026-04-13",
-      "2026-04-14"
+      "2026-04-14",
+      "2026-04-15"
     ],
     "skills": {
       "Python": [
@@ -417,7 +418,8 @@
         27,
         27,
         27,
-        31
+        31,
+        32
       ],
       "LLM": [
         5,
@@ -445,6 +447,7 @@
         25,
         23,
         24,
+        26,
         26
       ],
       "Azure": [
@@ -473,7 +476,8 @@
         16,
         14,
         16,
-        21
+        21,
+        17
       ],
       "CI/CD": [
         0,
@@ -501,6 +505,7 @@
         16,
         15,
         16,
+        19,
         19
       ],
       "RAG": [
@@ -529,6 +534,36 @@
         10,
         9,
         9,
+        11,
+        11
+      ],
+      "AWS": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        9,
+        9,
+        10,
+        10,
+        11,
+        11,
+        10,
+        7,
+        9,
+        12,
+        11,
+        9,
+        9,
+        8,
+        9,
+        9,
+        10,
+        12,
         11
       ],
       "Computer Vision": [
@@ -557,35 +592,8 @@
         9,
         10,
         8,
-        10
-      ],
-      "AWS": [
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        9,
-        9,
         10,
-        10,
-        11,
-        11,
-        10,
-        7,
-        9,
-        12,
-        11,
-        9,
-        9,
-        8,
-        9,
-        9,
-        10,
-        12
+        8
       ],
       "Deep Learning": [
         2,
@@ -613,37 +621,97 @@
         9,
         9,
         9,
-        14
+        14,
+        10
       ]
     },
     "categories": {
-      "ml-engineer": [
-        22,
-        23,
-        18,
-        21,
-        21,
-        22,
-        21,
-        24,
-        30,
-        31,
-        34,
-        34,
-        40,
-        41,
-        35,
-        28,
-        29,
-        30,
-        30,
+      "ai-engineer": [
         27,
         26,
-        25,
+        31,
+        28,
+        26,
+        22,
+        26,
+        27,
         24,
+        23,
+        23,
+        23,
+        21,
+        20,
+        23,
+        25,
+        22,
+        21,
+        19,
+        21,
         22,
         25,
-        28
+        25,
+        25,
+        26,
+        26,
+        25
+      ],
+      "data-general": [
+        4,
+        4,
+        3,
+        3,
+        3,
+        4,
+        4,
+        4,
+        3,
+        3,
+        3,
+        4,
+        3,
+        3,
+        4,
+        7,
+        4,
+        6,
+        4,
+        3,
+        6,
+        6,
+        7,
+        7,
+        7,
+        8,
+        7
+      ],
+      "data-analyst": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        3,
+        3
       ],
       "ai-researcher": [
         1,
@@ -671,35 +739,37 @@
         10,
         8,
         7,
+        8,
         8
       ],
-      "ai-engineer": [
-        27,
-        26,
-        31,
-        28,
-        26,
-        22,
-        26,
-        27,
-        24,
-        23,
-        23,
-        23,
-        21,
-        20,
-        23,
-        25,
-        22,
-        21,
-        19,
-        21,
-        22,
-        25,
-        25,
-        25,
-        26,
-        26
+      "nlp-engineer": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2,
+        2,
+        3,
+        3,
+        3,
+        2,
+        3,
+        3,
+        3,
+        2,
+        3,
+        2,
+        2,
+        2,
+        2,
+        2
       ],
       "other": [
         112,
@@ -727,6 +797,7 @@
         76,
         87,
         83,
+        79,
         79
       ],
       "cv-engineer": [
@@ -755,63 +826,8 @@
         5,
         6,
         5,
-        5
-      ],
-      "data-scientist": [
-        22,
-        20,
-        21,
-        21,
-        21,
-        19,
-        19,
-        22,
-        22,
-        21,
-        20,
-        19,
-        15,
-        21,
-        27,
-        26,
-        24,
-        26,
-        27,
-        27,
-        27,
-        27,
-        29,
-        27,
-        25,
-        28
-      ],
-      "ai-manager": [
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
         5,
-        5,
-        5,
-        5,
-        4,
-        7,
-        8,
-        6,
-        6,
-        7,
-        7,
-        7,
-        7,
-        2,
-        2,
-        1,
-        1,
-        2
+        4
       ],
       "ai-general": [
         21,
@@ -839,63 +855,37 @@
         27,
         22,
         23,
+        23,
         23
       ],
-      "nlp-engineer": [
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        2,
-        2,
-        3,
-        3,
-        3,
-        2,
-        3,
-        3,
-        3,
-        2,
-        3,
-        2,
-        2,
-        2,
-        2
-      ],
-      "ai-product": [
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
+      "ai-manager": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
         5,
-        4,
         5,
-        6,
-        6,
         5,
-        6,
         5,
         4,
         7,
-        7,
         8,
-        8,
-        8,
-        7,
         6,
-        8,
-        8
+        6,
+        7,
+        7,
+        7,
+        7,
+        2,
+        2,
+        1,
+        1,
+        2,
+        1
       ],
       "data-engineer": [
         1,
@@ -923,93 +913,126 @@
         0,
         1,
         1,
-        3
+        3,
+        1
       ],
-      "data-analyst": [
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        1,
-        3
+      "ml-engineer": [
+        22,
+        23,
+        18,
+        21,
+        21,
+        22,
+        21,
+        24,
+        30,
+        31,
+        34,
+        34,
+        40,
+        41,
+        35,
+        28,
+        29,
+        30,
+        30,
+        27,
+        26,
+        25,
+        24,
+        22,
+        25,
+        28,
+        26
       ],
-      "data-general": [
+      "data-scientist": [
+        22,
+        20,
+        21,
+        21,
+        21,
+        19,
+        19,
+        22,
+        22,
+        21,
+        20,
+        19,
+        15,
+        21,
+        27,
+        26,
+        24,
+        26,
+        27,
+        27,
+        27,
+        27,
+        29,
+        27,
+        25,
+        28,
+        28
+      ],
+      "ai-product": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        5,
         4,
-        4,
-        3,
-        3,
-        3,
-        4,
-        4,
-        4,
-        3,
-        3,
-        3,
-        4,
-        3,
-        3,
-        4,
-        7,
-        4,
+        5,
         6,
+        6,
+        5,
+        6,
+        5,
         4,
-        3,
+        7,
+        7,
+        8,
+        8,
+        8,
+        7,
         6,
-        6,
-        7,
-        7,
-        7,
-        8
+        8,
+        8,
+        7
       ]
     },
     "remote": {
-      "onsite": [
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        3,
+      "remote": [
         3,
         3,
         1,
-        3,
-        2,
-        2,
         1,
         1,
         1,
-        2,
-        2,
-        2,
-        2,
-        2,
-        2,
-        4,
-        4
+        1,
+        1,
+        11,
+        11,
+        10,
+        11,
+        11,
+        10,
+        11,
+        6,
+        6,
+        10,
+        9,
+        9,
+        10,
+        9,
+        10,
+        10,
+        10,
+        12,
+        14
       ],
       "unknown": [
         211,
@@ -1037,7 +1060,37 @@
         189,
         190,
         188,
-        197
+        197,
+        189
+      ],
+      "onsite": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        3,
+        3,
+        3,
+        1,
+        3,
+        2,
+        2,
+        1,
+        1,
+        1,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        4,
+        4,
+        2
       ],
       "hybrid": [
         0,
@@ -1065,35 +1118,8 @@
         13,
         13,
         12,
-        10
-      ],
-      "remote": [
-        3,
-        3,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        11,
-        11,
         10,
-        11,
-        11,
-        10,
-        11,
-        6,
-        6,
-        10,
-        9,
-        9,
-        10,
-        9,
-        10,
-        10,
-        10,
-        12
+        9
       ]
     },
     "totalPerRun": [
@@ -1122,49 +1148,50 @@
       214,
       215,
       214,
-      223
+      223,
+      214
     ]
   },
   "topCompanies": [
     {
       "name": "Synsel Techniek",
-      "count": 270
+      "count": 272
     },
     {
       "name": "Uitzendbureau",
-      "count": 242
+      "count": 245
     },
     {
       "name": "Nationale Nederlanden",
-      "count": 223
+      "count": 228
     },
     {
       "name": "Enexis",
-      "count": 133
+      "count": 140
     },
     {
       "name": "Pon",
-      "count": 102
+      "count": 104
     },
     {
       "name": "PostNL Hoofdkantoor",
-      "count": 95
+      "count": 97
     },
     {
       "name": "Sia",
-      "count": 93
+      "count": 96
     },
     {
       "name": "Ministerie van Defensie",
-      "count": 88
+      "count": 95
     },
     {
       "name": "Sopra Steria",
-      "count": 82
+      "count": 85
     },
     {
       "name": "pinely",
-      "count": 79
+      "count": 82
     }
   ]
 }
