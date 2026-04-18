@@ -32,6 +32,32 @@ def generate_dashboard(
     return html_path, json_path
 
 
+def _fmt_label(slug: str) -> str:
+    mapping = {
+        "ml-engineer": "ML Engineer",
+        "ai-engineer": "AI Engineer",
+        "ai-general": "AI General",
+        "data-scientist": "Data Scientist",
+        "ai-researcher": "AI Researcher",
+        "data-general": "Data General",
+        "ai-product": "AI Product",
+        "cv-engineer": "CV Engineer",
+        "data-analyst": "Data Analyst",
+        "nlp-engineer": "NLP Engineer",
+        "ai-manager": "AI Manager",
+        "data-engineer": "Data Engineer",
+        "remote": "Remote",
+        "hybrid": "Hybrid",
+        "onsite": "Onsite",
+        "senior": "Senior",
+        "junior": "Junior",
+        "lead": "Lead",
+        "mid": "Mid",
+        "head": "Head",
+    }
+    return mapping.get(slug, slug.replace("-", " ").title())
+
+
 def _build_html(data: dict[str, Any]) -> str:
     """Build the complete dashboard HTML string."""
     snapshot = data.get("latestSnapshot", {})
@@ -53,7 +79,8 @@ def _build_html(data: dict[str, Any]) -> str:
     # Skip "other" for the top category display
     cat_list_filtered = [c for c in cat_list if (c["name"] if isinstance(c, dict) else c[0]) != "other"]
     if cat_list_filtered:
-        top_category = cat_list_filtered[0]["name"] if isinstance(cat_list_filtered[0], dict) else cat_list_filtered[0][0]
+        raw = cat_list_filtered[0]["name"] if isinstance(cat_list_filtered[0], dict) else cat_list_filtered[0][0]
+        top_category = _fmt_label(raw)
 
     latest_total = snapshot.get("total", 0)
 
@@ -297,6 +324,13 @@ def _build_html(data: dict[str, Any]) -> str:
             </div>
 
             <div class="chart-card">
+                <h3>Work Arrangement</h3>
+                <div class="chart-container">
+                    <canvas id="arrangementChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
                 <h3>Top Companies Hiring</h3>
                 <div class="chart-container short">
                     <canvas id="companiesChart"></canvas>
@@ -327,6 +361,19 @@ def _build_html(data: dict[str, Any]) -> str:
         '#38bdf8', '#34d399', '#a78bfa', '#fb923c',
         '#ec4899', '#14b8a6'
     ];
+
+    const LABEL_MAP = {{
+        'ml-engineer': 'ML Engineer', 'ai-engineer': 'AI Engineer',
+        'ai-general': 'AI General', 'data-scientist': 'Data Scientist',
+        'ai-researcher': 'AI Researcher', 'data-general': 'Data General',
+        'ai-product': 'AI Product', 'cv-engineer': 'CV Engineer',
+        'data-analyst': 'Data Analyst', 'nlp-engineer': 'NLP Engineer',
+        'ai-manager': 'AI Manager', 'data-engineer': 'Data Engineer',
+        'remote': 'Remote', 'hybrid': 'Hybrid', 'onsite': 'Onsite',
+        'senior': 'Senior', 'junior': 'Junior', 'lead': 'Lead',
+        'mid': 'Mid', 'head': 'Head',
+    }};
+    const fmtLabel = n => LABEL_MAP[n] || n.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 
     const chartDefaults = {{
         responsive: true,
@@ -409,7 +456,7 @@ def _build_html(data: dict[str, Any]) -> str:
         new Chart(document.getElementById('categoryChart'), {{
             type: 'doughnut',
             data: {{
-                labels: cats.map(c => c.name),
+                labels: cats.map(c => fmtLabel(c.name)),
                 datasets: [{{
                     data: cats.map(c => c.count),
                     backgroundColor: COLORS.slice(0, cats.length),
@@ -439,7 +486,7 @@ def _build_html(data: dict[str, Any]) -> str:
         new Chart(document.getElementById('seniorityChart'), {{
             type: 'bar',
             data: {{
-                labels: seniority.map(s => s.name),
+                labels: seniority.map(s => fmtLabel(s.name)),
                 datasets: [{{
                     data: seniority.map(s => s.count),
                     backgroundColor: COLORS.slice(0, seniority.length),
@@ -454,6 +501,36 @@ def _build_html(data: dict[str, Any]) -> str:
                 scales: {{
                     x: {{ beginAtZero: true, ticks: {{ stepSize: 1, font: {{ size: 11 }} }} }},
                     y: {{ ticks: {{ font: {{ size: 12 }} }} }}
+                }}
+            }}
+        }});
+    }}
+
+    // --- Work Arrangement (Doughnut) --- filter out "unknown"
+    const arrangementRaw = (DATA.latestSnapshot || {{}}).by_remote || [];
+    const arrangement = arrangementRaw.filter(r => r.name !== 'unknown');
+    if (arrangement.length > 0) {{
+        new Chart(document.getElementById('arrangementChart'), {{
+            type: 'doughnut',
+            data: {{
+                labels: arrangement.map(r => fmtLabel(r.name)),
+                datasets: [{{
+                    data: arrangement.map(r => r.count),
+                    backgroundColor: COLORS.slice(0, arrangement.length),
+                    borderWidth: 0,
+                    hoverOffset: 8
+                }}]
+            }},
+            plugins: [pctPlugin],
+            options: {{
+                ...chartDefaults,
+                cutout: '55%',
+                plugins: {{
+                    ...chartDefaults.plugins,
+                    legend: {{
+                        ...chartDefaults.plugins.legend,
+                        position: 'right'
+                    }}
                 }}
             }}
         }});
