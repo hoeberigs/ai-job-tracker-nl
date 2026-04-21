@@ -50,15 +50,22 @@ CATEGORY_PATTERNS = {
     "ml-engineer": [
         r"\bmachine learning engineer\b", r"\bml engineer\b", r"\bmlops\b",
         r"\bml platform\b", r"\bml infrastructure\b",
+        r"\bmachine learning\b.*\bengineer\b",
+        r"\bml\b.*\bengineer\b",
+        r"\bml ops\b", r"\bml software\b",
+        r"\brecommendation\b.*\bengineer\b", r"\balgorithm engineer\b",
     ],
     "data-scientist": [
         r"\bdata scientist\b", r"\bdata science\b", r"\bresearch scientist\b",
-        r"\bapplied scientist\b",
+        r"\bapplied scientist\b", r"\bpredictive analytics\b",
+        r"\bml specialist\b", r"\bmachine learning specialist\b",
     ],
     "ai-engineer": [
         r"\bai engineer\b", r"\bartificial intelligence engineer\b",
         r"\bgenai\b", r"\bgenerative ai\b", r"\bllm engineer\b",
         r"\bprompt engineer\b", r"\bai developer\b",
+        r"\bai specialist\b", r"\bai consultant\b",
+        r"\bgpt engineer\b", r"\brag engineer\b",
     ],
     "nlp-engineer": [
         r"\bnlp\b", r"\bnatural language\b", r"\bcomputational linguist\b",
@@ -71,14 +78,17 @@ CATEGORY_PATTERNS = {
     "data-engineer": [
         r"\bdata engineer\b", r"\bdata platform\b", r"\betl\b",
         r"\bdata pipeline\b", r"\bdata infrastructure\b",
+        r"\banalytics engineer\b",
     ],
     "data-analyst": [
         r"\bdata analyst\b", r"\bdata analytics\b", r"\bbi analyst\b",
-        r"\bbusiness intelligence\b",
+        r"\bbusiness intelligence\b", r"\bbi developer\b",
     ],
     "ai-researcher": [
         r"\bai research\b", r"\bresearch\b.*\bai\b", r"\bphd\b",
-        r"\bdeep learning research\b",
+        r"\bdeep learning research\b", r"\bapplied ml\b",
+        r"\bml researcher\b", r"\bml research\b",
+        r"\bresearch engineer\b",
     ],
     "ai-product": [
         r"\bai product\b", r"\bproduct.*ai\b", r"\bai.*product\b",
@@ -230,3 +240,46 @@ def classify_job(job: Job) -> Job:
 def classify_all(jobs: list[Job]) -> list[Job]:
     """Classify all jobs."""
     return [classify_job(job) for job in jobs]
+
+
+# ── Relevance Filter ──────────────────────────────────────────────────
+
+RELEVANCE_TITLE_PATTERNS = [
+    r"\bai\b", r"\bml\b", r"\bllm\b", r"\bnlp\b", r"\brag\b",
+    r"\bmachine learning\b", r"\bdeep learning\b", r"\bartificial intelligence\b",
+    r"\bdata scienti", r"\bdata engineer", r"\bdata analyst",
+    r"\bdata platform\b", r"\bdata pipeline\b",
+    r"\bcomputer vision\b", r"\bgenai\b", r"\bgenerative ai\b",
+    r"\bmlops\b", r"\bneural network\b", r"\bpredictive\b",
+    r"\balgorithm engineer\b", r"\bresearch engineer\b",
+    r"\banalytics engineer\b", r"\bapplied ml\b",
+]
+
+
+def is_relevant(job: Job) -> bool:
+    """Return True if the job is relevant to AI/ML/data.
+
+    Checks title first; falls back to description for generic titles.
+    Drops jobs already given a specific category (not 'other' or 'data-general'
+    / 'ai-general') unconditionally — they matched a meaningful pattern.
+    """
+    if job.category not in ("other", "data-general", "ai-general"):
+        return True
+
+    title_lower = job.title.lower()
+    for pattern in RELEVANCE_TITLE_PATTERNS:
+        if re.search(pattern, title_lower):
+            return True
+
+    if len(job.description) > 100:
+        desc_lower = job.description.lower()
+        for pattern in RELEVANCE_TITLE_PATTERNS:
+            if re.search(pattern, desc_lower):
+                return True
+
+    return False
+
+
+def filter_relevant(jobs: list[Job]) -> list[Job]:
+    """Remove jobs with no AI/ML/data relevance."""
+    return [j for j in jobs if is_relevant(j)]

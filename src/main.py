@@ -13,7 +13,7 @@ import sys
 from rich.console import Console
 
 from src.scrapers import scrape_all, SEARCH_QUERIES
-from src.classifier import classify_all
+from src.classifier import classify_all, filter_relevant
 from src.analyzer import analyze
 from src.display import display_results
 from src.export import export_csv, export_json
@@ -104,8 +104,11 @@ def main():
     # Classify
     with console.status("[bold green]Classifying jobs..."):
         jobs = classify_all(jobs)
+        before = len(jobs)
+        jobs = filter_relevant(jobs)
+        dropped = before - len(jobs)
 
-    console.print(f"  Classified [bold]{len(jobs)}[/] jobs")
+    console.print(f"  Classified [bold]{len(jobs)}[/] jobs ({dropped} irrelevant filtered out)")
 
     # Analyse
     analysis = analyze(jobs)
