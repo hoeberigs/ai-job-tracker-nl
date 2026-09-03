@@ -8,6 +8,12 @@ on:
 permissions:
   contents: write
 
+# Serialise runs so a manual dispatch and the daily cron cannot push against
+# each other. Queue the second run rather than cancelling it.
+concurrency:
+  group: job-tracker-update
+  cancel-in-progress: false
+
 jobs:
   update:
     runs-on: ubuntu-latest
@@ -31,5 +37,37 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add data/jobs.db docs/
-          git diff --staged --quiet || git commit -m "Update job data and dashboard $(date +%Y-%m-%d)"
-          git push
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git commit -m "Update job data and dashboard $(date +%Y-%m-%d)"
+
+          # data/jobs.db and docs/ are regenerated artefacts, so on a rejected
+          # push we replay this run's output onto the latest origin/main rather
+          # than trying to merge a binary sqlite file.
+          for attempt in 1 2 3; do
+            if git push; then
+              echo "Pushed on attempt $attempt"
+              exit 0
+            fi
+            echo "Push rejected on attempt $attempt; replaying output onto latest origin/main"
+            rm -rf "$RUNNER_TEMP/out"
+            mkdir -p "$RUNNER_TEMP/out"
+            cp -a data/jobs.db "$RUNNER_TEMP/out/jobs.db"
+            cp -a docs "$RUNNER_TEMP/out/docs"
+            git fetch origin main
+            git reset --hard origin/main
+            cp -a "$RUNNER_TEMP/out/jobs.db" data/jobs.db
+            rm -rf docs
+            cp -a "$RUNNER_TEMP/out/docs" docs
+            git add data/jobs.db docs/
+            if git diff --staged --quiet; then
+              echo "origin/main already holds equivalent output"
+              exit 0
+            fi
+            git commit -m "Update job data and dashboard $(date +%Y-%m-%d)"
+          done
+
+          echo "::error::Push still rejected after 3 attempts"
+          exit 1
