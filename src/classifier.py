@@ -172,11 +172,10 @@ def classify_sector(company: str, title: str = "", description: str = "") -> str
 # ── Skills Extraction ─────────────────────────────────────────────────
 
 SKILL_PATTERNS = {
+    # --- languages / core stack -------------------------------------------
     "Python": r"\bpython\b",
-    "R": r"\br\b(?:\s+programming|\s+studio|\s+language)",
     "SQL": r"\bsql\b",
     "Spark": r"\bspark\b|\bpyspark\b",
-    "TensorFlow": r"\btensorflow\b|\btf\b",
     "PyTorch": r"\bpytorch\b|\btorch\b",
     "Kubernetes": r"\bkubernetes\b|\bk8s\b",
     "Docker": r"\bdocker\b",
@@ -186,19 +185,57 @@ SKILL_PATTERNS = {
     "Databricks": r"\bdatabricks\b",
     "MLflow": r"\bmlflow\b",
     "Hugging Face": r"\bhugging\s?face\b|\btransformers\b",
-    "LangChain": r"\blangchain\b",
-    "RAG": r"\brag\b|\bretrieval.augmented\b",
-    "LLM": r"\bllm\b|\blarge language\b",
-    "NLP": r"\bnlp\b|\bnatural language\b",
-    "Computer Vision": r"\bcomputer vision\b|\bcv\b|\bopencv\b",
-    "Deep Learning": r"\bdeep learning\b",
+    "LangChain": r"\blangchain\b|\blanggraph\b",
     "Airflow": r"\bairflow\b",
     "dbt": r"\bdbt\b",
-    "Tableau": r"\btableau\b",
     "Power BI": r"\bpower\s?bi\b",
     "Git": r"\bgit\b",
     "CI/CD": r"\bci/?cd\b",
     "Agile": r"\bagile\b|\bscrum\b",
+
+    # --- model / method ----------------------------------------------------
+    "RAG": r"\brag\b|\bretrieval.augmented\b",
+    "LLM": r"\bllm\b|\blarge language\b",
+    "NLP": r"\bnlp\b|\bnatural language\b",
+    "Deep Learning": r"\bdeep learning\b",
+    # "cv" removed: it matched "send your CV" and "submit resumes or CV's",
+    # inflating this skill by ~15% (28 vacancies tagged on that branch alone).
+    "Computer Vision": (
+        r"\bcomputer vision\b|\bopencv\b|\bbeeldherkenning\b"
+        r"|\bimage recognition\b|\bobject detection\b|\byolo\b"
+    ),
+
+    # --- the modern stack (added 2026-09) ----------------------------------
+    "AI Agents": (
+        r"\bagentic\b|\bai[- ]agents?\b|\bmulti[- ]?agent\b"
+        r"|\bagent frameworks?\b|\bagent workflows?\b|\bautogen\b|\bcrew\s?ai\b"
+    ),
+    "Fine-tuning": r"\bfine[- ]?tun|\blora\b|\bqlora\b|\bpeft\b|\brlhf\b",
+    "Embeddings": r"\bembeddings?\b|\bvector (?:database|db|store)\b|\bpgvector\b",
+    "Prompt Engineering": r"\bprompt engineering\b|\bprompt[- ]?engineer\b|\bprompting\b",
+    "MCP": r"\bmcp\b|\bmodel context protocol\b",
+
+    # --- model providers, one group each (added 2026-09) -------------------
+    # Ordinary English words (opus, sonnet, haiku, fable, muse, nova, titan,
+    # phi) are only matched with a version number or a vendor cue beside them,
+    # so a line about poetry or a product called Nova cannot trip them.
+    "OpenAI": (
+        r"\bopenai\b|\bchatgpt\b|\bgpt\b|\bgpt[- ]?[0-9]|\bdall[·\-. ]?e\b"
+        r"|\bwhisper\b|\bcodex\b|\bsora\b|\bo[134](?:[- ]mini)?\b"
+    ),
+    "Anthropic": (
+        r"\banthropic\b|\bclaude\b"
+        r"|\b(?:opus|sonnet|haiku|fable)\s*[0-9]"
+        r"|\bclaude\s+(?:opus|sonnet|haiku|fable)\b"
+    ),
+    "Google AI": (
+        r"\bgemini\b|\bvertex ai\b|\bgemma\b|\bbard\b|\bimagen\b|\bpalm\s*[0-9]"
+    ),
+    "Meta Llama": r"\bllama\s?[0-9]?\b|\bmeta ai\b|\bmuse\s*[0-9]",
+    "Mistral": r"\bmistral\b|\bmixtral\b|\bcodestral\b|\ble chat\b",
+    "Microsoft Copilot": r"\bcopilot\b|\bphi[- ]?[0-9]",
+    "AWS Bedrock": r"\bbedrock\b|\b(?:titan|nova)\s*[0-9]",
+    "Other frontier": r"\bdeepseek\b|\bqwen\b|\bgrok\b|\bkimi\b",
 }
 
 
