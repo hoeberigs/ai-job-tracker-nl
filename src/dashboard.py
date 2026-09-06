@@ -66,6 +66,7 @@ def _build_html(data: dict[str, Any]) -> str:
 
     # Extract summary stats
     total_tracked = data.get("totalJobsTracked", 0)
+    total_observations = data.get("totalObservations", 0)
     total_runs = data.get("totalRuns", 0)
     last_updated = data.get("lastUpdated", "—")
 
@@ -285,7 +286,11 @@ def _build_html(data: dict[str, Any]) -> str:
         <div class="stats">
             <div class="stat-card">
                 <div class="value">{total_tracked}</div>
-                <div class="label">Total Tracked</div>
+                <div class="label">Distinct Postings</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">{total_observations}</div>
+                <div class="label">Daily Observations</div>
             </div>
             <div class="stat-card">
                 <div class="value">{latest_total}</div>
@@ -401,7 +406,10 @@ def _build_html(data: dict[str, Any]) -> str:
                 labels: skillsTrend.dates,
                 datasets: skillNames.map((name, i) => ({{
                     label: name,
-                    data: skillsTrend.skills[name],
+                    // Share of postings whose text was retrieved, not raw
+                    // counts: text coverage rose from ~20% to ~70% over the
+                    // panel, and raw counts read that as a market surge.
+                    data: (skillsTrend.skillsPct || {{}})[name] || skillsTrend.skills[name],
                     borderColor: COLORS[i % COLORS.length],
                     backgroundColor: COLORS[i % COLORS.length] + '20',
                     tension: 0.3,
@@ -416,7 +424,8 @@ def _build_html(data: dict[str, Any]) -> str:
                 scales: {{
                     y: {{
                         beginAtZero: true,
-                        ticks: {{ font: {{ size: 11 }}, stepSize: 1 }}
+                        title: {{ display: true, text: '% of postings with text' }},
+                        ticks: {{ font: {{ size: 11 }}, callback: v => v + '%' }}
                     }},
                     x: {{
                         ticks: {{ font: {{ size: 11 }} }}

@@ -149,7 +149,9 @@ def get_trend_data(conn: sqlite3.Connection) -> dict[str, Any]:
 
     dates = []
     total_per_run = []
+    described_per_run: list[int] = []
     skills_over_time: dict[str, list[int]] = {}
+    skills_pct_over_time: dict[str, list[float]] = {}
     categories_over_time: dict[str, list[int]] = {}
     remote_over_time: dict[str, list[int]] = {}
 
@@ -178,8 +180,12 @@ def get_trend_data(conn: sqlite3.Connection) -> dict[str, Any]:
         total_per_run.append(run["total_jobs"])
 
         rows = conn.execute(
-            "SELECT skills, category, remote FROM jobs WHERE run_id = ?", (run["id"],)
+            "SELECT skills, category, remote, "
+            "(TRIM(COALESCE(description,'')) != '') AS has_text FROM jobs WHERE run_id = ?",
+            (run["id"],)
         ).fetchall()
+        described = sum(1 for r in rows if r["has_text"])
+        described_per_run.append(described)
 
         # Count skills
         skill_counts: dict[str, int] = {s: 0 for s in all_skills}
@@ -199,6 +205,12 @@ def get_trend_data(conn: sqlite3.Connection) -> dict[str, Any]:
 
         for s in all_skills:
             skills_over_time.setdefault(s, []).append(skill_counts[s])
+            # A run with too little retrieved text cannot carry a share; the
+            # early runs had none at all. None leaves a gap in the line instead
+            # of a fake zero that the chart would draw as a cliff.
+            skills_pct_over_time.setdefault(s, []).append(
+                round(100.0 * skill_counts[s] / described, 1) if described >= 30 else None
+            )
         for c in all_categories:
             categories_over_time.setdefault(c, []).append(cat_counts[c])
         for r in all_remote:
@@ -208,8 +220,11 @@ def get_trend_data(conn: sqlite3.Connection) -> dict[str, Any]:
     skill_totals = {s: sum(v) for s, v in skills_over_time.items()}
     top_skills = sorted(skill_totals, key=skill_totals.get, reverse=True)[:8]
     skills_over_time = {s: skills_over_time[s] for s in top_skills}
+    skills_pct_over_time = {s: skills_pct_over_time[s] for s in top_skills}
 
     return {
+        "skillsPct": skills_pct_over_time,
+        "describedPerRun": described_per_run,
         "dates": dates,
         "skills": skills_over_time,
         "categories": categories_over_time,
@@ -234,13 +249,20 @@ def get_dashboard_data(db_path: str = "data/jobs.db") -> dict[str, Any]:
         {"name": c, "count": n} for c, n in company_counts.most_common(10)
     ]
 
-    total_jobs = conn.execute("SELECT COUNT(*) as cnt FROM jobs").fetchone()["cnt"]
+    # One row is one posting seen on one day, so COUNT(*) counts scraping
+    # effort, not jobs. The headline must be distinct postings; the row count
+    # is kept as "observations" because it is what the trends are built from.
+    total_observations = conn.execute("SELECT COUNT(*) as cnt FROM jobs").fetchone()["cnt"]
+    total_postings = conn.execute(
+        "SELECT COUNT(DISTINCT url) as cnt FROM jobs WHERE url IS NOT NULL AND url != ''"
+    ).fetchone()["cnt"]
 
     conn.close()
 
     return {
         "lastUpdated": runs[0]["run_date"] if runs else "",
-        "totalJobsTracked": total_jobs,
+        "totalJobsTracked": total_postings,
+        "totalObservations": total_observations,
         "totalRuns": len(runs),
         "latestSnapshot": _serialise_snapshot(snapshot),
         "trends": trends,
