@@ -71,13 +71,13 @@ Every sentence that states a number is recomputed on each run, so the page stays
 |---|---|---|
 | `-q` / `--queries` | Custom search queries | Built-in AI/ML terms |
 | `-n` / `--max-per-query` | Max results per query per source | 15 |
-| `--update` | Full pipeline: scrape + DB + dashboard |: |
-| `--dashboard` | Regenerate dashboard from DB (no scraping) |: |
+| `--update` | Full pipeline: scrape + DB + dashboard | - |
+| `--dashboard` | Regenerate dashboard from DB (no scraping) | - |
 | `--db` | SQLite database path | `data/jobs.db` |
 | `--csv` | CSV export path | `data/jobs.csv` |
 | `--json` | JSON export path | `data/results.json` |
-| `--no-export` | Skip file export |: |
-| `--demo` | Use sample data (no scraping) |: |
+| `--no-export` | Skip file export | - |
+| `--demo` | Use sample data (no scraping) | - |
 
 ## Architecture
 

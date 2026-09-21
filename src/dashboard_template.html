@@ -15,6 +15,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+// Theme override: ?theme=light|dark wins, then the saved choice, else the system setting.
+(function () { try { var q = (location.search.match(/[?&]theme=(light|dark)/) || [])[1]; var t = q || localStorage.getItem('theme'); if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t); } catch (e) {} })();
+</script>
 <style>
 :root {
     color-scheme: light;
@@ -35,7 +39,7 @@
     --mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
 }
 @media (prefers-color-scheme: dark) {
-    :root {
+  :root:not([data-theme="light"]) {
         color-scheme: dark;
         --surface: #141517;
         --wash: #1c1e20;
@@ -49,7 +53,22 @@
         --flat: #63666a;
         --bar: #3987e5;
         --bar-muted: #4a4d51;
-    }
+  }
+}
+:root[data-theme="dark"] {
+        color-scheme: dark;
+        --surface: #141517;
+        --wash: #1c1e20;
+        --ink: #ecebe6;
+        --ink-2: #b9b8b1;
+        --ink-3: #8e8f89;
+        --rule: #2e3134;
+        --rule-strong: #ecebe6;
+        --rise: #3987e5;
+        --fall: #d95926;
+        --flat: #63666a;
+        --bar: #3987e5;
+        --bar-muted: #4a4d51;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -221,6 +240,9 @@ footer { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--rule);
 @media (prefers-reduced-motion: reduce) {
     * { transition: none !important; }
 }
+.theme { margin-left: 0.9rem; background: none; border: 1px solid var(--rule); color: var(--ink-2); font: inherit; padding: 0.15rem 0.5rem; cursor: pointer; }
+.theme:hover { color: var(--ink); border-color: var(--ink-3); }
+.theme:active { transform: translateY(1px); }
 </style>
 </head>
 <body>
@@ -230,10 +252,10 @@ footer { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--rule);
 <header class="masthead">
     <div class="kicker">
         <span>AI and ML job ads, Netherlands</span>
-        <span>Updated __UPDATED__</span>
+        <span>Updated __UPDATED__ <button type="button" class="theme" id="themeBtn">Theme: auto</button></span>
     </div>
     <h1>__HEADLINE__</h1>
-    <p class="dek"><strong>__FOLLOW__</strong> A daily scrape of __SOURCES__ listings for AI, machine learning and data science roles in the Netherlands, sorted by role, seniority and skills with keyword rules.</p>
+    <p class="dek"><strong>__FOLLOW__</strong> A daily collection of __SOURCES__ listings for AI, machine learning and data science roles in the Netherlands, sorted by role, seniority and skills with keyword rules.</p>
     <dl class="ledger">
         <div><dd>__OPEN_TODAY__</dd><dt>ads open on the latest run</dt></div>
         <div><dd>__TOTAL_POSTINGS__</dd><dt>distinct ads since __SINCE__</dt></div>
@@ -245,7 +267,7 @@ footer { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--rule);
 <noscript><p class="empty">The figures on this page are drawn in the browser and need JavaScript. The underlying numbers are in <a href="data.json">data.json</a>.</p></noscript>
 
 <div id="empty" class="empty" hidden>
-    <h2>No scrape runs recorded yet</h2>
+    <h2>No collection runs recorded yet</h2>
     <p>The first completed run fills this page. Until then there is nothing to chart.</p>
 </div>
 
@@ -367,7 +389,7 @@ const leaders = rows => rows.length ? rows.filter(r => r.count === rows[0].count
 const joinNames = names => names.length < 2 ? names.join('') : names.slice(0, -1).join(', ') + ' and ' + names[names.length - 1];
 const dayLabel = iso => { const p = String(iso).split('-'); return +p[2] + ' ' + MONTHS[+p[1] - 1] + ' ' + p[0]; };
 
-// Every string below may come from a scraped page: text goes in through
+// Every string below may come from a collected listing: text goes in through
 // textContent only, never through innerHTML.
 function el(tag, attrs, text) {
     const node = document.createElement(tag);
@@ -756,6 +778,21 @@ function render() {
 }
 
 render();
+
+// Theme button: cycles auto, light, dark and remembers the choice on this device.
+(function () {
+  var b = document.getElementById('themeBtn'); if (!b) return;
+  var order = ['auto', 'light', 'dark'];
+  function cur() { return document.documentElement.getAttribute('data-theme') || 'auto'; }
+  function paint() { b.textContent = 'Theme: ' + cur(); }
+  b.addEventListener('click', function () {
+    var n = order[(order.indexOf(cur()) + 1) % 3];
+    if (n === 'auto') document.documentElement.removeAttribute('data-theme'); else document.documentElement.setAttribute('data-theme', n);
+    try { if (n === 'auto') localStorage.removeItem('theme'); else localStorage.setItem('theme', n); } catch (e) {}
+    paint();
+  });
+  paint();
+})();
 </script>
 </body>
 </html>

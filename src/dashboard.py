@@ -174,9 +174,9 @@ def _long_date(iso_date: str | None) -> str:
 
 
 def _json_for_script(data: dict[str, Any]) -> str:
-    # Company names and titles are scraped from third-party pages. Inside a
+    # Company names and titles are collected from third-party pages. Inside a
     # <script> block the HTML parser ends the script at the first "</script",
-    # so escape every "<" and keep scraped text from breaking out of the JSON.
+    # so escape every "<" and keep collected text from breaking out of the JSON.
     # U+2028 and U+2029 are legal in JSON but end a line in older JS engines.
     text = json.dumps(data, default=str, ensure_ascii=False).replace("<", "\\u003c")
     for codepoint in (0x2028, 0x2029):
