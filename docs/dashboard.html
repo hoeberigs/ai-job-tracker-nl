@@ -1,512 +1,761 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Job Market Dashboard — Netherlands</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
-    <style>
-        :root {
-            --accent: #6b5ce7;
-            --accent-light: #8b7cf0;
-            --teal: #2dd4bf;
-            --warm: #f59e0b;
-            --rose: #f43f5e;
-            --sky: #38bdf8;
-            --emerald: #34d399;
-            --violet: #a78bfa;
-            --orange: #fb923c;
-            --charcoal: #1e1b2e;
-            --dark: #2a2742;
-            --card-bg: #ffffff;
-            --bg: #f8f7fc;
-            --text: #1e1b2e;
-            --text-muted: #6b7280;
-            --border: #e5e7eb;
-            --radius: 16px;
-            --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04);
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI and ML job ads in the Netherlands</title>
+<meta name="description" content="28% of Dutch AI job ads now ask for AI Agents. In April it was 14%. A daily tracker of what Dutch AI and ML job ads ask for: skills, roles, seniority, location and employers.">
+<meta property="og:title" content="AI and ML job ads in the Netherlands">
+<meta property="og:description" content="28% of Dutch AI job ads now ask for AI Agents. In April it was 14%.">
+<meta property="og:type" content="website">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#f5f6f4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#141517" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23141517'/%3E%3Cpath d='M5 23 L12 17 L18 20 L27 8' fill='none' stroke='%233987e5' stroke-width='3'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+    color-scheme: light;
+    --surface: #f5f6f4;
+    --wash: #eceeea;
+    --ink: #111315;
+    --ink-2: #4b4f4c;
+    --ink-3: #6f736f;
+    --rule: #d3d6d0;
+    --rule-strong: #111315;
+    --rise: #2a78d6;
+    --fall: #eb6834;
+    --flat: #a2a5a0;
+    --bar: #2a78d6;
+    --bar-muted: #b9bcb6;
+    --display: 'Bricolage Grotesque', 'IBM Plex Sans', system-ui, sans-serif;
+    --sans: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+    --mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        color-scheme: dark;
+        --surface: #141517;
+        --wash: #1c1e20;
+        --ink: #ecebe6;
+        --ink-2: #b9b8b1;
+        --ink-3: #8e8f89;
+        --rule: #2e3134;
+        --rule-strong: #ecebe6;
+        --rise: #3987e5;
+        --fall: #d95926;
+        --flat: #63666a;
+        --bar: #3987e5;
+        --bar-muted: #4a4d51;
+    }
+}
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+    margin: 0;
+    background: var(--surface);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 1rem;
+    line-height: 1.55;
+}
+a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+a:hover { text-decoration-thickness: 2px; }
+:focus-visible { outline: 2px solid var(--rise); outline-offset: 3px; }
 
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
-            min-height: 100vh;
-        }
+.skip {
+    position: absolute; left: 1rem; top: -4rem;
+    background: var(--ink); color: var(--surface);
+    padding: 0.5rem 0.75rem; font-family: var(--mono); font-size: 0.8rem;
+}
+.skip:focus { top: 1rem; }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem 1.5rem;
-        }
+.page { max-width: 1180px; margin: 0 auto; padding: 0 1.5rem 4rem; }
 
-        header {
-            text-align: center;
-            margin-bottom: 2.5rem;
-        }
+/* Masthead */
+.masthead { padding: 1.5rem 0 0; }
+.kicker {
+    display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.25rem 1.5rem;
+    font-family: var(--mono); font-size: 0.78rem; color: var(--ink-2);
+    padding-bottom: 0.6rem; border-bottom: 2px solid var(--rule-strong);
+}
+h1 {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(1.9rem, 4.6vw, 3.5rem);
+    line-height: 1.04;
+    letter-spacing: -0.025em;
+    margin: 2rem 0 0;
+    max-width: 19em;
+    text-wrap: balance;
+}
+.dek { max-width: 62ch; margin: 1.25rem 0 0; color: var(--ink-2); font-size: 1.05rem; text-wrap: pretty; }
+.dek strong { color: var(--ink); font-weight: 500; }
 
-        header h1 {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--charcoal);
-            margin-bottom: 0.25rem;
-        }
+.ledger {
+    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin: 2.5rem 0 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+}
+.ledger div { padding: 0.9rem 1.25rem 0.9rem 0; }
+.ledger div + div { padding-left: 1.25rem; border-left: 1px solid var(--rule); }
+.ledger dt { font-size: 0.85rem; color: var(--ink-2); order: 2; }
+.ledger dd { margin: 0; font-family: var(--mono); font-weight: 500; font-size: clamp(1.4rem, 3vw, 2rem); line-height: 1.15; }
+.ledger div { display: flex; flex-direction: column; }
 
-        header h1 span {
-            background: linear-gradient(135deg, var(--accent), var(--teal));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
+/* Figures */
+figure { margin: 0; }
+.fig { margin-top: 3.5rem; }
+.fig-bar {
+    display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0.35rem 1.5rem;
+    border-top: 2px solid var(--rule-strong); padding-top: 0.55rem;
+    font-family: var(--mono); font-size: 0.78rem; color: var(--ink-2);
+}
+.fig h2 {
+    font-family: var(--display); font-weight: 600;
+    font-size: clamp(1.2rem, 2.2vw, 1.55rem); line-height: 1.15; letter-spacing: -0.015em;
+    margin: 0.7rem 0 0; max-width: 28em; text-wrap: balance;
+}
+.fig-note { color: var(--ink-2); font-size: 0.9rem; max-width: 62ch; margin: 0.9rem 0 0; text-wrap: pretty; }
 
-        header p {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-        }
+.with-rail { display: grid; grid-template-columns: minmax(0, 1fr) 250px; gap: 0 2.5rem; align-items: start; margin-top: 1.25rem; }
+.rail { border-left: 1px solid var(--rule); padding-left: 1.25rem; font-size: 0.88rem; color: var(--ink-2); }
+.rail h3 { font-family: var(--mono); font-weight: 500; font-size: 0.78rem; color: var(--ink); margin: 0 0 0.6rem; }
+.rail p { margin: 1.1rem 0 0; text-wrap: pretty; }
+.movers { list-style: none; margin: 0; padding: 0; font-family: var(--mono); font-size: 0.8rem; }
+.movers li { display: grid; grid-template-columns: 16px minmax(0, 1fr) auto; gap: 0.5rem; align-items: center; padding: 0.3rem 0; border-bottom: 1px solid var(--rule); color: var(--ink); }
+.movers li.flat { color: var(--ink-3); }
+.key { display: inline-block; width: 16px; height: 0; border-top: 2px solid var(--flat); }
+.key.rising { border-color: var(--rise); }
+.key.falling { border-color: var(--fall); }
 
-        /* Stat Cards */
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
+.legend { display: flex; flex-wrap: wrap; gap: 0.25rem 1.1rem; list-style: none; margin: 0; padding: 0; }
+.legend li { display: inline-flex; align-items: center; gap: 0.45rem; }
 
-        .stat-card {
-            background: var(--card-bg);
-            border-radius: var(--radius);
-            padding: 1.25rem;
-            box-shadow: var(--shadow);
-            text-align: center;
-            border: 1px solid var(--border);
-        }
+.pair { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 0 3rem; }
+.pair.flip { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
 
-        .stat-card .value {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--accent);
-            line-height: 1.2;
-        }
+/* Line chart */
+.plot { position: relative; }
+.plot svg { display: block; width: 100%; height: auto; overflow: visible; touch-action: pan-y; }
+.plot svg:focus-visible { outline-offset: 6px; }
+.grid line { stroke: var(--rule); stroke-width: 1; shape-rendering: crispEdges; }
+.axis text, .endlabel { font-family: var(--mono); font-size: 11px; fill: var(--ink-3); }
+.endlabel.strong { fill: var(--ink); }
+.ln { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.ln.flat { stroke: var(--flat); stroke-width: 1.5; }
+.ln.rising { stroke: var(--rise); }
+.ln.falling { stroke: var(--fall); }
+.ln.total { stroke: var(--ink-3); }
+.ln.ring { stroke: var(--surface); stroke-width: 5; }
+.dot { stroke: var(--surface); stroke-width: 2; }
+.dot.flat { fill: var(--flat); } .dot.rising { fill: var(--rise); } .dot.falling { fill: var(--fall); } .dot.total { fill: var(--ink-3); }
+.cross { stroke: var(--ink); stroke-width: 1; shape-rendering: crispEdges; }
+.tip {
+    position: absolute; top: 0; left: 0; pointer-events: none; z-index: 2;
+    background: var(--ink); color: var(--surface);
+    font-family: var(--mono); font-size: 0.74rem; line-height: 1.35;
+    padding: 0.55rem 0.7rem; min-width: 170px; visibility: hidden;
+}
+.tip .tip-date { opacity: 0.75; margin-bottom: 0.3rem; }
+.tip-row { display: grid; grid-template-columns: 14px auto minmax(0, 1fr); gap: 0.45rem; align-items: center; }
+.tip-row b { font-weight: 500; text-align: right; min-width: 3.2em; }
+.tip-row span:last-child { opacity: 0.8; white-space: nowrap; }
+.tip .key { width: 14px; }
 
-        .stat-card .label {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-top: 0.25rem;
-        }
+/* Bar tables */
+table { border-collapse: collapse; width: 100%; }
+.bars { margin-top: 1.1rem; font-size: 0.92rem; }
+.bars th, .bars td { padding: 0.42rem 0; border-bottom: 1px solid var(--rule); vertical-align: middle; }
+.bars thead th { font-family: var(--mono); font-weight: 400; font-size: 0.74rem; color: var(--ink-3); text-align: right; padding-top: 0; padding-left: 0.9rem; }
+.bars thead th:first-child { padding-left: 0; }
+.bars thead th:first-child { text-align: left; }
+.bars tbody th { font-weight: 400; text-align: left; padding-right: 0.9rem; width: 1%; white-space: nowrap; max-width: 15em; overflow: hidden; text-overflow: ellipsis; }
+.bars td.track { width: auto; }
+.bars td.num { font-family: var(--mono); font-size: 0.82rem; text-align: right; padding-left: 0.9rem; width: 1%; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.bars td.num.pct { color: var(--ink-3); }
+.bars .fill { height: 10px; min-width: 2px; background: var(--bar); border-radius: 0 2px 2px 0; }
+.bars tr.muted .fill { background: var(--bar-muted); }
+.bars tr.muted th { color: var(--ink-3); }
+.bars tbody tr { transition: background-color 120ms ease; }
+.bars tbody tr:hover { background: var(--wash); }
 
-        /* Chart Grid */
-        .charts {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1.5rem;
-        }
+details { margin-top: 1rem; font-size: 0.85rem; }
+summary { cursor: pointer; font-family: var(--mono); font-size: 0.78rem; color: var(--ink-2); width: fit-content; }
+summary:hover { color: var(--ink); }
+.scroll { overflow-x: auto; margin-top: 0.6rem; }
+.data { font-family: var(--mono); font-size: 0.76rem; font-variant-numeric: tabular-nums; min-width: 520px; }
+.data th, .data td { padding: 0.3rem 0.6rem 0.3rem 0; border-bottom: 1px solid var(--rule); text-align: right; font-weight: 400; }
+.data th:first-child, .data td:first-child { text-align: left; }
+.data thead th { color: var(--ink-3); }
 
-        .chart-card {
-            background: var(--card-bg);
-            border-radius: var(--radius);
-            padding: 1.5rem;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border);
-        }
+/* Method and footer */
+.method { margin-top: 5rem; border-top: 2px solid var(--rule-strong); padding-top: 0.55rem; }
+.method > .label { font-family: var(--mono); font-size: 0.78rem; color: var(--ink-2); }
+.method-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 0 3rem; margin-top: 1rem; }
+.method h2 { font-family: var(--display); font-weight: 600; font-size: 1.3rem; letter-spacing: -0.015em; margin: 0 0 0.75rem; }
+.method p { color: var(--ink-2); font-size: 0.93rem; margin: 0 0 0.85rem; max-width: 60ch; text-wrap: pretty; }
+.method figcaption { font-family: var(--mono); font-size: 0.78rem; color: var(--ink-2); margin-bottom: 0.75rem; }
 
-        .chart-card.wide {
-            grid-column: 1 / -1;
-        }
+footer { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--rule); font-size: 0.88rem; color: var(--ink-2); display: flex; flex-wrap: wrap; gap: 0.4rem 1.5rem; justify-content: space-between; }
 
-        .chart-card h3 {
-            font-size: 0.95rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            color: var(--charcoal);
-        }
+.empty { margin-top: 3.5rem; border-top: 2px solid var(--rule-strong); padding-top: 1rem; max-width: 60ch; color: var(--ink-2); }
+.empty h2 { font-family: var(--display); font-size: 1.4rem; color: var(--ink); margin: 0 0 0.5rem; }
 
-        .chart-container {
-            position: relative;
-            width: 100%;
-            height: 300px;
-        }
-
-        .chart-container.short {
-            height: 250px;
-        }
-
-        /* Footer */
-        footer {
-            text-align: center;
-            margin-top: 2.5rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid var(--border);
-            color: var(--text-muted);
-            font-size: 0.85rem;
-        }
-
-        footer a {
-            color: var(--accent);
-            text-decoration: none;
-        }
-
-        footer a:hover {
-            text-decoration: underline;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .charts {
-                grid-template-columns: 1fr;
-            }
-            header h1 {
-                font-size: 1.5rem;
-            }
-            .stats {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        /* Empty state */
-        .empty-state {
-            text-align: center;
-            padding: 4rem 2rem;
-            color: var(--text-muted);
-        }
-
-        .empty-state h2 {
-            font-size: 1.25rem;
-            margin-bottom: 0.5rem;
-            color: var(--charcoal);
-        }
-    </style>
+@media (max-width: 900px) {
+    .with-rail, .pair, .pair.flip, .method-grid { grid-template-columns: minmax(0, 1fr); }
+    .rail { border-left: 0; padding-left: 0; margin-top: 1.5rem; }
+    .pair > .fig + .fig { margin-top: 3rem; }
+    .method-grid > figure { margin-top: 1.5rem; }
+}
+@media (max-width: 560px) {
+    .page { padding: 0 1rem 3rem; }
+    .ledger { grid-template-columns: minmax(0, 1fr); }
+    .ledger div, .ledger div + div { padding: 0.7rem 0; border-left: 0; }
+    .ledger div + div { border-top: 1px solid var(--rule); }
+    .fig { margin-top: 2.75rem; }
+    .bars tbody th { max-width: 9.5em; }
+}
+@media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+}
+</style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1><span>AI/ML Job Market</span> — Netherlands</h1>
-            <p style="max-width:640px;margin:0.75rem auto 0;color:var(--text-muted);font-size:0.95rem;line-height:1.6;">
-                Automated tracker that scrapes Dutch job sites weekly, classifies each listing by category, seniority, skills, and remote status using keyword-based NLP, and visualises market trends over time.
-            </p>
-            <p style="margin-top:0.5rem;color:var(--text-muted);font-size:0.85rem;">Updated 2026-09-20 &middot; 184 scrape runs</p>
-        </header>
+<a class="skip" href="#main">Skip to the figures</a>
+<div class="page">
 
-        <div class="stats">
-            <div class="stat-card">
-                <div class="value">3027</div>
-                <div class="label">Distinct Postings</div>
-            </div>
-            <div class="stat-card">
-                <div class="value">29562</div>
-                <div class="label">Daily Observations</div>
-            </div>
-            <div class="stat-card">
-                <div class="value">140</div>
-                <div class="label">Available This Week</div>
-            </div>
-            <div class="stat-card">
-                <div class="value" style="font-size:1.1rem;">AI Agents</div>
-                <div class="label">Top Skill</div>
-            </div>
-            <div class="stat-card">
-                <div class="value" style="font-size:1.1rem;">ML Engineer</div>
-                <div class="label">Top Category</div>
-            </div>
-        </div>
-
-        <div class="charts">
-            <div class="chart-card wide">
-                <h3>Most In-Demand Skills Over Time</h3>
-                <div class="chart-container">
-                    <canvas id="skillsTrend"></canvas>
-                </div>
-            </div>
-
-            <div class="chart-card">
-                <h3>Job Categories</h3>
-                <div class="chart-container">
-                    <canvas id="categoryChart"></canvas>
-                </div>
-            </div>
-
-            <div class="chart-card">
-                <h3>Seniority Distribution</h3>
-                <div class="chart-container">
-                    <canvas id="seniorityChart"></canvas>
-                </div>
-            </div>
-
-            <div class="chart-card">
-                <h3>Work Arrangement</h3>
-                <div class="chart-container">
-                    <canvas id="arrangementChart"></canvas>
-                </div>
-            </div>
-
-            <div class="chart-card">
-                <h3>Top Companies Hiring</h3>
-                <div class="chart-container short">
-                    <canvas id="companiesChart"></canvas>
-                </div>
-            </div>
-
-            <div class="chart-card wide">
-                <h3>Jobs Per Scrape Run</h3>
-                <div class="chart-container short">
-                    <canvas id="runsChart"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <footer>
-            <p>
-                Built by <a href="https://lindahoeberigs.com">Linda Hoeberigs</a> &middot;
-                <a href="https://github.com/hoeberigs/ai-job-tracker-nl">View on GitHub</a>
-            </p>
-        </footer>
+<header class="masthead">
+    <div class="kicker">
+        <span>AI and ML job ads, Netherlands</span>
+        <span>Updated 21 September 2026</span>
     </div>
+    <h1>28% of Dutch AI job ads now ask for AI Agents. In April it was 14%.</h1>
+    <p class="dek"><strong>Python moved the other way, from 31% to 25% over the same period.</strong> A daily scrape of linkedin.com and jobbird.com listings for AI, machine learning and data science roles in the Netherlands, sorted by role, seniority and skills with keyword rules.</p>
+    <dl class="ledger">
+        <div><dd>140</dd><dt>ads open on the latest run</dt></div>
+        <div><dd>3,029</dd><dt>distinct ads since 20 March 2026</dt></div>
+        <div><dd>185</dd><dt>daily runs</dt></div>
+    </dl>
+</header>
 
-    <script>
-    const DATA = {"lastUpdated": "2026-09-20", "totalJobsTracked": 3027, "totalObservations": 29562, "totalRuns": 184, "latestSnapshot": {"total": 140, "by_category": [{"name": "ml-engineer", "count": 39, "pct": 27.9}, {"name": "ai-engineer", "count": 35, "pct": 25.0}, {"name": "data-scientist", "count": 26, "pct": 18.6}, {"name": "ai-general", "count": 13, "pct": 9.3}, {"name": "cv-engineer", "count": 11, "pct": 7.9}, {"name": "ai-researcher", "count": 6, "pct": 4.3}, {"name": "data-engineer", "count": 5, "pct": 3.6}, {"name": "ai-product", "count": 4, "pct": 2.9}, {"name": "nlp-engineer", "count": 1, "pct": 0.7}], "by_seniority": [{"name": "unknown", "count": 53, "pct": 37.9}, {"name": "senior", "count": 47, "pct": 33.6}, {"name": "lead", "count": 23, "pct": 16.4}, {"name": "junior", "count": 9, "pct": 6.4}, {"name": "mid", "count": 4, "pct": 2.9}, {"name": "head", "count": 4, "pct": 2.9}], "by_remote": [{"name": "unknown", "count": 123, "pct": 87.9}, {"name": "remote", "count": 8, "pct": 5.7}, {"name": "hybrid", "count": 8, "pct": 5.7}, {"name": "onsite", "count": 1, "pct": 0.7}], "by_sector": [{"name": "tech", "count": 116, "pct": 82.9}, {"name": "other", "count": 17, "pct": 12.1}, {"name": "government", "count": 3, "pct": 2.1}, {"name": "finance", "count": 2, "pct": 1.4}, {"name": "retail", "count": 1, "pct": 0.7}, {"name": "logistics", "count": 1, "pct": 0.7}], "by_source": [{"name": "linkedin.com", "count": 105, "pct": 75.0}, {"name": "jobbird.com", "count": 35, "pct": 25.0}], "by_location": [{"name": "Amsterdam", "count": 56, "pct": 40.0}, {"name": "Utrecht", "count": 21, "pct": 15.0}, {"name": "Rotterdam", "count": 11, "pct": 7.9}, {"name": "Nederland", "count": 10, "pct": 7.1}, {"name": "Eindhoven", "count": 8, "pct": 5.7}, {"name": "Delft", "count": 4, "pct": 2.9}, {"name": "Randstad", "count": 2, "pct": 1.4}, {"name": "Amersfoort", "count": 2, "pct": 1.4}, {"name": "Naarden", "count": 1, "pct": 0.7}, {"name": "Rotterdam and The Hague", "count": 1, "pct": 0.7}], "top_skills": [{"name": "AI Agents", "count": 30, "pct": 21.4}, {"name": "LLM", "count": 30, "pct": 21.4}, {"name": "Python", "count": 25, "pct": 17.9}, {"name": "RAG", "count": 23, "pct": 16.4}, {"name": "Computer Vision", "count": 18, "pct": 12.9}, {"name": "Deep Learning", "count": 16, "pct": 11.4}, {"name": "Azure", "count": 15, "pct": 10.7}, {"name": "CI/CD", "count": 13, "pct": 9.3}, {"name": "Embeddings", "count": 11, "pct": 7.9}, {"name": "NLP", "count": 9, "pct": 6.4}, {"name": "Databricks", "count": 8, "pct": 5.7}, {"name": "OpenAI", "count": 7, "pct": 5.0}, {"name": "Fine-tuning", "count": 7, "pct": 5.0}, {"name": "AWS", "count": 7, "pct": 5.0}, {"name": "Anthropic", "count": 6, "pct": 4.3}], "top_companies": [{"name": "StudentJob", "count": 10, "pct": 7.1}, {"name": "Capgemini", "count": 6, "pct": 4.3}, {"name": "eBay", "count": 4, "pct": 2.9}, {"name": "jouwtechniekbaan.nl", "count": 4, "pct": 2.9}, {"name": "Ministerie van Defensie", "count": 3, "pct": 2.1}, {"name": "Sogeti", "count": 2, "pct": 1.4}, {"name": "Datacation", "count": 2, "pct": 1.4}, {"name": "Jobgether", "count": 2, "pct": 1.4}, {"name": "Booking.com", "count": 2, "pct": 1.4}, {"name": "Picnic Technologies", "count": 2, "pct": 1.4}]}, "trends": {"skillsPct": {"Python": [null, null, null, null, null, null, null, null, 27.8, 28.1, 28.3, 30.3, 29.7, 31.5, 27.3, 25.0, 37.9, 30.4, 30.7, 29.6, 30.4, 28.7, 26.0, 26.7, 26.7, 28.7, 31.6, 42.6, 34.3, 34.0, 32.1, 32.7, 32.6, 33.3, 33.7, 27.6, 27.4, 27.2, 25.9, 24.4, 26.2, 27.8, 28.6, 29.9, 29.1, 32.1, 35.0, 32.9, 31.6, 26.2, 30.4, 28.9, 29.0, 36.1, 29.4, 31.6, 30.4, 26.6, 28.4, 29.2, 29.8, 27.1, 29.5, 36.6, 32.4, 35.2, 30.2, 26.6, 29.5, 30.3, 32.7, 28.2, 31.2, 27.1, 27.3, 30.3, 29.2, 30.8, 32.7, 32.2, 33.3, null, 38.3, 35.9, 38.0, 36.7, 38.9, 35.6, 34.5, 31.5, 31.9, 37.8, 35.4, 38.9, 33.6, 35.4, 31.1, 31.3, 29.6, 33.0, 31.2, 30.8, 39.7, 36.3, 37.0, 30.1, 33.3, 37.0, 33.3, 33.0, 33.6, 31.6, 39.0, 32.5, 34.9, 36.7, 39.4, 33.0, 32.4, 25.7, 31.4, 28.0, 29.7, 36.6, 32.0, 28.7, 33.0, 32.1, 29.5, 34.4, 29.0, 28.3, 31.9, 27.4, 23.4, 32.2, 30.4, 24.8, 29.2, 29.5, 30.9, 29.9, 29.8, 32.3, 29.7, 30.8, 32.6, 27.0, 26.3, 27.0, 29.4, 27.7, 27.3, 26.9, 27.0, 24.2, 27.1, 26.1, 22.2, 21.8, 23.2, 27.6, 22.6, 25.4, 24.8, 24.1, 21.1, 28.0, 27.7, 22.8, 24.3, 27.0, 26.1, 27.6, 25.5, 24.5, 24.0, 24.1, 25.5, 25.7, 26.9, 25.5, 23.8, 24.5], "LLM": [null, null, null, null, null, null, null, null, 25.8, 26.0, 25.3, 25.3, 22.8, 25.0, 24.5, 27.9, 19.7, 23.5, 22.8, 25.5, 23.5, 23.8, 24.0, 22.8, 23.8, 24.1, 26.5, 26.4, 25.7, 28.2, 25.5, 26.0, 30.2, 31.0, 33.7, 36.8, 36.9, 39.5, 38.3, 37.2, 36.2, 32.2, 28.6, 28.6, 29.1, 28.2, 28.8, 28.0, 34.2, 27.4, 23.9, 27.7, 29.0, 32.5, 25.9, 28.4, 32.1, 35.4, 32.4, 31.2, 29.8, 31.2, 31.8, 32.9, 32.4, 35.2, 27.1, 22.3, 33.0, 25.3, 29.1, 23.9, 26.8, 27.1, 23.6, 27.3, 23.6, 23.4, 26.7, 28.9, 32.2, null, 29.8, 31.5, 32.0, 26.5, 28.9, 28.7, 31.9, 31.5, 26.1, 31.6, 22.9, 34.7, 30.9, 31.3, 27.7, 26.1, 24.5, 23.6, 24.8, 28.0, 33.3, 26.5, 31.0, 21.2, 23.5, 29.0, 26.7, 23.6, 34.6, 26.5, 21.0, 23.9, 26.6, 31.2, 26.9, 24.0, 17.6, 28.3, 22.5, 21.0, 20.7, 21.4, 24.0, 18.3, 26.1, 19.6, 14.0, 22.9, 19.6, 25.7, 20.2, 17.9, 21.6, 20.9, 19.1, 22.9, 21.9, 20.0, 20.6, 19.6, 20.2, 21.5, 21.8, 20.6, 24.2, 27.9, 24.2, 31.5, 20.6, 21.8, 27.3, 27.7, 21.7, 26.6, 22.4, 25.2, 25.6, 21.8, 19.6, 25.9, 23.5, 23.7, 26.5, 28.4, 27.2, 28.0, 25.2, 27.2, 27.8, 25.2, 27.7, 28.4, 24.5, 23.6, 23.1, 24.1, 25.5, 27.6, 29.6, 30.2, 30.5, 29.4], "AI Agents": [null, null, null, null, null, null, null, null, 15.5, 15.6, 15.2, 14.1, 14.9, 13.9, 15.5, 16.2, 16.7, 12.7, 12.9, 11.2, 11.8, 10.9, 12.5, 11.9, 12.9, 12.0, 13.3, 17.1, 14.3, 14.6, 11.3, 14.4, 18.6, 19.0, 17.4, 17.2, 16.7, 19.8, 21.0, 17.9, 18.8, 13.3, 11.7, 10.4, 10.1, 10.3, 12.5, 15.9, 16.5, 14.3, 12.0, 12.0, 10.8, 14.5, 9.4, 13.7, 14.3, 13.9, 9.5, 14.6, 11.7, 15.6, 14.8, 20.7, 18.6, 22.9, 13.5, 18.1, 28.4, 13.1, 22.7, 14.1, 25.0, 21.9, 27.3, 27.3, 24.5, 18.7, 26.7, 21.1, 30.0, null, 24.5, 29.3, 31.0, 23.5, 24.4, 19.8, 27.7, 30.4, 21.8, 29.6, 25.0, 27.4, 28.2, 31.3, 24.4, 25.2, 24.5, 17.9, 22.0, 23.4, 30.2, 31.4, 25.0, 15.0, 32.4, 31.0, 28.3, 28.3, 29.0, 25.6, 27.6, 24.8, 27.5, 29.4, 28.8, 31.0, 29.6, 27.4, 33.3, 31.0, 29.7, 25.0, 36.0, 31.3, 28.7, 28.6, 24.0, 30.2, 36.4, 34.5, 29.4, 29.1, 23.4, 23.5, 37.4, 33.0, 31.2, 29.5, 29.9, 30.9, 29.8, 26.9, 31.7, 28.0, 28.4, 32.4, 28.3, 28.8, 28.4, 27.7, 32.2, 31.1, 30.4, 28.2, 28.0, 26.1, 31.6, 27.3, 30.4, 26.7, 32.2, 24.6, 26.5, 31.0, 30.7, 26.3, 26.9, 28.9, 27.0, 29.7, 31.1, 29.3, 25.5, 26.4, 25.0, 25.0, 27.4, 28.6, 29.6, 30.2, 29.5, 29.4], "Azure": [null, null, null, null, null, null, null, null, 15.5, 15.6, 14.1, 16.2, 16.8, 16.7, 13.6, 17.6, 18.2, 18.6, 16.8, 17.3, 15.7, 16.8, 15.4, 13.9, 15.8, 19.4, 16.3, 11.6, 16.2, 15.5, 12.3, 15.4, 20.9, 22.6, 19.8, 16.1, 14.3, 16.0, 16.0, 14.1, 12.5, 14.4, 14.3, 14.3, 16.5, 15.4, 17.5, 17.1, 16.5, 11.9, 16.3, 14.5, 17.2, 18.1, 15.3, 16.8, 17.9, 15.2, 14.9, 16.7, 16.0, 15.6, 14.8, 23.2, 15.7, 16.2, 17.7, 12.8, 18.2, 14.1, 15.5, 9.9, 16.1, 12.5, 13.6, 15.2, 11.3, 10.3, 12.9, 20.0, 13.3, null, 16.0, 20.7, 23.0, 21.4, 17.8, 15.8, 17.6, 16.3, 16.8, 19.4, 15.6, 15.8, 14.5, 20.2, 18.5, 17.4, 14.3, 21.7, 20.2, 15.9, 23.8, 16.7, 23.0, 18.6, 17.6, 21.0, 20.8, 17.0, 27.1, 19.7, 19.0, 22.2, 21.1, 20.2, 23.1, 15.0, 14.8, 18.6, 19.6, 18.0, 18.9, 21.4, 16.0, 18.3, 20.9, 19.6, 17.1, 21.9, 17.8, 17.7, 19.3, 16.2, 15.3, 19.1, 17.4, 14.7, 20.8, 18.9, 19.6, 20.6, 21.3, 21.5, 18.8, 19.6, 21.1, 18.9, 22.2, 20.7, 22.5, 22.8, 20.7, 17.6, 20.0, 16.9, 20.6, 19.3, 16.2, 16.4, 16.1, 18.1, 16.5, 21.1, 16.2, 19.8, 18.4, 20.3, 20.2, 19.3, 15.7, 18.9, 19.3, 17.2, 14.5, 15.1, 14.4, 14.8, 16.0, 15.2, 17.6, 16.0, 15.2, 14.7], "RAG": [null, null, null, null, null, null, null, null, 13.4, 13.5, 13.1, 12.1, 9.9, 8.3, 11.8, 10.3, 10.6, 7.8, 8.9, 9.2, 10.8, 8.9, 9.6, 8.9, 8.9, 10.2, 11.2, 12.4, 15.2, 16.5, 12.3, 15.4, 17.4, 15.5, 14.0, 13.8, 13.1, 13.6, 13.6, 11.5, 12.5, 16.7, 11.7, 13.0, 11.4, 12.8, 11.2, 12.2, 15.2, 13.1, 12.0, 13.3, 11.8, 12.0, 10.6, 13.7, 12.5, 13.9, 9.5, 15.6, 11.7, 17.7, 11.4, 15.9, 14.7, 15.2, 10.4, 12.8, 18.2, 8.1, 14.5, 7.0, 14.3, 11.5, 14.5, 14.1, 10.4, 9.3, 9.9, 12.2, 10.0, null, 13.8, 21.7, 24.0, 15.3, 15.6, 13.9, 21.8, 13.0, 16.0, 21.4, 8.3, 22.1, 19.1, 21.2, 18.5, 13.9, 10.2, 14.2, 13.8, 14.0, 23.8, 20.6, 18.0, 13.3, 16.7, 18.0, 20.0, 19.8, 26.2, 16.2, 17.1, 16.2, 19.3, 21.1, 19.2, 20.0, 14.8, 19.5, 23.5, 22.0, 16.2, 17.9, 21.0, 19.1, 19.1, 13.4, 8.5, 15.6, 18.7, 19.5, 14.3, 15.4, 10.8, 12.2, 17.4, 11.9, 20.8, 18.9, 18.6, 18.6, 19.1, 20.4, 19.8, 18.7, 21.1, 20.7, 19.2, 19.8, 19.6, 20.8, 21.5, 19.3, 20.0, 20.2, 22.4, 21.8, 18.8, 18.2, 17.0, 18.1, 17.4, 17.5, 19.7, 17.2, 17.5, 20.3, 18.5, 18.4, 19.1, 18.0, 17.6, 18.1, 15.5, 15.1, 14.4, 15.7, 17.0, 20.0, 21.3, 21.7, 22.9, 22.5], "Deep Learning": [null, null, null, null, null, null, null, null, 7.2, 6.2, 6.1, 7.1, 9.9, 10.2, 8.2, 8.8, 10.6, 6.9, 6.9, 7.1, 8.8, 7.9, 8.7, 8.9, 8.9, 13.0, 9.2, 14.7, 11.4, 9.7, 7.5, 10.6, 12.8, 11.9, 10.5, 11.5, 10.7, 8.6, 9.9, 11.5, 13.8, 7.8, 10.4, 11.7, 8.9, 10.3, 12.5, 12.2, 15.2, 11.9, 10.9, 13.3, 12.9, 14.5, 15.3, 15.8, 19.6, 17.7, 25.7, 16.7, 17.0, 12.5, 13.6, 14.6, 13.7, 14.3, 13.5, 14.9, 13.6, 17.2, 13.6, 14.1, 17.0, 14.6, 11.8, 12.1, 16.0, 13.1, 11.9, 13.3, 15.6, null, 13.8, 13.0, 12.0, 14.3, 13.3, 14.9, 12.6, 15.2, 14.3, 14.3, 10.4, 11.6, 16.4, 11.1, 14.3, 14.8, 11.2, 12.3, 15.6, 9.3, 14.3, 18.6, 14.0, 12.4, 16.7, 12.0, 13.3, 15.1, 14.0, 12.8, 14.3, 12.8, 14.7, 15.6, 15.4, 15.0, 13.9, 11.5, 12.7, 14.0, 15.3, 15.2, 13.0, 15.7, 14.8, 16.1, 14.0, 11.5, 13.1, 12.4, 13.4, 12.0, 14.4, 17.4, 14.8, 11.0, 14.6, 15.8, 16.5, 14.4, 14.9, 14.0, 13.9, 17.8, 8.4, 12.6, 12.1, 16.2, 12.7, 11.9, 11.6, 15.1, 12.2, 12.9, 13.1, 13.4, 11.1, 11.8, 16.1, 15.5, 13.9, 16.7, 14.5, 8.6, 9.6, 14.4, 13.4, 12.3, 12.2, 13.5, 14.3, 14.7, 13.6, 15.1, 13.5, 14.8, 16.0, 15.2, 14.8, 17.0, 15.2, 15.7], "CI/CD": [null, null, null, null, null, null, null, null, 14.4, 15.6, 15.2, 15.2, 13.9, 15.7, 9.1, 13.2, 13.6, 16.7, 16.8, 17.3, 15.7, 15.8, 15.4, 14.9, 15.8, 17.6, 18.4, 14.0, 19.0, 17.5, 14.2, 18.3, 22.1, 22.6, 17.4, 17.2, 16.7, 17.3, 17.3, 15.4, 16.2, 17.8, 20.8, 18.2, 17.7, 15.4, 16.2, 17.1, 15.2, 13.1, 13.0, 12.0, 8.6, 14.5, 9.4, 9.5, 7.1, 7.6, 8.1, 7.3, 6.4, 9.4, 6.8, 12.2, 7.8, 10.5, 7.3, 6.4, 8.0, 7.1, 10.0, 8.5, 8.9, 8.3, 12.7, 9.1, 5.7, 7.5, 7.9, 6.7, 5.6, null, 5.3, 7.6, 8.0, 5.1, 6.7, 5.9, 7.6, 6.5, 3.4, 6.1, 5.2, 6.3, 7.3, 10.1, 5.9, 7.0, 9.2, 9.4, 8.3, 11.2, 9.5, 11.8, 11.0, 6.2, 12.7, 17.0, 14.2, 9.4, 12.1, 12.0, 12.4, 12.8, 14.7, 12.8, 10.6, 10.0, 13.0, 15.0, 9.8, 16.0, 9.9, 13.4, 10.0, 8.7, 14.8, 11.6, 11.6, 14.6, 11.2, 12.4, 8.4, 12.8, 8.1, 10.4, 11.3, 10.1, 12.5, 10.5, 12.4, 12.4, 12.8, 12.9, 11.9, 11.2, 14.7, 12.6, 16.2, 11.7, 11.8, 11.9, 11.6, 12.6, 12.2, 9.7, 14.0, 10.9, 12.0, 13.6, 14.3, 13.8, 14.8, 10.5, 14.5, 12.9, 14.9, 14.4, 13.4, 9.6, 13.0, 14.4, 11.8, 12.1, 15.5, 16.0, 15.4, 14.8, 14.2, 14.3, 14.8, 14.2, 13.3, 12.7], "Computer Vision": [null, null, null, null, null, null, null, null, 5.2, 5.2, 5.1, 6.1, 6.9, 8.3, 8.2, 7.4, 7.6, 6.9, 6.9, 7.1, 7.8, 7.9, 7.7, 9.9, 7.9, 8.3, 7.1, 13.2, 6.7, 5.8, 5.7, 7.7, 9.3, 6.0, 4.7, 5.7, 4.8, 2.5, 3.7, 5.1, 7.5, 7.8, 6.5, 6.5, 6.3, 6.4, 5.0, 4.9, 8.9, 7.1, 6.5, 7.2, 5.4, 10.8, 9.4, 9.5, 10.7, 10.1, 14.9, 8.3, 17.0, 7.3, 8.0, 6.1, 6.9, 11.4, 7.3, 19.1, 10.2, 9.1, 6.4, 18.3, 16.1, 8.3, 9.1, 5.1, 17.0, 15.0, 8.9, 8.9, 11.1, null, 12.8, 10.9, 12.0, 10.2, 10.0, 17.8, 10.1, 12.0, 15.1, 17.3, 8.3, 7.4, 16.4, 8.1, 14.3, 16.5, 8.2, 9.4, 16.5, 15.9, 17.5, 18.6, 8.0, 16.8, 16.7, 9.0, 9.2, 11.3, 13.1, 12.0, 17.1, 12.8, 17.4, 12.8, 12.5, 17.0, 13.9, 15.0, 11.8, 10.0, 11.7, 14.3, 9.0, 14.8, 10.4, 9.8, 13.2, 8.3, 14.0, 14.2, 11.8, 12.8, 13.5, 13.9, 15.7, 10.1, 13.5, 14.7, 15.5, 14.4, 14.9, 15.1, 15.8, 15.9, 12.6, 14.4, 12.1, 16.2, 17.6, 17.8, 15.7, 17.6, 15.7, 16.1, 16.8, 16.8, 14.5, 14.5, 16.1, 14.7, 13.9, 16.7, 16.2, 15.5, 14.0, 15.3, 17.6, 16.7, 15.7, 15.3, 14.3, 15.5, 16.4, 16.0, 15.4, 15.7, 15.1, 16.2, 16.7, 17.0, 17.1, 17.6]}, "describedPerRun": [0, 0, 0, 0, 0, 0, 0, 0, 97, 96, 99, 99, 101, 108, 110, 68, 66, 102, 101, 98, 102, 101, 104, 101, 101, 108, 98, 129, 105, 103, 106, 104, 86, 84, 86, 87, 84, 81, 81, 78, 80, 90, 77, 77, 79, 78, 80, 82, 79, 84, 92, 83, 93, 83, 85, 95, 56, 79, 74, 96, 94, 96, 88, 82, 102, 105, 96, 94, 88, 99, 110, 71, 112, 96, 110, 99, 106, 107, 101, 90, 90, 14, 94, 92, 100, 98, 90, 101, 119, 92, 119, 98, 96, 95, 110, 99, 119, 115, 98, 106, 109, 107, 63, 102, 100, 113, 102, 100, 120, 106, 107, 117, 105, 117, 109, 109, 104, 100, 108, 113, 102, 100, 111, 112, 100, 115, 115, 112, 129, 96, 107, 113, 119, 117, 111, 115, 115, 109, 96, 95, 97, 97, 94, 93, 101, 107, 95, 111, 99, 111, 102, 101, 121, 119, 115, 124, 107, 119, 117, 110, 112, 116, 115, 114, 117, 116, 114, 118, 119, 114, 115, 111, 119, 116, 110, 106, 104, 108, 106, 105, 108, 106, 105, 102], "dates": ["2026-03-20", "2026-03-21", "2026-03-22", "2026-03-23", "2026-03-24", "2026-03-25", "2026-03-26", "2026-03-27", "2026-03-28", "2026-03-29", "2026-03-30", "2026-03-31", "2026-04-01", "2026-04-02", "2026-04-03", "2026-04-04", "2026-04-05", "2026-04-06", "2026-04-07", "2026-04-08", "2026-04-09", "2026-04-10", "2026-04-11", "2026-04-12", "2026-04-13", "2026-04-14", "2026-04-15", "2026-04-16", "2026-04-17", "2026-04-18", "2026-04-19", "2026-04-20", "2026-04-21", "2026-04-22", "2026-04-23", "2026-04-24", "2026-04-25", "2026-04-26", "2026-04-27", "2026-04-28", "2026-04-29", "2026-04-30", "2026-05-01", "2026-05-02", "2026-05-03", "2026-05-04", "2026-05-05", "2026-05-06", "2026-05-07", "2026-05-08", "2026-05-09", "2026-05-10", "2026-05-11", "2026-05-12", "2026-05-13", "2026-05-14", "2026-05-15", "2026-05-16", "2026-05-17", "2026-05-18", "2026-05-19", "2026-05-20", "2026-05-21", "2026-05-22", "2026-05-23", "2026-05-24", "2026-05-25", "2026-05-27", "2026-05-28", "2026-05-29", "2026-05-30", "2026-05-31", "2026-06-01", "2026-06-02", "2026-06-03", "2026-06-04", "2026-06-05", "2026-06-06", "2026-06-07", "2026-06-08", "2026-06-09", "2026-06-10", "2026-06-11", "2026-06-12", "2026-06-13", "2026-06-14", "2026-06-15", "2026-06-16", "2026-06-17", "2026-06-18", "2026-06-19", "2026-06-20", "2026-06-21", "2026-06-22", "2026-06-23", "2026-06-24", "2026-06-25", "2026-06-26", "2026-06-27", "2026-06-28", "2026-06-29", "2026-06-30", "2026-07-01", "2026-07-02", "2026-07-03", "2026-07-04", "2026-07-05", "2026-07-06", "2026-07-07", "2026-07-08", "2026-07-09", "2026-07-10", "2026-07-11", "2026-07-12", "2026-07-13", "2026-07-14", "2026-07-15", "2026-07-16", "2026-07-17", "2026-07-18", "2026-07-19", "2026-07-20", "2026-07-21", "2026-07-22", "2026-07-23", "2026-07-24", "2026-07-25", "2026-07-26", "2026-07-27", "2026-07-28", "2026-07-29", "2026-07-30", "2026-07-31", "2026-08-01", "2026-08-02", "2026-08-03", "2026-08-04", "2026-08-05", "2026-08-06", "2026-08-07", "2026-08-08", "2026-08-09", "2026-08-10", "2026-08-11", "2026-08-12", "2026-08-13", "2026-08-14", "2026-08-15", "2026-08-16", "2026-08-17", "2026-08-18", "2026-08-19", "2026-08-20", "2026-08-21", "2026-08-22", "2026-08-23", "2026-08-24", "2026-08-25", "2026-08-26", "2026-08-27", "2026-08-28", "2026-08-29", "2026-08-30", "2026-08-31", "2026-09-01", "2026-09-02", "2026-09-03", "2026-09-04", "2026-09-05", "2026-09-06", "2026-09-07", "2026-09-08", "2026-09-09", "2026-09-10", "2026-09-11", "2026-09-12", "2026-09-13", "2026-09-14", "2026-09-15", "2026-09-16", "2026-09-17", "2026-09-18", "2026-09-19", "2026-09-20"], "skills": {"Python": [4, 5, 6, 5, 5, 5, 2, 1, 27, 27, 28, 30, 30, 34, 30, 17, 25, 31, 31, 29, 31, 29, 27, 27, 27, 31, 31, 55, 36, 35, 34, 34, 28, 28, 29, 24, 23, 22, 21, 19, 21, 25, 22, 23, 23, 25, 28, 27, 25, 22, 28, 24, 27, 30, 25, 30, 17, 21, 21, 28, 28, 26, 26, 30, 33, 37, 29, 25, 26, 30, 36, 20, 35, 26, 30, 30, 31, 33, 33, 29, 30, 5, 36, 33, 38, 36, 35, 36, 41, 29, 38, 37, 34, 37, 37, 35, 37, 36, 29, 35, 34, 33, 25, 37, 37, 34, 34, 37, 40, 35, 36, 37, 41, 38, 38, 40, 41, 33, 35, 29, 32, 28, 33, 41, 32, 33, 38, 36, 38, 33, 31, 32, 38, 32, 26, 37, 35, 27, 28, 28, 30, 29, 28, 30, 30, 33, 31, 30, 26, 30, 30, 28, 33, 32, 31, 30, 29, 31, 26, 24, 26, 32, 26, 29, 29, 28, 24, 33, 33, 26, 28, 30, 31, 32, 28, 26, 25, 26, 27, 27, 29, 27, 25, 25], "LLM": [5, 4, 4, 4, 4, 3, 3, 3, 25, 25, 25, 25, 23, 27, 27, 19, 13, 24, 23, 25, 24, 24, 25, 23, 24, 26, 26, 34, 27, 29, 27, 27, 26, 26, 29, 32, 31, 32, 31, 29, 29, 29, 22, 22, 23, 22, 23, 23, 27, 23, 22, 23, 27, 27, 22, 27, 18, 28, 24, 30, 28, 30, 28, 27, 33, 37, 26, 21, 29, 25, 32, 17, 30, 26, 26, 27, 25, 25, 27, 26, 29, 3, 28, 29, 32, 26, 26, 29, 38, 29, 31, 31, 22, 33, 34, 31, 33, 30, 24, 25, 27, 30, 21, 27, 31, 24, 24, 29, 32, 25, 37, 31, 22, 28, 29, 34, 28, 24, 19, 32, 23, 21, 23, 24, 24, 21, 30, 22, 18, 22, 21, 29, 24, 21, 24, 24, 22, 25, 21, 19, 20, 19, 19, 20, 22, 22, 23, 31, 24, 35, 21, 22, 33, 33, 25, 33, 24, 30, 30, 24, 22, 30, 27, 27, 31, 33, 31, 33, 30, 31, 32, 28, 33, 33, 27, 25, 24, 26, 27, 29, 32, 32, 32, 30], "AI Agents": [2, 2, 2, 2, 1, 1, 1, 2, 15, 15, 15, 14, 15, 15, 17, 11, 11, 13, 13, 11, 12, 11, 13, 12, 13, 13, 13, 22, 15, 15, 12, 15, 16, 16, 15, 15, 14, 16, 17, 14, 15, 12, 9, 8, 8, 8, 10, 13, 13, 12, 11, 10, 10, 12, 8, 13, 8, 11, 7, 14, 11, 15, 13, 17, 19, 24, 13, 17, 25, 13, 25, 10, 28, 21, 30, 27, 26, 20, 27, 19, 27, 7, 23, 27, 31, 23, 22, 20, 33, 28, 26, 29, 24, 26, 31, 31, 29, 29, 24, 19, 24, 25, 19, 32, 25, 17, 33, 31, 34, 30, 31, 30, 29, 29, 30, 32, 30, 31, 32, 31, 34, 31, 33, 28, 36, 36, 33, 32, 31, 29, 39, 39, 35, 34, 26, 27, 43, 36, 30, 28, 29, 30, 28, 25, 32, 30, 27, 36, 28, 32, 29, 28, 39, 37, 35, 35, 30, 31, 37, 30, 34, 31, 37, 28, 31, 36, 35, 31, 32, 33, 31, 33, 37, 34, 28, 28, 26, 27, 29, 30, 32, 32, 31, 30], "Azure": [1, 1, 1, 1, 1, 1, 1, 0, 15, 15, 14, 16, 17, 18, 15, 12, 12, 19, 17, 17, 16, 17, 16, 14, 16, 21, 16, 15, 17, 16, 13, 16, 18, 19, 17, 14, 12, 13, 13, 11, 10, 13, 11, 11, 13, 12, 14, 14, 13, 10, 15, 12, 16, 15, 13, 16, 10, 12, 11, 16, 15, 15, 13, 19, 16, 17, 17, 12, 16, 14, 17, 7, 18, 12, 15, 15, 12, 11, 13, 18, 12, 4, 15, 19, 23, 21, 16, 16, 21, 15, 20, 19, 15, 15, 16, 20, 22, 20, 14, 23, 22, 17, 15, 17, 23, 21, 18, 21, 25, 18, 29, 23, 20, 26, 23, 22, 24, 15, 16, 21, 20, 18, 21, 24, 16, 21, 24, 22, 22, 21, 19, 20, 23, 19, 17, 22, 20, 16, 20, 18, 19, 20, 20, 20, 19, 21, 20, 21, 22, 23, 23, 23, 25, 21, 23, 21, 22, 23, 19, 18, 18, 21, 19, 24, 19, 23, 21, 24, 24, 22, 18, 21, 23, 20, 16, 16, 15, 16, 17, 16, 19, 17, 16, 15], "RAG": [3, 3, 3, 3, 3, 3, 3, 2, 13, 13, 13, 12, 10, 9, 13, 7, 7, 8, 9, 9, 11, 9, 10, 9, 9, 11, 11, 16, 16, 17, 13, 16, 15, 13, 12, 12, 11, 11, 11, 9, 10, 15, 9, 10, 9, 10, 9, 10, 12, 11, 11, 11, 11, 10, 9, 13, 7, 11, 7, 15, 11, 17, 10, 13, 15, 16, 10, 12, 16, 8, 16, 5, 16, 11, 16, 14, 11, 10, 10, 11, 9, 2, 13, 20, 24, 15, 14, 14, 26, 12, 19, 21, 8, 21, 21, 21, 22, 16, 10, 15, 15, 15, 15, 21, 18, 15, 17, 18, 24, 21, 28, 19, 18, 19, 21, 23, 20, 20, 16, 22, 24, 22, 18, 20, 21, 22, 22, 15, 11, 15, 20, 22, 17, 18, 12, 14, 20, 13, 20, 18, 18, 18, 18, 19, 20, 20, 20, 23, 19, 22, 20, 21, 26, 23, 23, 25, 24, 26, 22, 20, 19, 21, 20, 20, 23, 20, 20, 24, 22, 21, 22, 20, 21, 21, 17, 16, 15, 17, 18, 21, 23, 23, 24, 23], "Deep Learning": [2, 2, 2, 2, 2, 2, 1, 2, 7, 6, 6, 7, 10, 11, 9, 6, 7, 7, 7, 7, 9, 8, 9, 9, 9, 14, 9, 19, 12, 10, 8, 11, 11, 10, 9, 10, 9, 7, 8, 9, 11, 7, 8, 9, 7, 8, 10, 10, 12, 10, 10, 11, 12, 12, 13, 15, 11, 14, 19, 16, 16, 12, 12, 12, 14, 15, 13, 14, 12, 17, 15, 10, 19, 14, 13, 12, 17, 14, 12, 12, 14, 5, 13, 12, 12, 14, 12, 15, 15, 14, 17, 14, 10, 11, 18, 11, 17, 17, 11, 13, 17, 10, 9, 19, 14, 14, 17, 12, 16, 16, 15, 15, 15, 15, 16, 17, 16, 15, 15, 13, 13, 14, 17, 17, 13, 18, 17, 18, 18, 11, 14, 14, 16, 14, 16, 20, 17, 12, 14, 15, 16, 14, 14, 13, 14, 19, 8, 14, 12, 18, 13, 12, 14, 18, 14, 16, 14, 16, 13, 13, 18, 18, 16, 19, 17, 10, 11, 17, 16, 14, 14, 15, 17, 17, 15, 16, 14, 16, 17, 16, 16, 18, 16, 16], "CI/CD": [0, 0, 0, 0, 0, 0, 0, 0, 14, 15, 15, 15, 14, 17, 10, 9, 9, 17, 17, 17, 16, 16, 16, 15, 16, 19, 18, 18, 20, 18, 15, 19, 19, 19, 15, 15, 14, 14, 14, 12, 13, 16, 16, 14, 14, 12, 13, 14, 12, 11, 12, 10, 8, 12, 8, 9, 4, 6, 6, 7, 6, 9, 6, 10, 8, 11, 7, 6, 7, 7, 11, 6, 10, 8, 14, 9, 6, 8, 8, 6, 5, 0, 5, 7, 8, 5, 6, 6, 9, 6, 4, 6, 5, 6, 8, 10, 7, 8, 9, 10, 9, 12, 6, 12, 11, 7, 13, 17, 17, 10, 13, 14, 13, 15, 16, 14, 11, 10, 14, 17, 10, 16, 11, 15, 10, 10, 17, 13, 15, 14, 12, 14, 10, 15, 9, 12, 13, 11, 12, 10, 12, 12, 12, 12, 12, 12, 14, 14, 16, 13, 12, 12, 14, 15, 14, 12, 15, 13, 14, 15, 16, 16, 17, 12, 17, 15, 17, 17, 16, 11, 15, 16, 14, 14, 17, 17, 16, 16, 15, 15, 16, 15, 14, 13], "Computer Vision": [2, 1, 2, 1, 1, 1, 2, 2, 5, 5, 5, 6, 7, 9, 9, 5, 5, 7, 7, 7, 8, 8, 8, 10, 8, 9, 7, 17, 7, 6, 6, 8, 8, 5, 4, 5, 4, 2, 3, 4, 6, 7, 5, 5, 5, 5, 4, 4, 7, 6, 6, 6, 5, 9, 8, 9, 6, 8, 11, 8, 16, 7, 7, 5, 7, 12, 7, 18, 9, 9, 7, 13, 18, 8, 10, 5, 18, 16, 9, 8, 10, 6, 12, 10, 12, 10, 9, 18, 12, 11, 18, 17, 8, 7, 18, 8, 17, 19, 8, 10, 18, 17, 11, 19, 8, 19, 17, 9, 11, 12, 14, 14, 18, 15, 19, 14, 13, 17, 15, 17, 12, 10, 13, 16, 9, 17, 12, 11, 17, 8, 15, 16, 14, 15, 15, 16, 18, 11, 13, 14, 15, 14, 14, 14, 16, 17, 12, 16, 12, 18, 18, 18, 19, 21, 18, 20, 18, 20, 17, 16, 18, 17, 16, 19, 19, 18, 16, 18, 21, 19, 18, 17, 17, 18, 18, 17, 16, 17, 16, 17, 18, 18, 18, 18]}, "categories": {"data-general": [4, 4, 3, 3, 3, 4, 4, 4, 3, 3, 3, 4, 3, 3, 4, 7, 4, 6, 4, 3, 6, 6, 7, 7, 7, 8, 7, 2, 10, 8, 9, 8, 2, 2, 3, 3, 3, 3, 3, 2, 2, 2, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 2, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 2, 1, 2, 2, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "other": [112, 112, 118, 113, 116, 115, 114, 113, 91, 93, 95, 94, 85, 88, 91, 90, 85, 84, 86, 82, 81, 76, 76, 87, 83, 79, 79, 78, 75, 73, 72, 75, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 2, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 2, 5, 2, 3, 1, 0, 0, 0, 1, 1, 2, 3, 2, 2, 2, 3, 1, 1, 1, 1, 1, 1, 1, 2, 1, 2, 3, 2, 1, 2, 1, 1, 6, 3, 2, 2, 3, 3, 3, 3, 4, 4, 5, 4, 4, 5, 5, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 0, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 2, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0], "cv-engineer": [2, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 2, 4, 4, 2, 2, 3, 3, 3, 5, 5, 5, 6, 5, 5, 4, 5, 4, 4, 3, 5, 3, 1, 1, 2, 1, 1, 1, 1, 3, 1, 2, 2, 2, 2, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 5, 1, 7, 1, 3, 1, 2, 4, 1, 10, 4, 3, 1, 10, 9, 3, 3, 3, 10, 10, 4, 4, 4, 4, 5, 4, 6, 4, 4, 11, 4, 7, 10, 12, 4, 3, 11, 3, 11, 11, 3, 4, 11, 11, 6, 11, 4, 11, 10, 3, 3, 2, 4, 4, 11, 5, 11, 6, 7, 10, 11, 8, 8, 3, 4, 9, 3, 9, 3, 3, 9, 1, 8, 8, 7, 8, 6, 7, 8, 6, 7, 7, 9, 8, 8, 10, 11, 10, 9, 12, 7, 10, 11, 12, 13, 14, 12, 13, 11, 11, 11, 12, 12, 10, 10, 12, 12, 11, 10, 10, 11, 11, 11, 11, 11, 11, 12, 11, 11, 11, 12, 12, 10, 11, 11, 11], "ai-general": [21, 19, 22, 22, 21, 21, 18, 20, 15, 14, 13, 24, 15, 13, 13, 18, 17, 19, 18, 20, 20, 25, 27, 22, 23, 23, 23, 30, 25, 23, 25, 23, 19, 20, 22, 21, 20, 21, 21, 20, 24, 20, 12, 19, 18, 19, 40, 38, 29, 43, 32, 23, 33, 29, 26, 28, 31, 24, 21, 26, 19, 19, 20, 26, 22, 19, 24, 30, 36, 39, 35, 35, 36, 34, 25, 18, 18, 21, 20, 21, 25, 20, 25, 19, 14, 15, 20, 19, 20, 15, 18, 15, 20, 16, 16, 17, 18, 12, 20, 21, 21, 16, 19, 14, 13, 17, 10, 10, 14, 15, 14, 23, 12, 17, 12, 12, 11, 14, 15, 14, 14, 11, 16, 13, 14, 14, 12, 18, 22, 17, 21, 16, 27, 21, 27, 26, 24, 28, 16, 20, 20, 19, 20, 20, 23, 17, 19, 16, 20, 18, 21, 18, 23, 19, 21, 21, 15, 25, 24, 25, 24, 21, 21, 25, 29, 27, 28, 21, 24, 20, 18, 20, 17, 17, 16, 14, 14, 14, 14, 12, 15, 12, 13, 13], "data-scientist": [22, 20, 21, 21, 21, 19, 19, 22, 22, 21, 20, 19, 15, 21, 27, 26, 24, 26, 27, 27, 27, 27, 29, 27, 25, 28, 28, 36, 23, 23, 29, 23, 19, 20, 22, 21, 22, 22, 21, 21, 21, 19, 18, 19, 20, 21, 20, 22, 20, 20, 28, 20, 18, 18, 21, 24, 22, 23, 18, 22, 19, 20, 17, 20, 22, 21, 26, 23, 22, 22, 25, 21, 33, 32, 32, 34, 33, 31, 34, 33, 28, 34, 27, 23, 31, 28, 30, 29, 39, 21, 32, 23, 24, 28, 30, 25, 36, 29, 18, 23, 25, 18, 24, 20, 25, 21, 22, 18, 23, 27, 24, 23, 18, 24, 20, 21, 24, 19, 22, 23, 24, 22, 24, 21, 21, 23, 24, 25, 21, 19, 15, 19, 24, 25, 29, 30, 29, 32, 21, 22, 24, 21, 23, 20, 23, 25, 21, 24, 23, 26, 26, 26, 26, 31, 29, 30, 28, 25, 23, 23, 25, 26, 24, 25, 24, 25, 23, 22, 25, 24, 25, 23, 23, 23, 24, 27, 27, 27, 26, 26, 26, 25, 28, 26], "ai-manager": [1, 1, 1, 1, 1, 1, 1, 1, 5, 5, 5, 5, 4, 7, 8, 6, 6, 7, 7, 7, 7, 2, 2, 1, 1, 2, 1, 3, 1, 1, 2, 3, 2, 3, 3, 3, 3, 3, 4, 4, 4, 3, 2, 2, 2, 2, 2, 3, 3, 2, 1, 2, 2, 3, 3, 4, 3, 2, 0, 2, 2, 2, 3, 1, 2, 1, 2, 1, 1, 3, 3, 3, 2, 2, 1, 2, 1, 2, 2, 1, 2, 0, 0, 0, 0, 2, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 3, 3, 1, 2, 2, 1, 3, 2, 4, 2, 2, 2, 3, 2, 2, 2, 2, 5, 5, 4, 6, 6, 3, 1, 3, 2, 1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 0, 1, 1, 1, 1, 2, 1, 1, 1, 1, 2, 1, 2, 1, 2, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "ml-engineer": [22, 23, 18, 21, 21, 22, 21, 24, 30, 31, 34, 34, 40, 41, 35, 28, 29, 30, 30, 27, 26, 25, 24, 22, 25, 28, 26, 48, 29, 30, 30, 32, 37, 37, 32, 32, 33, 34, 31, 30, 31, 35, 35, 34, 36, 33, 40, 40, 31, 44, 47, 36, 47, 38, 33, 40, 25, 34, 34, 42, 33, 34, 33, 34, 36, 49, 38, 43, 40, 48, 51, 34, 56, 46, 66, 39, 45, 43, 40, 34, 32, 16, 30, 31, 39, 31, 30, 33, 44, 39, 41, 35, 36, 33, 42, 38, 40, 44, 38, 45, 34, 49, 39, 43, 45, 54, 47, 53, 56, 50, 59, 59, 59, 66, 61, 54, 52, 58, 52, 61, 47, 56, 60, 61, 48, 59, 62, 63, 71, 51, 57, 59, 57, 56, 47, 54, 58, 45, 54, 52, 48, 57, 56, 46, 43, 60, 55, 60, 59, 62, 48, 46, 63, 53, 53, 59, 52, 66, 58, 50, 47, 48, 65, 50, 46, 52, 53, 49, 46, 40, 45, 43, 42, 38, 37, 40, 39, 40, 39, 38, 43, 41, 41, 39], "ai-product": [0, 0, 0, 0, 0, 0, 0, 0, 5, 4, 5, 6, 6, 5, 6, 5, 4, 7, 7, 8, 8, 8, 7, 6, 8, 8, 7, 3, 8, 7, 8, 8, 8, 9, 9, 10, 9, 9, 11, 11, 10, 10, 8, 7, 6, 7, 8, 10, 9, 9, 8, 7, 6, 6, 5, 7, 4, 7, 5, 5, 7, 9, 9, 5, 6, 8, 8, 5, 3, 5, 4, 6, 2, 4, 3, 3, 5, 7, 6, 5, 5, 1, 6, 3, 3, 6, 6, 4, 6, 6, 5, 3, 7, 7, 6, 5, 6, 4, 5, 5, 4, 5, 2, 3, 6, 5, 3, 5, 9, 5, 4, 5, 6, 4, 3, 4, 4, 3, 7, 2, 5, 4, 3, 3, 3, 4, 3, 4, 4, 4, 5, 2, 4, 6, 4, 4, 5, 5, 1, 1, 2, 1, 0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 2, 3, 2, 2, 1, 2, 1, 2, 1, 1, 2, 2, 2, 2, 2, 3, 2, 3, 3, 4, 3, 2, 5, 4, 4, 4, 4], "ai-engineer": [27, 26, 31, 28, 26, 22, 26, 27, 24, 23, 23, 23, 21, 20, 23, 25, 22, 21, 19, 21, 22, 25, 25, 25, 26, 26, 25, 23, 30, 29, 26, 28, 33, 29, 31, 31, 31, 29, 26, 26, 27, 30, 20, 20, 20, 21, 23, 24, 25, 19, 20, 23, 26, 24, 25, 27, 24, 24, 25, 28, 26, 30, 26, 31, 34, 35, 28, 27, 33, 23, 33, 25, 26, 26, 33, 35, 33, 31, 35, 29, 34, 17, 36, 38, 36, 33, 33, 33, 41, 37, 33, 39, 28, 35, 38, 39, 34, 29, 30, 26, 32, 30, 36, 35, 30, 29, 40, 41, 43, 37, 32, 29, 25, 26, 29, 28, 28, 27, 29, 30, 33, 35, 27, 31, 38, 32, 34, 29, 21, 29, 24, 32, 22, 33, 24, 32, 35, 33, 24, 23, 26, 22, 21, 28, 31, 28, 24, 31, 24, 28, 31, 28, 27, 30, 33, 32, 28, 23, 27, 24, 25, 28, 23, 25, 30, 31, 34, 37, 37, 35, 35, 33, 37, 38, 33, 33, 30, 33, 34, 32, 33, 33, 34, 35], "data-engineer": [1, 1, 2, 1, 1, 3, 3, 1, 3, 3, 3, 1, 3, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 3, 1, 2, 2, 1, 1, 1, 2, 3, 3, 3, 3, 3, 3, 3, 5, 5, 6, 6, 6, 7, 3, 6, 5, 3, 5, 5, 4, 5, 6, 5, 6, 5, 5, 4, 5, 5, 5, 4, 4, 5, 4, 4, 5, 3, 4, 2, 1, 1, 2, 3, 3, 3, 3, 3, 5, 5, 2, 6, 4, 5, 0, 3, 0, 4, 3, 2, 3, 2, 5, 2, 0, 4, 3, 3, 3, 4, 0, 4, 5, 3, 5, 6, 8, 6, 5, 4, 5, 5, 5, 5, 5, 4, 4, 3, 3, 2, 2, 0, 1, 1, 1, 2, 0, 2, 1, 1, 1, 2, 3, 4, 5, 6, 2, 1, 3, 1, 2, 4, 4, 1, 1, 1, 1, 0, 1, 2, 0, 2, 2, 2, 2, 1, 2, 6, 6, 6, 5, 6, 10, 6, 7, 11, 9, 11, 9, 9, 9, 9, 4, 6, 5, 7, 5, 3, 3, 4, 4, 5], "nlp-engineer": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 3, 3, 3, 2, 3, 3, 3, 2, 3, 2, 2, 2, 2, 2, 9, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 2, 0, 0, 0, 2, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1], "data-analyst": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 3, 3, 2, 4, 4, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 3, 3, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 1, 2, 4, 2, 2, 2, 1, 0, 1, 2, 2, 3, 3, 1, 2, 2, 1, 1, 2, 1, 1, 1, 1, 1, 2, 2, 1, 2, 2, 2, 0, 2, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 2, 1, 0, 0, 0, 1, 1, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "ai-researcher": [1, 1, 1, 1, 1, 1, 1, 1, 8, 8, 8, 9, 7, 8, 7, 6, 6, 8, 8, 7, 7, 8, 10, 8, 7, 8, 8, 4, 8, 8, 8, 9, 9, 8, 8, 10, 10, 9, 11, 9, 7, 10, 11, 12, 13, 12, 15, 14, 14, 16, 16, 17, 19, 16, 22, 19, 18, 14, 25, 21, 23, 24, 26, 27, 28, 15, 22, 18, 11, 17, 14, 11, 13, 16, 14, 11, 10, 13, 14, 10, 13, 3, 10, 9, 6, 11, 10, 9, 9, 7, 11, 6, 8, 8, 12, 7, 11, 8, 9, 8, 9, 8, 6, 6, 9, 12, 6, 5, 9, 8, 6, 10, 5, 9, 6, 11, 7, 6, 8, 10, 7, 5, 10, 11, 9, 9, 13, 7, 16, 11, 13, 14, 12, 4, 8, 5, 7, 9, 6, 7, 5, 6, 4, 6, 7, 8, 6, 9, 9, 8, 7, 7, 9, 7, 8, 8, 7, 7, 6, 7, 8, 7, 4, 7, 9, 5, 6, 8, 11, 9, 10, 10, 9, 11, 10, 7, 6, 8, 7, 7, 6, 7, 6, 6]}, "remote": {"hybrid": [0, 0, 0, 0, 0, 0, 0, 0, 16, 16, 15, 18, 18, 12, 13, 11, 8, 14, 11, 15, 13, 13, 13, 13, 12, 10, 9, 10, 12, 16, 14, 17, 12, 13, 11, 10, 10, 8, 9, 8, 9, 9, 9, 8, 8, 8, 7, 7, 7, 8, 9, 9, 6, 8, 8, 9, 5, 7, 7, 7, 10, 10, 10, 9, 9, 8, 8, 8, 10, 8, 10, 6, 8, 6, 11, 11, 9, 12, 8, 9, 15, 1, 13, 15, 9, 12, 14, 17, 14, 12, 13, 14, 11, 12, 13, 13, 12, 10, 15, 12, 12, 18, 6, 14, 12, 11, 12, 15, 13, 10, 14, 14, 10, 10, 10, 14, 12, 10, 14, 17, 14, 9, 9, 17, 14, 13, 16, 10, 16, 10, 12, 16, 12, 18, 10, 10, 17, 14, 12, 12, 14, 14, 14, 13, 12, 14, 16, 15, 15, 17, 14, 15, 13, 13, 11, 12, 12, 11, 10, 8, 10, 13, 10, 13, 12, 12, 10, 11, 13, 12, 10, 10, 9, 11, 8, 8, 6, 5, 5, 6, 8, 8, 8, 8], "remote": [3, 3, 1, 1, 1, 1, 1, 1, 11, 11, 10, 11, 11, 10, 11, 6, 6, 10, 9, 9, 10, 9, 10, 10, 10, 12, 14, 26, 14, 15, 14, 15, 12, 11, 11, 14, 13, 14, 12, 9, 10, 7, 8, 9, 10, 9, 8, 8, 8, 8, 8, 8, 10, 11, 12, 12, 8, 12, 9, 10, 6, 6, 7, 5, 7, 6, 7, 4, 4, 6, 6, 4, 5, 4, 4, 5, 6, 5, 5, 5, 5, 0, 6, 6, 4, 5, 5, 7, 6, 4, 6, 4, 6, 7, 9, 6, 11, 8, 9, 13, 11, 9, 4, 3, 12, 16, 4, 5, 4, 3, 5, 12, 4, 12, 4, 6, 7, 3, 7, 4, 3, 4, 11, 6, 7, 7, 5, 9, 11, 6, 7, 8, 8, 7, 13, 12, 5, 11, 3, 3, 3, 3, 3, 3, 5, 3, 3, 3, 3, 4, 4, 5, 9, 8, 5, 8, 4, 7, 6, 6, 5, 5, 7, 5, 6, 7, 5, 7, 8, 8, 9, 7, 6, 7, 6, 6, 6, 7, 6, 5, 7, 8, 8, 8], "unknown": [211, 206, 218, 212, 212, 209, 209, 214, 178, 177, 183, 193, 172, 192, 197, 198, 186, 189, 190, 182, 186, 186, 189, 190, 188, 197, 189, 203, 191, 178, 186, 183, 112, 110, 113, 113, 114, 113, 112, 110, 114, 117, 97, 105, 105, 107, 135, 141, 120, 138, 136, 114, 138, 118, 119, 133, 123, 113, 125, 134, 121, 126, 123, 136, 138, 141, 136, 146, 138, 145, 154, 141, 166, 155, 163, 129, 140, 137, 142, 124, 128, 104, 121, 113, 125, 121, 115, 114, 141, 120, 135, 116, 117, 116, 138, 117, 132, 124, 102, 107, 112, 113, 126, 121, 114, 123, 128, 122, 150, 139, 134, 135, 130, 138, 137, 125, 124, 132, 132, 135, 127, 128, 132, 128, 118, 135, 134, 141, 145, 122, 130, 132, 139, 130, 126, 140, 150, 141, 119, 121, 121, 120, 119, 120, 127, 134, 119, 139, 127, 133, 128, 120, 139, 135, 143, 145, 128, 143, 138, 135, 134, 129, 140, 133, 147, 139, 149, 143, 144, 133, 134, 133, 133, 130, 124, 127, 123, 130, 127, 124, 126, 121, 125, 123], "onsite": [0, 0, 0, 0, 0, 0, 0, 1, 3, 3, 3, 1, 3, 2, 2, 1, 1, 1, 2, 2, 2, 2, 2, 2, 4, 4, 2, 6, 4, 4, 3, 4, 3, 3, 4, 3, 2, 3, 3, 4, 4, 5, 4, 4, 4, 4, 4, 4, 5, 4, 4, 4, 4, 4, 5, 3, 3, 4, 3, 5, 6, 4, 5, 4, 5, 4, 5, 5, 5, 6, 5, 4, 5, 5, 3, 6, 5, 8, 5, 5, 3, 0, 5, 3, 4, 3, 4, 7, 7, 4, 6, 4, 3, 4, 3, 2, 6, 4, 3, 6, 6, 6, 3, 3, 4, 7, 3, 4, 4, 3, 3, 5, 4, 4, 3, 4, 4, 2, 3, 2, 2, 1, 1, 3, 3, 2, 2, 1, 1, 3, 3, 3, 2, 2, 4, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 1, 2, 1, 2, 2, 2, 1, 1, 1, 2, 1, 2, 1, 1, 2, 2, 3, 2, 3, 3, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1]}, "totalPerRun": [214, 209, 219, 213, 213, 210, 210, 216, 208, 207, 211, 223, 204, 216, 223, 216, 201, 214, 212, 208, 211, 210, 214, 215, 214, 223, 214, 245, 221, 213, 217, 219, 139, 137, 139, 140, 139, 138, 136, 131, 137, 138, 118, 126, 127, 128, 154, 160, 140, 158, 157, 135, 158, 141, 144, 157, 139, 136, 144, 156, 143, 146, 145, 154, 159, 159, 156, 163, 157, 165, 175, 155, 184, 170, 181, 151, 160, 162, 160, 143, 151, 105, 145, 137, 142, 141, 138, 145, 168, 140, 160, 138, 137, 139, 163, 138, 161, 146, 129, 138, 141, 146, 139, 141, 142, 157, 147, 146, 171, 155, 156, 166, 148, 164, 154, 149, 147, 147, 156, 158, 146, 142, 153, 154, 142, 157, 157, 161, 173, 141, 152, 159, 161, 157, 153, 165, 174, 167, 134, 136, 138, 137, 136, 136, 144, 151, 138, 157, 145, 155, 147, 141, 163, 158, 160, 167, 145, 163, 156, 151, 150, 148, 158, 153, 166, 160, 165, 162, 167, 155, 156, 152, 151, 151, 140, 143, 137, 144, 140, 136, 142, 138, 142, 140]}, "topCompanies": [{"name": "Uitzendbureau", "count": 841}, {"name": "StudentJob", "count": 780}, {"name": "Sopra Steria", "count": 496}, {"name": "Nationale Nederlanden", "count": 473}, {"name": "Synsel Techniek", "count": 467}, {"name": "Sia", "count": 359}, {"name": "Veneficus", "count": 358}, {"name": "Capgemini", "count": 334}, {"name": "Harnham", "count": 323}, {"name": "Ministerie van Defensie", "count": 319}]};
+<main id="main">
+<noscript><p class="empty">The figures on this page are drawn in the browser and need JavaScript. The underlying numbers are in <a href="data.json">data.json</a>.</p></noscript>
 
-    const COLORS = [
-        '#6b5ce7', '#2dd4bf', '#f59e0b', '#f43f5e',
-        '#38bdf8', '#34d399', '#a78bfa', '#fb923c',
-        '#ec4899', '#14b8a6'
-    ];
+<div id="empty" class="empty" hidden>
+    <h2>No scrape runs recorded yet</h2>
+    <p>The first completed run fills this page. Until then there is nothing to chart.</p>
+</div>
 
-    const LABEL_MAP = {
-        'ml-engineer': 'ML Engineer', 'ai-engineer': 'AI Engineer',
-        'ai-general': 'AI General', 'data-scientist': 'Data Scientist',
-        'ai-researcher': 'AI Researcher', 'data-general': 'Data General',
-        'ai-product': 'AI Product', 'cv-engineer': 'CV Engineer',
-        'data-analyst': 'Data Analyst', 'nlp-engineer': 'NLP Engineer',
-        'ai-manager': 'AI Manager', 'data-engineer': 'Data Engineer',
-        'remote': 'Remote', 'hybrid': 'Hybrid', 'onsite': 'Onsite',
-        'senior': 'Senior', 'junior': 'Junior', 'lead': 'Lead',
-        'mid': 'Mid', 'head': 'Head',
-    };
-    const fmtLabel = n => LABEL_MAP[n] || n.replace(/-/g, ' ').replace(/\w/g, c => c.toUpperCase());
+<div id="figures">
 
-    const chartDefaults = {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: {
-                labels: {
-                    font: { family: "'Inter', sans-serif", size: 11 },
-                    usePointStyle: true,
-                    pointStyle: 'circle',
-                    padding: 16
-                }
-            }
+<figure class="fig" id="fig-skills">
+    <div class="fig-bar">
+        <span>Share of ads naming each skill, 7-day average</span>
+        <ul class="legend" aria-label="Line colours">
+            <li><i class="key rising"></i>up 3 points or more</li>
+            <li><i class="key falling"></i>down 3 points or more</li>
+            <li><i class="key"></i>within 3 points</li>
+        </ul>
+    </div>
+    <h2 id="skills-title">The eight most requested skills</h2>
+    <div class="with-rail">
+        <div>
+            <div class="plot" id="skills-plot"></div>
+            <details>
+                <summary>Table view: monthly averages</summary>
+                <div class="scroll" id="skills-table"></div>
+            </details>
+        </div>
+        <aside class="rail" aria-label="Notes on the skills figure">
+            <h3 id="movers-title">First vs last four weeks</h3>
+            <ul class="movers" id="movers"></ul>
+            <p id="skills-note"></p>
+        </aside>
+    </div>
+</figure>
+
+<div class="pair">
+    <figure class="fig" id="fig-roles">
+        <div class="fig-bar"><span>Role type, ads open on the latest run</span></div>
+        <h2 id="roles-title">Roles</h2>
+        <div id="roles"></div>
+        <p class="fig-note" id="roles-note"></p>
+    </figure>
+    <figure class="fig" id="fig-seniority">
+        <div class="fig-bar"><span>Seniority, ads open on the latest run</span></div>
+        <h2 id="seniority-title">Seniority</h2>
+        <div id="seniority"></div>
+        <p class="fig-note" id="seniority-note"></p>
+    </figure>
+</div>
+
+<div class="pair flip">
+    <figure class="fig" id="fig-arrangement">
+        <div class="fig-bar"><span>Work arrangement, ads open on the latest run</span></div>
+        <h2 id="arrangement-title">Work arrangement</h2>
+        <div id="arrangement"></div>
+        <p class="fig-note" id="arrangement-note"></p>
+    </figure>
+    <figure class="fig" id="fig-location">
+        <div class="fig-bar"><span>Location as written in the ad, latest run</span></div>
+        <h2 id="location-title">Location</h2>
+        <div id="location"></div>
+    </figure>
+</div>
+
+<figure class="fig" id="fig-employers">
+    <div class="fig-bar"><span>Distinct ads per employer since 20 March 2026</span></div>
+    <h2 id="employers-title">Employers with the most ads</h2>
+    <div id="employers"></div>
+    <p class="fig-note" id="employers-note"></p>
+</figure>
+
+<section class="method" aria-labelledby="method-title">
+    <div class="label">Method</div>
+    <div class="method-grid">
+        <div>
+            <h2 id="method-title">How the numbers are made</h2>
+            <p>A scheduled job collects listings from linkedin.com and jobbird.com once a day. Each ad is matched against keyword lists for role, seniority, work arrangement and skills. No language model is involved, so an ad that phrases a skill in an unusual way is missed.</p>
+            <p>An ad that stays open is seen again every day. The 29,702 daily sightings collapse to 3,029 distinct ads by URL, and employer counts use distinct ads.</p>
+            <p>Skill shares use only ads whose full text could be retrieved, because a title alone rarely names a skill. Days with fewer than 30 such ads carry no share, which is why the skills figure starts later than the first run. The headline and the change column compare four-week averages, so they differ slightly from the 7-day line ends. The 3-point cut-off that colours a line is a reading aid, not a significance test.</p>
+        </div>
+        <figure>
+            <figcaption>
+                <ul class="legend" aria-label="Line colours">
+                    <li><i class="key" style="border-color:var(--ink-3)"></i>ads open per day</li>
+                    <li><i class="key rising"></i>of which with full text</li>
+                </ul>
+            </figcaption>
+            <div class="plot" id="volume-plot"></div>
+        </figure>
+    </div>
+</section>
+
+</div>
+</main>
+
+<footer>
+    <span>Built by <a href="https://lindahoeberigs.com">Linda Hoeberigs</a></span>
+    <span><a href="https://github.com/hoeberigs/ai-job-tracker-nl">Source on GitHub</a> &nbsp; <a href="data.json">data.json</a></span>
+</footer>
+</div>
+
+<script>
+const DATA = {"lastUpdated": "2026-09-21", "totalJobsTracked": 3029, "totalObservations": 29702, "totalRuns": 185, "latestSnapshot": {"total": 140, "by_category": [{"name": "ml-engineer", "count": 40, "pct": 28.6}, {"name": "ai-engineer", "count": 37, "pct": 26.4}, {"name": "data-scientist", "count": 25, "pct": 17.9}, {"name": "ai-general", "count": 13, "pct": 9.3}, {"name": "cv-engineer", "count": 10, "pct": 7.1}, {"name": "ai-researcher", "count": 7, "pct": 5.0}, {"name": "ai-product", "count": 4, "pct": 2.9}, {"name": "data-engineer", "count": 4, "pct": 2.9}], "by_seniority": [{"name": "unknown", "count": 57, "pct": 40.7}, {"name": "senior", "count": 46, "pct": 32.9}, {"name": "lead", "count": 21, "pct": 15.0}, {"name": "junior", "count": 9, "pct": 6.4}, {"name": "head", "count": 4, "pct": 2.9}, {"name": "mid", "count": 3, "pct": 2.1}], "by_remote": [{"name": "unknown", "count": 124, "pct": 88.6}, {"name": "hybrid", "count": 8, "pct": 5.7}, {"name": "remote", "count": 7, "pct": 5.0}, {"name": "onsite", "count": 1, "pct": 0.7}], "by_sector": [{"name": "tech", "count": 114, "pct": 81.4}, {"name": "other", "count": 18, "pct": 12.9}, {"name": "government", "count": 3, "pct": 2.1}, {"name": "finance", "count": 2, "pct": 1.4}, {"name": "retail", "count": 1, "pct": 0.7}, {"name": "logistics", "count": 1, "pct": 0.7}, {"name": "consulting", "count": 1, "pct": 0.7}], "by_source": [{"name": "linkedin.com", "count": 106, "pct": 75.7}, {"name": "jobbird.com", "count": 34, "pct": 24.3}], "by_location": [{"name": "Amsterdam", "count": 55, "pct": 39.3}, {"name": "Utrecht", "count": 25, "pct": 17.9}, {"name": "Rotterdam", "count": 10, "pct": 7.1}, {"name": "Nederland", "count": 10, "pct": 7.1}, {"name": "Eindhoven", "count": 9, "pct": 6.4}, {"name": "Delft", "count": 4, "pct": 2.9}, {"name": "Randstad", "count": 2, "pct": 1.4}, {"name": "Zoetermeer", "count": 2, "pct": 1.4}, {"name": "Naarden", "count": 1, "pct": 0.7}, {"name": "Rotterdam and The Hague", "count": 1, "pct": 0.7}], "top_skills": [{"name": "LLM", "count": 33, "pct": 23.6}, {"name": "AI Agents", "count": 31, "pct": 22.1}, {"name": "Python", "count": 27, "pct": 19.3}, {"name": "RAG", "count": 22, "pct": 15.7}, {"name": "Deep Learning", "count": 18, "pct": 12.9}, {"name": "Azure", "count": 16, "pct": 11.4}, {"name": "Computer Vision", "count": 15, "pct": 10.7}, {"name": "CI/CD", "count": 14, "pct": 10.0}, {"name": "Embeddings", "count": 10, "pct": 7.1}, {"name": "Databricks", "count": 9, "pct": 6.4}, {"name": "AWS", "count": 8, "pct": 5.7}, {"name": "OpenAI", "count": 7, "pct": 5.0}, {"name": "NLP", "count": 7, "pct": 5.0}, {"name": "Fine-tuning", "count": 7, "pct": 5.0}, {"name": "Anthropic", "count": 5, "pct": 3.6}], "top_companies": [{"name": "StudentJob", "count": 9, "pct": 6.4}, {"name": "Capgemini", "count": 6, "pct": 4.3}, {"name": "eBay", "count": 4, "pct": 2.9}, {"name": "Ministerie van Defensie", "count": 3, "pct": 2.1}, {"name": "SevenLab", "count": 3, "pct": 2.1}, {"name": "Sogeti", "count": 2, "pct": 1.4}, {"name": "Datacation", "count": 2, "pct": 1.4}, {"name": "Jobgether", "count": 2, "pct": 1.4}, {"name": "Booking.com", "count": 2, "pct": 1.4}, {"name": "Picnic Technologies", "count": 2, "pct": 1.4}]}, "trends": {"skillsPct": {"Python": [null, null, null, null, null, null, null, null, 27.8, 28.1, 28.3, 30.3, 29.7, 31.5, 27.3, 25.0, 37.9, 30.4, 30.7, 29.6, 30.4, 28.7, 26.0, 26.7, 26.7, 28.7, 31.6, 42.6, 34.3, 34.0, 32.1, 32.7, 32.6, 33.3, 33.7, 27.6, 27.4, 27.2, 25.9, 24.4, 26.2, 27.8, 28.6, 29.9, 29.1, 32.1, 35.0, 32.9, 31.6, 26.2, 30.4, 28.9, 29.0, 36.1, 29.4, 31.6, 30.4, 26.6, 28.4, 29.2, 29.8, 27.1, 29.5, 36.6, 32.4, 35.2, 30.2, 26.6, 29.5, 30.3, 32.7, 28.2, 31.2, 27.1, 27.3, 30.3, 29.2, 30.8, 32.7, 32.2, 33.3, null, 38.3, 35.9, 38.0, 36.7, 38.9, 35.6, 34.5, 31.5, 31.9, 37.8, 35.4, 38.9, 33.6, 35.4, 31.1, 31.3, 29.6, 33.0, 31.2, 30.8, 39.7, 36.3, 37.0, 30.1, 33.3, 37.0, 33.3, 33.0, 33.6, 31.6, 39.0, 32.5, 34.9, 36.7, 39.4, 33.0, 32.4, 25.7, 31.4, 28.0, 29.7, 36.6, 32.0, 28.7, 33.0, 32.1, 29.5, 34.4, 29.0, 28.3, 31.9, 27.4, 23.4, 32.2, 30.4, 24.8, 29.2, 29.5, 30.9, 29.9, 29.8, 32.3, 29.7, 30.8, 32.6, 27.0, 26.3, 27.0, 29.4, 27.7, 27.3, 26.9, 27.0, 24.2, 27.1, 26.1, 22.2, 21.8, 23.2, 27.6, 22.6, 25.4, 24.8, 24.1, 21.1, 28.0, 27.7, 22.8, 24.3, 27.0, 26.1, 27.6, 25.5, 24.5, 24.0, 24.1, 25.5, 25.7, 26.9, 25.5, 23.8, 24.5, 26.2], "LLM": [null, null, null, null, null, null, null, null, 25.8, 26.0, 25.3, 25.3, 22.8, 25.0, 24.5, 27.9, 19.7, 23.5, 22.8, 25.5, 23.5, 23.8, 24.0, 22.8, 23.8, 24.1, 26.5, 26.4, 25.7, 28.2, 25.5, 26.0, 30.2, 31.0, 33.7, 36.8, 36.9, 39.5, 38.3, 37.2, 36.2, 32.2, 28.6, 28.6, 29.1, 28.2, 28.8, 28.0, 34.2, 27.4, 23.9, 27.7, 29.0, 32.5, 25.9, 28.4, 32.1, 35.4, 32.4, 31.2, 29.8, 31.2, 31.8, 32.9, 32.4, 35.2, 27.1, 22.3, 33.0, 25.3, 29.1, 23.9, 26.8, 27.1, 23.6, 27.3, 23.6, 23.4, 26.7, 28.9, 32.2, null, 29.8, 31.5, 32.0, 26.5, 28.9, 28.7, 31.9, 31.5, 26.1, 31.6, 22.9, 34.7, 30.9, 31.3, 27.7, 26.1, 24.5, 23.6, 24.8, 28.0, 33.3, 26.5, 31.0, 21.2, 23.5, 29.0, 26.7, 23.6, 34.6, 26.5, 21.0, 23.9, 26.6, 31.2, 26.9, 24.0, 17.6, 28.3, 22.5, 21.0, 20.7, 21.4, 24.0, 18.3, 26.1, 19.6, 14.0, 22.9, 19.6, 25.7, 20.2, 17.9, 21.6, 20.9, 19.1, 22.9, 21.9, 20.0, 20.6, 19.6, 20.2, 21.5, 21.8, 20.6, 24.2, 27.9, 24.2, 31.5, 20.6, 21.8, 27.3, 27.7, 21.7, 26.6, 22.4, 25.2, 25.6, 21.8, 19.6, 25.9, 23.5, 23.7, 26.5, 28.4, 27.2, 28.0, 25.2, 27.2, 27.8, 25.2, 27.7, 28.4, 24.5, 23.6, 23.1, 24.1, 25.5, 27.6, 29.6, 30.2, 30.5, 29.4, 32.0], "AI Agents": [null, null, null, null, null, null, null, null, 15.5, 15.6, 15.2, 14.1, 14.9, 13.9, 15.5, 16.2, 16.7, 12.7, 12.9, 11.2, 11.8, 10.9, 12.5, 11.9, 12.9, 12.0, 13.3, 17.1, 14.3, 14.6, 11.3, 14.4, 18.6, 19.0, 17.4, 17.2, 16.7, 19.8, 21.0, 17.9, 18.8, 13.3, 11.7, 10.4, 10.1, 10.3, 12.5, 15.9, 16.5, 14.3, 12.0, 12.0, 10.8, 14.5, 9.4, 13.7, 14.3, 13.9, 9.5, 14.6, 11.7, 15.6, 14.8, 20.7, 18.6, 22.9, 13.5, 18.1, 28.4, 13.1, 22.7, 14.1, 25.0, 21.9, 27.3, 27.3, 24.5, 18.7, 26.7, 21.1, 30.0, null, 24.5, 29.3, 31.0, 23.5, 24.4, 19.8, 27.7, 30.4, 21.8, 29.6, 25.0, 27.4, 28.2, 31.3, 24.4, 25.2, 24.5, 17.9, 22.0, 23.4, 30.2, 31.4, 25.0, 15.0, 32.4, 31.0, 28.3, 28.3, 29.0, 25.6, 27.6, 24.8, 27.5, 29.4, 28.8, 31.0, 29.6, 27.4, 33.3, 31.0, 29.7, 25.0, 36.0, 31.3, 28.7, 28.6, 24.0, 30.2, 36.4, 34.5, 29.4, 29.1, 23.4, 23.5, 37.4, 33.0, 31.2, 29.5, 29.9, 30.9, 29.8, 26.9, 31.7, 28.0, 28.4, 32.4, 28.3, 28.8, 28.4, 27.7, 32.2, 31.1, 30.4, 28.2, 28.0, 26.1, 31.6, 27.3, 30.4, 26.7, 32.2, 24.6, 26.5, 31.0, 30.7, 26.3, 26.9, 28.9, 27.0, 29.7, 31.1, 29.3, 25.5, 26.4, 25.0, 25.0, 27.4, 28.6, 29.6, 30.2, 29.5, 29.4, 30.1], "Azure": [null, null, null, null, null, null, null, null, 15.5, 15.6, 14.1, 16.2, 16.8, 16.7, 13.6, 17.6, 18.2, 18.6, 16.8, 17.3, 15.7, 16.8, 15.4, 13.9, 15.8, 19.4, 16.3, 11.6, 16.2, 15.5, 12.3, 15.4, 20.9, 22.6, 19.8, 16.1, 14.3, 16.0, 16.0, 14.1, 12.5, 14.4, 14.3, 14.3, 16.5, 15.4, 17.5, 17.1, 16.5, 11.9, 16.3, 14.5, 17.2, 18.1, 15.3, 16.8, 17.9, 15.2, 14.9, 16.7, 16.0, 15.6, 14.8, 23.2, 15.7, 16.2, 17.7, 12.8, 18.2, 14.1, 15.5, 9.9, 16.1, 12.5, 13.6, 15.2, 11.3, 10.3, 12.9, 20.0, 13.3, null, 16.0, 20.7, 23.0, 21.4, 17.8, 15.8, 17.6, 16.3, 16.8, 19.4, 15.6, 15.8, 14.5, 20.2, 18.5, 17.4, 14.3, 21.7, 20.2, 15.9, 23.8, 16.7, 23.0, 18.6, 17.6, 21.0, 20.8, 17.0, 27.1, 19.7, 19.0, 22.2, 21.1, 20.2, 23.1, 15.0, 14.8, 18.6, 19.6, 18.0, 18.9, 21.4, 16.0, 18.3, 20.9, 19.6, 17.1, 21.9, 17.8, 17.7, 19.3, 16.2, 15.3, 19.1, 17.4, 14.7, 20.8, 18.9, 19.6, 20.6, 21.3, 21.5, 18.8, 19.6, 21.1, 18.9, 22.2, 20.7, 22.5, 22.8, 20.7, 17.6, 20.0, 16.9, 20.6, 19.3, 16.2, 16.4, 16.1, 18.1, 16.5, 21.1, 16.2, 19.8, 18.4, 20.3, 20.2, 19.3, 15.7, 18.9, 19.3, 17.2, 14.5, 15.1, 14.4, 14.8, 16.0, 15.2, 17.6, 16.0, 15.2, 14.7, 15.5], "RAG": [null, null, null, null, null, null, null, null, 13.4, 13.5, 13.1, 12.1, 9.9, 8.3, 11.8, 10.3, 10.6, 7.8, 8.9, 9.2, 10.8, 8.9, 9.6, 8.9, 8.9, 10.2, 11.2, 12.4, 15.2, 16.5, 12.3, 15.4, 17.4, 15.5, 14.0, 13.8, 13.1, 13.6, 13.6, 11.5, 12.5, 16.7, 11.7, 13.0, 11.4, 12.8, 11.2, 12.2, 15.2, 13.1, 12.0, 13.3, 11.8, 12.0, 10.6, 13.7, 12.5, 13.9, 9.5, 15.6, 11.7, 17.7, 11.4, 15.9, 14.7, 15.2, 10.4, 12.8, 18.2, 8.1, 14.5, 7.0, 14.3, 11.5, 14.5, 14.1, 10.4, 9.3, 9.9, 12.2, 10.0, null, 13.8, 21.7, 24.0, 15.3, 15.6, 13.9, 21.8, 13.0, 16.0, 21.4, 8.3, 22.1, 19.1, 21.2, 18.5, 13.9, 10.2, 14.2, 13.8, 14.0, 23.8, 20.6, 18.0, 13.3, 16.7, 18.0, 20.0, 19.8, 26.2, 16.2, 17.1, 16.2, 19.3, 21.1, 19.2, 20.0, 14.8, 19.5, 23.5, 22.0, 16.2, 17.9, 21.0, 19.1, 19.1, 13.4, 8.5, 15.6, 18.7, 19.5, 14.3, 15.4, 10.8, 12.2, 17.4, 11.9, 20.8, 18.9, 18.6, 18.6, 19.1, 20.4, 19.8, 18.7, 21.1, 20.7, 19.2, 19.8, 19.6, 20.8, 21.5, 19.3, 20.0, 20.2, 22.4, 21.8, 18.8, 18.2, 17.0, 18.1, 17.4, 17.5, 19.7, 17.2, 17.5, 20.3, 18.5, 18.4, 19.1, 18.0, 17.6, 18.1, 15.5, 15.1, 14.4, 15.7, 17.0, 20.0, 21.3, 21.7, 22.9, 22.5, 21.4], "Deep Learning": [null, null, null, null, null, null, null, null, 7.2, 6.2, 6.1, 7.1, 9.9, 10.2, 8.2, 8.8, 10.6, 6.9, 6.9, 7.1, 8.8, 7.9, 8.7, 8.9, 8.9, 13.0, 9.2, 14.7, 11.4, 9.7, 7.5, 10.6, 12.8, 11.9, 10.5, 11.5, 10.7, 8.6, 9.9, 11.5, 13.8, 7.8, 10.4, 11.7, 8.9, 10.3, 12.5, 12.2, 15.2, 11.9, 10.9, 13.3, 12.9, 14.5, 15.3, 15.8, 19.6, 17.7, 25.7, 16.7, 17.0, 12.5, 13.6, 14.6, 13.7, 14.3, 13.5, 14.9, 13.6, 17.2, 13.6, 14.1, 17.0, 14.6, 11.8, 12.1, 16.0, 13.1, 11.9, 13.3, 15.6, null, 13.8, 13.0, 12.0, 14.3, 13.3, 14.9, 12.6, 15.2, 14.3, 14.3, 10.4, 11.6, 16.4, 11.1, 14.3, 14.8, 11.2, 12.3, 15.6, 9.3, 14.3, 18.6, 14.0, 12.4, 16.7, 12.0, 13.3, 15.1, 14.0, 12.8, 14.3, 12.8, 14.7, 15.6, 15.4, 15.0, 13.9, 11.5, 12.7, 14.0, 15.3, 15.2, 13.0, 15.7, 14.8, 16.1, 14.0, 11.5, 13.1, 12.4, 13.4, 12.0, 14.4, 17.4, 14.8, 11.0, 14.6, 15.8, 16.5, 14.4, 14.9, 14.0, 13.9, 17.8, 8.4, 12.6, 12.1, 16.2, 12.7, 11.9, 11.6, 15.1, 12.2, 12.9, 13.1, 13.4, 11.1, 11.8, 16.1, 15.5, 13.9, 16.7, 14.5, 8.6, 9.6, 14.4, 13.4, 12.3, 12.2, 13.5, 14.3, 14.7, 13.6, 15.1, 13.5, 14.8, 16.0, 15.2, 14.8, 17.0, 15.2, 15.7, 17.5], "CI/CD": [null, null, null, null, null, null, null, null, 14.4, 15.6, 15.2, 15.2, 13.9, 15.7, 9.1, 13.2, 13.6, 16.7, 16.8, 17.3, 15.7, 15.8, 15.4, 14.9, 15.8, 17.6, 18.4, 14.0, 19.0, 17.5, 14.2, 18.3, 22.1, 22.6, 17.4, 17.2, 16.7, 17.3, 17.3, 15.4, 16.2, 17.8, 20.8, 18.2, 17.7, 15.4, 16.2, 17.1, 15.2, 13.1, 13.0, 12.0, 8.6, 14.5, 9.4, 9.5, 7.1, 7.6, 8.1, 7.3, 6.4, 9.4, 6.8, 12.2, 7.8, 10.5, 7.3, 6.4, 8.0, 7.1, 10.0, 8.5, 8.9, 8.3, 12.7, 9.1, 5.7, 7.5, 7.9, 6.7, 5.6, null, 5.3, 7.6, 8.0, 5.1, 6.7, 5.9, 7.6, 6.5, 3.4, 6.1, 5.2, 6.3, 7.3, 10.1, 5.9, 7.0, 9.2, 9.4, 8.3, 11.2, 9.5, 11.8, 11.0, 6.2, 12.7, 17.0, 14.2, 9.4, 12.1, 12.0, 12.4, 12.8, 14.7, 12.8, 10.6, 10.0, 13.0, 15.0, 9.8, 16.0, 9.9, 13.4, 10.0, 8.7, 14.8, 11.6, 11.6, 14.6, 11.2, 12.4, 8.4, 12.8, 8.1, 10.4, 11.3, 10.1, 12.5, 10.5, 12.4, 12.4, 12.8, 12.9, 11.9, 11.2, 14.7, 12.6, 16.2, 11.7, 11.8, 11.9, 11.6, 12.6, 12.2, 9.7, 14.0, 10.9, 12.0, 13.6, 14.3, 13.8, 14.8, 10.5, 14.5, 12.9, 14.9, 14.4, 13.4, 9.6, 13.0, 14.4, 11.8, 12.1, 15.5, 16.0, 15.4, 14.8, 14.2, 14.3, 14.8, 14.2, 13.3, 12.7, 13.6], "Computer Vision": [null, null, null, null, null, null, null, null, 5.2, 5.2, 5.1, 6.1, 6.9, 8.3, 8.2, 7.4, 7.6, 6.9, 6.9, 7.1, 7.8, 7.9, 7.7, 9.9, 7.9, 8.3, 7.1, 13.2, 6.7, 5.8, 5.7, 7.7, 9.3, 6.0, 4.7, 5.7, 4.8, 2.5, 3.7, 5.1, 7.5, 7.8, 6.5, 6.5, 6.3, 6.4, 5.0, 4.9, 8.9, 7.1, 6.5, 7.2, 5.4, 10.8, 9.4, 9.5, 10.7, 10.1, 14.9, 8.3, 17.0, 7.3, 8.0, 6.1, 6.9, 11.4, 7.3, 19.1, 10.2, 9.1, 6.4, 18.3, 16.1, 8.3, 9.1, 5.1, 17.0, 15.0, 8.9, 8.9, 11.1, null, 12.8, 10.9, 12.0, 10.2, 10.0, 17.8, 10.1, 12.0, 15.1, 17.3, 8.3, 7.4, 16.4, 8.1, 14.3, 16.5, 8.2, 9.4, 16.5, 15.9, 17.5, 18.6, 8.0, 16.8, 16.7, 9.0, 9.2, 11.3, 13.1, 12.0, 17.1, 12.8, 17.4, 12.8, 12.5, 17.0, 13.9, 15.0, 11.8, 10.0, 11.7, 14.3, 9.0, 14.8, 10.4, 9.8, 13.2, 8.3, 14.0, 14.2, 11.8, 12.8, 13.5, 13.9, 15.7, 10.1, 13.5, 14.7, 15.5, 14.4, 14.9, 15.1, 15.8, 15.9, 12.6, 14.4, 12.1, 16.2, 17.6, 17.8, 15.7, 17.6, 15.7, 16.1, 16.8, 16.8, 14.5, 14.5, 16.1, 14.7, 13.9, 16.7, 16.2, 15.5, 14.0, 15.3, 17.6, 16.7, 15.7, 15.3, 14.3, 15.5, 16.4, 16.0, 15.4, 15.7, 15.1, 16.2, 16.7, 17.0, 17.1, 17.6, 14.6]}, "describedPerRun": [0, 0, 0, 0, 0, 0, 0, 0, 97, 96, 99, 99, 101, 108, 110, 68, 66, 102, 101, 98, 102, 101, 104, 101, 101, 108, 98, 129, 105, 103, 106, 104, 86, 84, 86, 87, 84, 81, 81, 78, 80, 90, 77, 77, 79, 78, 80, 82, 79, 84, 92, 83, 93, 83, 85, 95, 56, 79, 74, 96, 94, 96, 88, 82, 102, 105, 96, 94, 88, 99, 110, 71, 112, 96, 110, 99, 106, 107, 101, 90, 90, 14, 94, 92, 100, 98, 90, 101, 119, 92, 119, 98, 96, 95, 110, 99, 119, 115, 98, 106, 109, 107, 63, 102, 100, 113, 102, 100, 120, 106, 107, 117, 105, 117, 109, 109, 104, 100, 108, 113, 102, 100, 111, 112, 100, 115, 115, 112, 129, 96, 107, 113, 119, 117, 111, 115, 115, 109, 96, 95, 97, 97, 94, 93, 101, 107, 95, 111, 99, 111, 102, 101, 121, 119, 115, 124, 107, 119, 117, 110, 112, 116, 115, 114, 117, 116, 114, 118, 119, 114, 115, 111, 119, 116, 110, 106, 104, 108, 106, 105, 108, 106, 105, 102, 103], "dates": ["2026-03-20", "2026-03-21", "2026-03-22", "2026-03-23", "2026-03-24", "2026-03-25", "2026-03-26", "2026-03-27", "2026-03-28", "2026-03-29", "2026-03-30", "2026-03-31", "2026-04-01", "2026-04-02", "2026-04-03", "2026-04-04", "2026-04-05", "2026-04-06", "2026-04-07", "2026-04-08", "2026-04-09", "2026-04-10", "2026-04-11", "2026-04-12", "2026-04-13", "2026-04-14", "2026-04-15", "2026-04-16", "2026-04-17", "2026-04-18", "2026-04-19", "2026-04-20", "2026-04-21", "2026-04-22", "2026-04-23", "2026-04-24", "2026-04-25", "2026-04-26", "2026-04-27", "2026-04-28", "2026-04-29", "2026-04-30", "2026-05-01", "2026-05-02", "2026-05-03", "2026-05-04", "2026-05-05", "2026-05-06", "2026-05-07", "2026-05-08", "2026-05-09", "2026-05-10", "2026-05-11", "2026-05-12", "2026-05-13", "2026-05-14", "2026-05-15", "2026-05-16", "2026-05-17", "2026-05-18", "2026-05-19", "2026-05-20", "2026-05-21", "2026-05-22", "2026-05-23", "2026-05-24", "2026-05-25", "2026-05-27", "2026-05-28", "2026-05-29", "2026-05-30", "2026-05-31", "2026-06-01", "2026-06-02", "2026-06-03", "2026-06-04", "2026-06-05", "2026-06-06", "2026-06-07", "2026-06-08", "2026-06-09", "2026-06-10", "2026-06-11", "2026-06-12", "2026-06-13", "2026-06-14", "2026-06-15", "2026-06-16", "2026-06-17", "2026-06-18", "2026-06-19", "2026-06-20", "2026-06-21", "2026-06-22", "2026-06-23", "2026-06-24", "2026-06-25", "2026-06-26", "2026-06-27", "2026-06-28", "2026-06-29", "2026-06-30", "2026-07-01", "2026-07-02", "2026-07-03", "2026-07-04", "2026-07-05", "2026-07-06", "2026-07-07", "2026-07-08", "2026-07-09", "2026-07-10", "2026-07-11", "2026-07-12", "2026-07-13", "2026-07-14", "2026-07-15", "2026-07-16", "2026-07-17", "2026-07-18", "2026-07-19", "2026-07-20", "2026-07-21", "2026-07-22", "2026-07-23", "2026-07-24", "2026-07-25", "2026-07-26", "2026-07-27", "2026-07-28", "2026-07-29", "2026-07-30", "2026-07-31", "2026-08-01", "2026-08-02", "2026-08-03", "2026-08-04", "2026-08-05", "2026-08-06", "2026-08-07", "2026-08-08", "2026-08-09", "2026-08-10", "2026-08-11", "2026-08-12", "2026-08-13", "2026-08-14", "2026-08-15", "2026-08-16", "2026-08-17", "2026-08-18", "2026-08-19", "2026-08-20", "2026-08-21", "2026-08-22", "2026-08-23", "2026-08-24", "2026-08-25", "2026-08-26", "2026-08-27", "2026-08-28", "2026-08-29", "2026-08-30", "2026-08-31", "2026-09-01", "2026-09-02", "2026-09-03", "2026-09-04", "2026-09-05", "2026-09-06", "2026-09-07", "2026-09-08", "2026-09-09", "2026-09-10", "2026-09-11", "2026-09-12", "2026-09-13", "2026-09-14", "2026-09-15", "2026-09-16", "2026-09-17", "2026-09-18", "2026-09-19", "2026-09-20", "2026-09-21"], "skills": {"Python": [4, 5, 6, 5, 5, 5, 2, 1, 27, 27, 28, 30, 30, 34, 30, 17, 25, 31, 31, 29, 31, 29, 27, 27, 27, 31, 31, 55, 36, 35, 34, 34, 28, 28, 29, 24, 23, 22, 21, 19, 21, 25, 22, 23, 23, 25, 28, 27, 25, 22, 28, 24, 27, 30, 25, 30, 17, 21, 21, 28, 28, 26, 26, 30, 33, 37, 29, 25, 26, 30, 36, 20, 35, 26, 30, 30, 31, 33, 33, 29, 30, 5, 36, 33, 38, 36, 35, 36, 41, 29, 38, 37, 34, 37, 37, 35, 37, 36, 29, 35, 34, 33, 25, 37, 37, 34, 34, 37, 40, 35, 36, 37, 41, 38, 38, 40, 41, 33, 35, 29, 32, 28, 33, 41, 32, 33, 38, 36, 38, 33, 31, 32, 38, 32, 26, 37, 35, 27, 28, 28, 30, 29, 28, 30, 30, 33, 31, 30, 26, 30, 30, 28, 33, 32, 31, 30, 29, 31, 26, 24, 26, 32, 26, 29, 29, 28, 24, 33, 33, 26, 28, 30, 31, 32, 28, 26, 25, 26, 27, 27, 29, 27, 25, 25, 27], "LLM": [5, 4, 4, 4, 4, 3, 3, 3, 25, 25, 25, 25, 23, 27, 27, 19, 13, 24, 23, 25, 24, 24, 25, 23, 24, 26, 26, 34, 27, 29, 27, 27, 26, 26, 29, 32, 31, 32, 31, 29, 29, 29, 22, 22, 23, 22, 23, 23, 27, 23, 22, 23, 27, 27, 22, 27, 18, 28, 24, 30, 28, 30, 28, 27, 33, 37, 26, 21, 29, 25, 32, 17, 30, 26, 26, 27, 25, 25, 27, 26, 29, 3, 28, 29, 32, 26, 26, 29, 38, 29, 31, 31, 22, 33, 34, 31, 33, 30, 24, 25, 27, 30, 21, 27, 31, 24, 24, 29, 32, 25, 37, 31, 22, 28, 29, 34, 28, 24, 19, 32, 23, 21, 23, 24, 24, 21, 30, 22, 18, 22, 21, 29, 24, 21, 24, 24, 22, 25, 21, 19, 20, 19, 19, 20, 22, 22, 23, 31, 24, 35, 21, 22, 33, 33, 25, 33, 24, 30, 30, 24, 22, 30, 27, 27, 31, 33, 31, 33, 30, 31, 32, 28, 33, 33, 27, 25, 24, 26, 27, 29, 32, 32, 32, 30, 33], "AI Agents": [2, 2, 2, 2, 1, 1, 1, 2, 15, 15, 15, 14, 15, 15, 17, 11, 11, 13, 13, 11, 12, 11, 13, 12, 13, 13, 13, 22, 15, 15, 12, 15, 16, 16, 15, 15, 14, 16, 17, 14, 15, 12, 9, 8, 8, 8, 10, 13, 13, 12, 11, 10, 10, 12, 8, 13, 8, 11, 7, 14, 11, 15, 13, 17, 19, 24, 13, 17, 25, 13, 25, 10, 28, 21, 30, 27, 26, 20, 27, 19, 27, 7, 23, 27, 31, 23, 22, 20, 33, 28, 26, 29, 24, 26, 31, 31, 29, 29, 24, 19, 24, 25, 19, 32, 25, 17, 33, 31, 34, 30, 31, 30, 29, 29, 30, 32, 30, 31, 32, 31, 34, 31, 33, 28, 36, 36, 33, 32, 31, 29, 39, 39, 35, 34, 26, 27, 43, 36, 30, 28, 29, 30, 28, 25, 32, 30, 27, 36, 28, 32, 29, 28, 39, 37, 35, 35, 30, 31, 37, 30, 34, 31, 37, 28, 31, 36, 35, 31, 32, 33, 31, 33, 37, 34, 28, 28, 26, 27, 29, 30, 32, 32, 31, 30, 31], "Azure": [1, 1, 1, 1, 1, 1, 1, 0, 15, 15, 14, 16, 17, 18, 15, 12, 12, 19, 17, 17, 16, 17, 16, 14, 16, 21, 16, 15, 17, 16, 13, 16, 18, 19, 17, 14, 12, 13, 13, 11, 10, 13, 11, 11, 13, 12, 14, 14, 13, 10, 15, 12, 16, 15, 13, 16, 10, 12, 11, 16, 15, 15, 13, 19, 16, 17, 17, 12, 16, 14, 17, 7, 18, 12, 15, 15, 12, 11, 13, 18, 12, 4, 15, 19, 23, 21, 16, 16, 21, 15, 20, 19, 15, 15, 16, 20, 22, 20, 14, 23, 22, 17, 15, 17, 23, 21, 18, 21, 25, 18, 29, 23, 20, 26, 23, 22, 24, 15, 16, 21, 20, 18, 21, 24, 16, 21, 24, 22, 22, 21, 19, 20, 23, 19, 17, 22, 20, 16, 20, 18, 19, 20, 20, 20, 19, 21, 20, 21, 22, 23, 23, 23, 25, 21, 23, 21, 22, 23, 19, 18, 18, 21, 19, 24, 19, 23, 21, 24, 24, 22, 18, 21, 23, 20, 16, 16, 15, 16, 17, 16, 19, 17, 16, 15, 16], "RAG": [3, 3, 3, 3, 3, 3, 3, 2, 13, 13, 13, 12, 10, 9, 13, 7, 7, 8, 9, 9, 11, 9, 10, 9, 9, 11, 11, 16, 16, 17, 13, 16, 15, 13, 12, 12, 11, 11, 11, 9, 10, 15, 9, 10, 9, 10, 9, 10, 12, 11, 11, 11, 11, 10, 9, 13, 7, 11, 7, 15, 11, 17, 10, 13, 15, 16, 10, 12, 16, 8, 16, 5, 16, 11, 16, 14, 11, 10, 10, 11, 9, 2, 13, 20, 24, 15, 14, 14, 26, 12, 19, 21, 8, 21, 21, 21, 22, 16, 10, 15, 15, 15, 15, 21, 18, 15, 17, 18, 24, 21, 28, 19, 18, 19, 21, 23, 20, 20, 16, 22, 24, 22, 18, 20, 21, 22, 22, 15, 11, 15, 20, 22, 17, 18, 12, 14, 20, 13, 20, 18, 18, 18, 18, 19, 20, 20, 20, 23, 19, 22, 20, 21, 26, 23, 23, 25, 24, 26, 22, 20, 19, 21, 20, 20, 23, 20, 20, 24, 22, 21, 22, 20, 21, 21, 17, 16, 15, 17, 18, 21, 23, 23, 24, 23, 22], "Deep Learning": [2, 2, 2, 2, 2, 2, 1, 2, 7, 6, 6, 7, 10, 11, 9, 6, 7, 7, 7, 7, 9, 8, 9, 9, 9, 14, 9, 19, 12, 10, 8, 11, 11, 10, 9, 10, 9, 7, 8, 9, 11, 7, 8, 9, 7, 8, 10, 10, 12, 10, 10, 11, 12, 12, 13, 15, 11, 14, 19, 16, 16, 12, 12, 12, 14, 15, 13, 14, 12, 17, 15, 10, 19, 14, 13, 12, 17, 14, 12, 12, 14, 5, 13, 12, 12, 14, 12, 15, 15, 14, 17, 14, 10, 11, 18, 11, 17, 17, 11, 13, 17, 10, 9, 19, 14, 14, 17, 12, 16, 16, 15, 15, 15, 15, 16, 17, 16, 15, 15, 13, 13, 14, 17, 17, 13, 18, 17, 18, 18, 11, 14, 14, 16, 14, 16, 20, 17, 12, 14, 15, 16, 14, 14, 13, 14, 19, 8, 14, 12, 18, 13, 12, 14, 18, 14, 16, 14, 16, 13, 13, 18, 18, 16, 19, 17, 10, 11, 17, 16, 14, 14, 15, 17, 17, 15, 16, 14, 16, 17, 16, 16, 18, 16, 16, 18], "CI/CD": [0, 0, 0, 0, 0, 0, 0, 0, 14, 15, 15, 15, 14, 17, 10, 9, 9, 17, 17, 17, 16, 16, 16, 15, 16, 19, 18, 18, 20, 18, 15, 19, 19, 19, 15, 15, 14, 14, 14, 12, 13, 16, 16, 14, 14, 12, 13, 14, 12, 11, 12, 10, 8, 12, 8, 9, 4, 6, 6, 7, 6, 9, 6, 10, 8, 11, 7, 6, 7, 7, 11, 6, 10, 8, 14, 9, 6, 8, 8, 6, 5, 0, 5, 7, 8, 5, 6, 6, 9, 6, 4, 6, 5, 6, 8, 10, 7, 8, 9, 10, 9, 12, 6, 12, 11, 7, 13, 17, 17, 10, 13, 14, 13, 15, 16, 14, 11, 10, 14, 17, 10, 16, 11, 15, 10, 10, 17, 13, 15, 14, 12, 14, 10, 15, 9, 12, 13, 11, 12, 10, 12, 12, 12, 12, 12, 12, 14, 14, 16, 13, 12, 12, 14, 15, 14, 12, 15, 13, 14, 15, 16, 16, 17, 12, 17, 15, 17, 17, 16, 11, 15, 16, 14, 14, 17, 17, 16, 16, 15, 15, 16, 15, 14, 13, 14], "Computer Vision": [2, 1, 2, 1, 1, 1, 2, 2, 5, 5, 5, 6, 7, 9, 9, 5, 5, 7, 7, 7, 8, 8, 8, 10, 8, 9, 7, 17, 7, 6, 6, 8, 8, 5, 4, 5, 4, 2, 3, 4, 6, 7, 5, 5, 5, 5, 4, 4, 7, 6, 6, 6, 5, 9, 8, 9, 6, 8, 11, 8, 16, 7, 7, 5, 7, 12, 7, 18, 9, 9, 7, 13, 18, 8, 10, 5, 18, 16, 9, 8, 10, 6, 12, 10, 12, 10, 9, 18, 12, 11, 18, 17, 8, 7, 18, 8, 17, 19, 8, 10, 18, 17, 11, 19, 8, 19, 17, 9, 11, 12, 14, 14, 18, 15, 19, 14, 13, 17, 15, 17, 12, 10, 13, 16, 9, 17, 12, 11, 17, 8, 15, 16, 14, 15, 15, 16, 18, 11, 13, 14, 15, 14, 14, 14, 16, 17, 12, 16, 12, 18, 18, 18, 19, 21, 18, 20, 18, 20, 17, 16, 18, 17, 16, 19, 19, 18, 16, 18, 21, 19, 18, 17, 17, 18, 18, 17, 16, 17, 16, 17, 18, 18, 18, 18, 15]}, "categories": {"nlp-engineer": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 3, 3, 3, 2, 3, 3, 3, 2, 3, 2, 2, 2, 2, 2, 9, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 2, 0, 0, 0, 2, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 0], "ai-product": [0, 0, 0, 0, 0, 0, 0, 0, 5, 4, 5, 6, 6, 5, 6, 5, 4, 7, 7, 8, 8, 8, 7, 6, 8, 8, 7, 3, 8, 7, 8, 8, 8, 9, 9, 10, 9, 9, 11, 11, 10, 10, 8, 7, 6, 7, 8, 10, 9, 9, 8, 7, 6, 6, 5, 7, 4, 7, 5, 5, 7, 9, 9, 5, 6, 8, 8, 5, 3, 5, 4, 6, 2, 4, 3, 3, 5, 7, 6, 5, 5, 1, 6, 3, 3, 6, 6, 4, 6, 6, 5, 3, 7, 7, 6, 5, 6, 4, 5, 5, 4, 5, 2, 3, 6, 5, 3, 5, 9, 5, 4, 5, 6, 4, 3, 4, 4, 3, 7, 2, 5, 4, 3, 3, 3, 4, 3, 4, 4, 4, 5, 2, 4, 6, 4, 4, 5, 5, 1, 1, 2, 1, 0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 2, 3, 2, 2, 1, 2, 1, 2, 1, 1, 2, 2, 2, 2, 2, 3, 2, 3, 3, 4, 3, 2, 5, 4, 4, 4, 4, 4], "ml-engineer": [22, 23, 18, 21, 21, 22, 21, 24, 30, 31, 34, 34, 40, 41, 35, 28, 29, 30, 30, 27, 26, 25, 24, 22, 25, 28, 26, 48, 29, 30, 30, 32, 37, 37, 32, 32, 33, 34, 31, 30, 31, 35, 35, 34, 36, 33, 40, 40, 31, 44, 47, 36, 47, 38, 33, 40, 25, 34, 34, 42, 33, 34, 33, 34, 36, 49, 38, 43, 40, 48, 51, 34, 56, 46, 66, 39, 45, 43, 40, 34, 32, 16, 30, 31, 39, 31, 30, 33, 44, 39, 41, 35, 36, 33, 42, 38, 40, 44, 38, 45, 34, 49, 39, 43, 45, 54, 47, 53, 56, 50, 59, 59, 59, 66, 61, 54, 52, 58, 52, 61, 47, 56, 60, 61, 48, 59, 62, 63, 71, 51, 57, 59, 57, 56, 47, 54, 58, 45, 54, 52, 48, 57, 56, 46, 43, 60, 55, 60, 59, 62, 48, 46, 63, 53, 53, 59, 52, 66, 58, 50, 47, 48, 65, 50, 46, 52, 53, 49, 46, 40, 45, 43, 42, 38, 37, 40, 39, 40, 39, 38, 43, 41, 41, 39, 40], "data-general": [4, 4, 3, 3, 3, 4, 4, 4, 3, 3, 3, 4, 3, 3, 4, 7, 4, 6, 4, 3, 6, 6, 7, 7, 7, 8, 7, 2, 10, 8, 9, 8, 2, 2, 3, 3, 3, 3, 3, 2, 2, 2, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 2, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 2, 1, 2, 2, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "ai-engineer": [27, 26, 31, 28, 26, 22, 26, 27, 24, 23, 23, 23, 21, 20, 23, 25, 22, 21, 19, 21, 22, 25, 25, 25, 26, 26, 25, 23, 30, 29, 26, 28, 33, 29, 31, 31, 31, 29, 26, 26, 27, 30, 20, 20, 20, 21, 23, 24, 25, 19, 20, 23, 26, 24, 25, 27, 24, 24, 25, 28, 26, 30, 26, 31, 34, 35, 28, 27, 33, 23, 33, 25, 26, 26, 33, 35, 33, 31, 35, 29, 34, 17, 36, 38, 36, 33, 33, 33, 41, 37, 33, 39, 28, 35, 38, 39, 34, 29, 30, 26, 32, 30, 36, 35, 30, 29, 40, 41, 43, 37, 32, 29, 25, 26, 29, 28, 28, 27, 29, 30, 33, 35, 27, 31, 38, 32, 34, 29, 21, 29, 24, 32, 22, 33, 24, 32, 35, 33, 24, 23, 26, 22, 21, 28, 31, 28, 24, 31, 24, 28, 31, 28, 27, 30, 33, 32, 28, 23, 27, 24, 25, 28, 23, 25, 30, 31, 34, 37, 37, 35, 35, 33, 37, 38, 33, 33, 30, 33, 34, 32, 33, 33, 34, 35, 37], "data-scientist": [22, 20, 21, 21, 21, 19, 19, 22, 22, 21, 20, 19, 15, 21, 27, 26, 24, 26, 27, 27, 27, 27, 29, 27, 25, 28, 28, 36, 23, 23, 29, 23, 19, 20, 22, 21, 22, 22, 21, 21, 21, 19, 18, 19, 20, 21, 20, 22, 20, 20, 28, 20, 18, 18, 21, 24, 22, 23, 18, 22, 19, 20, 17, 20, 22, 21, 26, 23, 22, 22, 25, 21, 33, 32, 32, 34, 33, 31, 34, 33, 28, 34, 27, 23, 31, 28, 30, 29, 39, 21, 32, 23, 24, 28, 30, 25, 36, 29, 18, 23, 25, 18, 24, 20, 25, 21, 22, 18, 23, 27, 24, 23, 18, 24, 20, 21, 24, 19, 22, 23, 24, 22, 24, 21, 21, 23, 24, 25, 21, 19, 15, 19, 24, 25, 29, 30, 29, 32, 21, 22, 24, 21, 23, 20, 23, 25, 21, 24, 23, 26, 26, 26, 26, 31, 29, 30, 28, 25, 23, 23, 25, 26, 24, 25, 24, 25, 23, 22, 25, 24, 25, 23, 23, 23, 24, 27, 27, 27, 26, 26, 26, 25, 28, 26, 25], "ai-manager": [1, 1, 1, 1, 1, 1, 1, 1, 5, 5, 5, 5, 4, 7, 8, 6, 6, 7, 7, 7, 7, 2, 2, 1, 1, 2, 1, 3, 1, 1, 2, 3, 2, 3, 3, 3, 3, 3, 4, 4, 4, 3, 2, 2, 2, 2, 2, 3, 3, 2, 1, 2, 2, 3, 3, 4, 3, 2, 0, 2, 2, 2, 3, 1, 2, 1, 2, 1, 1, 3, 3, 3, 2, 2, 1, 2, 1, 2, 2, 1, 2, 0, 0, 0, 0, 2, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 3, 3, 1, 2, 2, 1, 3, 2, 4, 2, 2, 2, 3, 2, 2, 2, 2, 5, 5, 4, 6, 6, 3, 1, 3, 2, 1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 0, 1, 1, 1, 1, 2, 1, 1, 1, 1, 2, 1, 2, 1, 2, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "cv-engineer": [2, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 2, 4, 4, 2, 2, 3, 3, 3, 5, 5, 5, 6, 5, 5, 4, 5, 4, 4, 3, 5, 3, 1, 1, 2, 1, 1, 1, 1, 3, 1, 2, 2, 2, 2, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 5, 1, 7, 1, 3, 1, 2, 4, 1, 10, 4, 3, 1, 10, 9, 3, 3, 3, 10, 10, 4, 4, 4, 4, 5, 4, 6, 4, 4, 11, 4, 7, 10, 12, 4, 3, 11, 3, 11, 11, 3, 4, 11, 11, 6, 11, 4, 11, 10, 3, 3, 2, 4, 4, 11, 5, 11, 6, 7, 10, 11, 8, 8, 3, 4, 9, 3, 9, 3, 3, 9, 1, 8, 8, 7, 8, 6, 7, 8, 6, 7, 7, 9, 8, 8, 10, 11, 10, 9, 12, 7, 10, 11, 12, 13, 14, 12, 13, 11, 11, 11, 12, 12, 10, 10, 12, 12, 11, 10, 10, 11, 11, 11, 11, 11, 11, 12, 11, 11, 11, 12, 12, 10, 11, 11, 11, 10], "ai-general": [21, 19, 22, 22, 21, 21, 18, 20, 15, 14, 13, 24, 15, 13, 13, 18, 17, 19, 18, 20, 20, 25, 27, 22, 23, 23, 23, 30, 25, 23, 25, 23, 19, 20, 22, 21, 20, 21, 21, 20, 24, 20, 12, 19, 18, 19, 40, 38, 29, 43, 32, 23, 33, 29, 26, 28, 31, 24, 21, 26, 19, 19, 20, 26, 22, 19, 24, 30, 36, 39, 35, 35, 36, 34, 25, 18, 18, 21, 20, 21, 25, 20, 25, 19, 14, 15, 20, 19, 20, 15, 18, 15, 20, 16, 16, 17, 18, 12, 20, 21, 21, 16, 19, 14, 13, 17, 10, 10, 14, 15, 14, 23, 12, 17, 12, 12, 11, 14, 15, 14, 14, 11, 16, 13, 14, 14, 12, 18, 22, 17, 21, 16, 27, 21, 27, 26, 24, 28, 16, 20, 20, 19, 20, 20, 23, 17, 19, 16, 20, 18, 21, 18, 23, 19, 21, 21, 15, 25, 24, 25, 24, 21, 21, 25, 29, 27, 28, 21, 24, 20, 18, 20, 17, 17, 16, 14, 14, 14, 14, 12, 15, 12, 13, 13, 13], "ai-researcher": [1, 1, 1, 1, 1, 1, 1, 1, 8, 8, 8, 9, 7, 8, 7, 6, 6, 8, 8, 7, 7, 8, 10, 8, 7, 8, 8, 4, 8, 8, 8, 9, 9, 8, 8, 10, 10, 9, 11, 9, 7, 10, 11, 12, 13, 12, 15, 14, 14, 16, 16, 17, 19, 16, 22, 19, 18, 14, 25, 21, 23, 24, 26, 27, 28, 15, 22, 18, 11, 17, 14, 11, 13, 16, 14, 11, 10, 13, 14, 10, 13, 3, 10, 9, 6, 11, 10, 9, 9, 7, 11, 6, 8, 8, 12, 7, 11, 8, 9, 8, 9, 8, 6, 6, 9, 12, 6, 5, 9, 8, 6, 10, 5, 9, 6, 11, 7, 6, 8, 10, 7, 5, 10, 11, 9, 9, 13, 7, 16, 11, 13, 14, 12, 4, 8, 5, 7, 9, 6, 7, 5, 6, 4, 6, 7, 8, 6, 9, 9, 8, 7, 7, 9, 7, 8, 8, 7, 7, 6, 7, 8, 7, 4, 7, 9, 5, 6, 8, 11, 9, 10, 10, 9, 11, 10, 7, 6, 8, 7, 7, 6, 7, 6, 6, 7], "data-analyst": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 3, 3, 2, 4, 4, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 3, 3, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 1, 2, 4, 2, 2, 2, 1, 0, 1, 2, 2, 3, 3, 1, 2, 2, 1, 1, 2, 1, 1, 1, 1, 1, 2, 2, 1, 2, 2, 2, 0, 2, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 2, 1, 0, 0, 0, 1, 1, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "other": [112, 112, 118, 113, 116, 115, 114, 113, 91, 93, 95, 94, 85, 88, 91, 90, 85, 84, 86, 82, 81, 76, 76, 87, 83, 79, 79, 78, 75, 73, 72, 75, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 2, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 2, 5, 2, 3, 1, 0, 0, 0, 1, 1, 2, 3, 2, 2, 2, 3, 1, 1, 1, 1, 1, 1, 1, 2, 1, 2, 3, 2, 1, 2, 1, 1, 6, 3, 2, 2, 3, 3, 3, 3, 4, 4, 5, 4, 4, 5, 5, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 0, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 2, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0], "data-engineer": [1, 1, 2, 1, 1, 3, 3, 1, 3, 3, 3, 1, 3, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 3, 1, 2, 2, 1, 1, 1, 2, 3, 3, 3, 3, 3, 3, 3, 5, 5, 6, 6, 6, 7, 3, 6, 5, 3, 5, 5, 4, 5, 6, 5, 6, 5, 5, 4, 5, 5, 5, 4, 4, 5, 4, 4, 5, 3, 4, 2, 1, 1, 2, 3, 3, 3, 3, 3, 5, 5, 2, 6, 4, 5, 0, 3, 0, 4, 3, 2, 3, 2, 5, 2, 0, 4, 3, 3, 3, 4, 0, 4, 5, 3, 5, 6, 8, 6, 5, 4, 5, 5, 5, 5, 5, 4, 4, 3, 3, 2, 2, 0, 1, 1, 1, 2, 0, 2, 1, 1, 1, 2, 3, 4, 5, 6, 2, 1, 3, 1, 2, 4, 4, 1, 1, 1, 1, 0, 1, 2, 0, 2, 2, 2, 2, 1, 2, 6, 6, 6, 5, 6, 10, 6, 7, 11, 9, 11, 9, 9, 9, 9, 4, 6, 5, 7, 5, 3, 3, 4, 4, 5, 4]}, "remote": {"hybrid": [0, 0, 0, 0, 0, 0, 0, 0, 16, 16, 15, 18, 18, 12, 13, 11, 8, 14, 11, 15, 13, 13, 13, 13, 12, 10, 9, 10, 12, 16, 14, 17, 12, 13, 11, 10, 10, 8, 9, 8, 9, 9, 9, 8, 8, 8, 7, 7, 7, 8, 9, 9, 6, 8, 8, 9, 5, 7, 7, 7, 10, 10, 10, 9, 9, 8, 8, 8, 10, 8, 10, 6, 8, 6, 11, 11, 9, 12, 8, 9, 15, 1, 13, 15, 9, 12, 14, 17, 14, 12, 13, 14, 11, 12, 13, 13, 12, 10, 15, 12, 12, 18, 6, 14, 12, 11, 12, 15, 13, 10, 14, 14, 10, 10, 10, 14, 12, 10, 14, 17, 14, 9, 9, 17, 14, 13, 16, 10, 16, 10, 12, 16, 12, 18, 10, 10, 17, 14, 12, 12, 14, 14, 14, 13, 12, 14, 16, 15, 15, 17, 14, 15, 13, 13, 11, 12, 12, 11, 10, 8, 10, 13, 10, 13, 12, 12, 10, 11, 13, 12, 10, 10, 9, 11, 8, 8, 6, 5, 5, 6, 8, 8, 8, 8, 8], "onsite": [0, 0, 0, 0, 0, 0, 0, 1, 3, 3, 3, 1, 3, 2, 2, 1, 1, 1, 2, 2, 2, 2, 2, 2, 4, 4, 2, 6, 4, 4, 3, 4, 3, 3, 4, 3, 2, 3, 3, 4, 4, 5, 4, 4, 4, 4, 4, 4, 5, 4, 4, 4, 4, 4, 5, 3, 3, 4, 3, 5, 6, 4, 5, 4, 5, 4, 5, 5, 5, 6, 5, 4, 5, 5, 3, 6, 5, 8, 5, 5, 3, 0, 5, 3, 4, 3, 4, 7, 7, 4, 6, 4, 3, 4, 3, 2, 6, 4, 3, 6, 6, 6, 3, 3, 4, 7, 3, 4, 4, 3, 3, 5, 4, 4, 3, 4, 4, 2, 3, 2, 2, 1, 1, 3, 3, 2, 2, 1, 1, 3, 3, 3, 2, 2, 4, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 1, 2, 1, 2, 2, 2, 1, 1, 1, 2, 1, 2, 1, 1, 2, 2, 3, 2, 3, 3, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1], "remote": [3, 3, 1, 1, 1, 1, 1, 1, 11, 11, 10, 11, 11, 10, 11, 6, 6, 10, 9, 9, 10, 9, 10, 10, 10, 12, 14, 26, 14, 15, 14, 15, 12, 11, 11, 14, 13, 14, 12, 9, 10, 7, 8, 9, 10, 9, 8, 8, 8, 8, 8, 8, 10, 11, 12, 12, 8, 12, 9, 10, 6, 6, 7, 5, 7, 6, 7, 4, 4, 6, 6, 4, 5, 4, 4, 5, 6, 5, 5, 5, 5, 0, 6, 6, 4, 5, 5, 7, 6, 4, 6, 4, 6, 7, 9, 6, 11, 8, 9, 13, 11, 9, 4, 3, 12, 16, 4, 5, 4, 3, 5, 12, 4, 12, 4, 6, 7, 3, 7, 4, 3, 4, 11, 6, 7, 7, 5, 9, 11, 6, 7, 8, 8, 7, 13, 12, 5, 11, 3, 3, 3, 3, 3, 3, 5, 3, 3, 3, 3, 4, 4, 5, 9, 8, 5, 8, 4, 7, 6, 6, 5, 5, 7, 5, 6, 7, 5, 7, 8, 8, 9, 7, 6, 7, 6, 6, 6, 7, 6, 5, 7, 8, 8, 8, 7], "unknown": [211, 206, 218, 212, 212, 209, 209, 214, 178, 177, 183, 193, 172, 192, 197, 198, 186, 189, 190, 182, 186, 186, 189, 190, 188, 197, 189, 203, 191, 178, 186, 183, 112, 110, 113, 113, 114, 113, 112, 110, 114, 117, 97, 105, 105, 107, 135, 141, 120, 138, 136, 114, 138, 118, 119, 133, 123, 113, 125, 134, 121, 126, 123, 136, 138, 141, 136, 146, 138, 145, 154, 141, 166, 155, 163, 129, 140, 137, 142, 124, 128, 104, 121, 113, 125, 121, 115, 114, 141, 120, 135, 116, 117, 116, 138, 117, 132, 124, 102, 107, 112, 113, 126, 121, 114, 123, 128, 122, 150, 139, 134, 135, 130, 138, 137, 125, 124, 132, 132, 135, 127, 128, 132, 128, 118, 135, 134, 141, 145, 122, 130, 132, 139, 130, 126, 140, 150, 141, 119, 121, 121, 120, 119, 120, 127, 134, 119, 139, 127, 133, 128, 120, 139, 135, 143, 145, 128, 143, 138, 135, 134, 129, 140, 133, 147, 139, 149, 143, 144, 133, 134, 133, 133, 130, 124, 127, 123, 130, 127, 124, 126, 121, 125, 123, 124]}, "totalPerRun": [214, 209, 219, 213, 213, 210, 210, 216, 208, 207, 211, 223, 204, 216, 223, 216, 201, 214, 212, 208, 211, 210, 214, 215, 214, 223, 214, 245, 221, 213, 217, 219, 139, 137, 139, 140, 139, 138, 136, 131, 137, 138, 118, 126, 127, 128, 154, 160, 140, 158, 157, 135, 158, 141, 144, 157, 139, 136, 144, 156, 143, 146, 145, 154, 159, 159, 156, 163, 157, 165, 175, 155, 184, 170, 181, 151, 160, 162, 160, 143, 151, 105, 145, 137, 142, 141, 138, 145, 168, 140, 160, 138, 137, 139, 163, 138, 161, 146, 129, 138, 141, 146, 139, 141, 142, 157, 147, 146, 171, 155, 156, 166, 148, 164, 154, 149, 147, 147, 156, 158, 146, 142, 153, 154, 142, 157, 157, 161, 173, 141, 152, 159, 161, 157, 153, 165, 174, 167, 134, 136, 138, 137, 136, 136, 144, 151, 138, 157, 145, 155, 147, 141, 163, 158, 160, 167, 145, 163, 156, 151, 150, 148, 158, 153, 166, 160, 165, 162, 167, 155, 156, 152, 151, 151, 140, 143, 137, 144, 140, 136, 142, 138, 142, 140, 140]}, "topCompanies": [{"name": "Uitzendbureau", "count": 111, "observations": 843, "intermediary": true}, {"name": "StudentJob", "count": 88, "observations": 789, "intermediary": true}, {"name": "Synsel Techniek", "count": 66, "observations": 469, "intermediary": true}, {"name": "Jobgether", "count": 47, "observations": 197, "intermediary": true}, {"name": "CIMSOLUTIONS", "count": 41, "observations": 210, "intermediary": false}, {"name": "Sia", "count": 37, "observations": 359, "intermediary": false}, {"name": "Nationale Nederlanden", "count": 36, "observations": 473, "intermediary": false}, {"name": "Ministerie van Defensie", "count": 33, "observations": 322, "intermediary": false}, {"name": "Nebius", "count": 32, "observations": 194, "intermediary": false}, {"name": "Harnham", "count": 26, "observations": 323, "intermediary": true}], "topEmployers": [{"name": "CIMSOLUTIONS", "count": 41, "observations": 210, "intermediary": false}, {"name": "Sia", "count": 37, "observations": 359, "intermediary": false}, {"name": "Nationale Nederlanden", "count": 36, "observations": 473, "intermediary": false}, {"name": "Ministerie van Defensie", "count": 33, "observations": 322, "intermediary": false}, {"name": "Nebius", "count": 32, "observations": 194, "intermediary": false}, {"name": "Veneficus", "count": 23, "observations": 358, "intermediary": false}, {"name": "Capgemini", "count": 21, "observations": 340, "intermediary": false}, {"name": "EIFFEL", "count": 19, "observations": 202, "intermediary": false}, {"name": "Qabird", "count": 18, "observations": 196, "intermediary": false}, {"name": "ABN AMRO Bank N.V.", "count": 17, "observations": 218, "intermediary": false}], "skillMovers": {"window": 28, "threshold": 3.0, "baselineDate": "2026-04-11", "skills": [{"name": "AI Agents", "start": 14.4, "now": 28.3, "delta": 13.9, "status": "rising"}, {"name": "Computer Vision", "start": 7.2, "now": 15.8, "delta": 8.5, "status": "rising"}, {"name": "RAG", "start": 11.8, "now": 18.6, "delta": 6.8, "status": "rising"}, {"name": "Deep Learning", "start": 9.3, "now": 14.1, "delta": 4.8, "status": "rising"}, {"name": "Azure", "start": 16.5, "now": 17.1, "delta": 0.6, "status": "flat"}, {"name": "LLM", "start": 25.9, "now": 26.3, "delta": 0.4, "status": "flat"}, {"name": "CI/CD", "start": 16.2, "now": 13.6, "delta": -2.6, "status": "flat"}, {"name": "Python", "start": 30.7, "now": 24.9, "delta": -5.7, "status": "falling"}]}};
+
+const LABELS = {
+    'ml-engineer': 'ML Engineer', 'ai-engineer': 'AI Engineer', 'ai-general': 'AI General',
+    'data-scientist': 'Data Scientist', 'ai-researcher': 'AI Researcher', 'data-general': 'Data General',
+    'ai-product': 'AI Product', 'cv-engineer': 'CV Engineer', 'data-analyst': 'Data Analyst',
+    'nlp-engineer': 'NLP Engineer', 'ai-manager': 'AI Manager', 'data-engineer': 'Data Engineer',
+    'remote': 'Remote', 'hybrid': 'Hybrid', 'onsite': 'Onsite', 'senior': 'Senior', 'junior': 'Junior',
+    'lead': 'Lead', 'mid': 'Mid', 'head': 'Head', 'unknown': 'Not stated', 'other': 'Other'
+};
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const SVGNS = 'http://www.w3.org/2000/svg';
+
+const $ = id => document.getElementById(id);
+const label = n => LABELS[n] || String(n).replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+const num = n => Number(n).toLocaleString('en-GB');
+const pctOf = (n, total) => total ? Math.round(100 * n / total) : 0;
+const signed = v => (v > 0 ? '+' : '') + v.toFixed(1);
+// Names tied for first place, so a title never crowns one of two equals.
+const leaders = rows => rows.length ? rows.filter(r => r.count === rows[0].count).map(r => r.label) : [];
+const joinNames = names => names.length < 2 ? names.join('') : names.slice(0, -1).join(', ') + ' and ' + names[names.length - 1];
+const dayLabel = iso => { const p = String(iso).split('-'); return +p[2] + ' ' + MONTHS[+p[1] - 1] + ' ' + p[0]; };
+
+// Every string below may come from a scraped page: text goes in through
+// textContent only, never through innerHTML.
+function el(tag, attrs, text) {
+    const node = document.createElement(tag);
+    for (const k in (attrs || {})) node.setAttribute(k, attrs[k]);
+    if (text !== undefined) node.textContent = text;
+    return node;
+}
+function sv(tag, attrs, text) {
+    const node = document.createElementNS(SVGNS, tag);
+    for (const k in (attrs || {})) node.setAttribute(k, attrs[k]);
+    if (text !== undefined) node.textContent = text;
+    return node;
+}
+
+function trailingMean(values, span) {
+    return values.map((v, i) => {
+        if (v === null || v === undefined) return null;
+        let sum = 0, n = 0;
+        for (let j = Math.max(0, i - span + 1); j <= i; j++) {
+            if (values[j] !== null && values[j] !== undefined) { sum += values[j]; n++; }
         }
-    };
+        return n ? sum / n : null;
+    });
+}
 
-    // --- Skills Trend (Line) ---
-    const skillsTrend = DATA.trends || {};
-    const skillNames = Object.keys(skillsTrend.skills || {});
+// ---- Line chart: crosshair snaps to the nearest day, one tooltip lists every series
+function lineChart(host, cfg) {
+    const state = { width: 0, idx: null };
 
-    if (skillNames.length > 0 && (skillsTrend.dates || []).length > 0) {
-        new Chart(document.getElementById('skillsTrend'), {
-            type: 'line',
-            data: {
-                labels: skillsTrend.dates,
-                datasets: skillNames.map((name, i) => ({
-                    label: name,
-                    // Share of postings whose text was retrieved, not raw
-                    // counts: text coverage rose from ~20% to ~70% over the
-                    // panel, and raw counts read that as a market surge.
-                    data: (skillsTrend.skillsPct || {})[name] || skillsTrend.skills[name],
-                    borderColor: COLORS[i % COLORS.length],
-                    backgroundColor: COLORS[i % COLORS.length] + '20',
-                    tension: 0.3,
-                    fill: false,
-                    pointRadius: 4,
-                    pointHoverRadius: 6,
-                    borderWidth: 2.5
-                }))
-            },
-            options: {
-                ...chartDefaults,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        title: { display: true, text: '% of postings with text' },
-                        ticks: { font: { size: 11 }, callback: v => v + '%' }
-                    },
-                    x: {
-                        ticks: { font: { size: 11 } }
-                    }
-                }
+    function draw() {
+        const W = Math.max(300, Math.floor(host.clientWidth));
+        if (W === state.width) return;
+        state.width = W;
+        state.idx = null;
+        host.textContent = '';
+
+        const narrow = W < 560;
+        const H = cfg.height ? cfg.height(narrow) : (narrow ? 300 : 390);
+        const m = { top: 10, right: narrow ? 116 : 150, bottom: 26, left: 38 };
+        const i0 = cfg.start, i1 = cfg.dates.length - 1;
+        const iw = W - m.left - m.right, ih = H - m.top - m.bottom;
+
+        let peak = 0;
+        cfg.series.forEach(s => s.values.forEach((v, i) => { if (i >= i0 && v !== null && v > peak) peak = v; }));
+        const yMax = Math.max(cfg.step, Math.ceil(peak / cfg.step) * cfg.step);
+        const x = i => m.left + (i1 === i0 ? 0 : (i - i0) / (i1 - i0) * iw);
+        const y = v => m.top + ih - (v / yMax) * ih;
+
+        const svg = sv('svg', { viewBox: '0 0 ' + W + ' ' + H, width: W, height: H, role: 'img', tabindex: '0', 'aria-label': cfg.describe() });
+
+        const grid = sv('g', { class: 'grid' }), axis = sv('g', { class: 'axis' });
+        for (let v = 0; v <= yMax; v += cfg.step) {
+            grid.appendChild(sv('line', { x1: m.left, x2: m.left + iw, y1: y(v), y2: y(v) }));
+            axis.appendChild(sv('text', { x: m.left - 8, y: y(v) + 4, 'text-anchor': 'end' }, cfg.fmt(v)));
+        }
+        // Month starts own the tick labels; the partial first month is only
+        // labelled when it has room, so a short March cannot crowd out April.
+        const ticks = [];
+        for (let i = i0 + 1; i <= i1; i++) if (cfg.dates[i - 1].slice(0, 7) !== cfg.dates[i].slice(0, 7)) ticks.push(i);
+        if (!ticks.length || x(ticks[0]) - x(i0) >= 44) ticks.unshift(i0);
+        let lastTick = -Infinity;
+        for (const i of ticks) {
+            const mo = cfg.dates[i].slice(0, 7);
+            if (x(i) - lastTick < 44) continue;
+            lastTick = x(i);
+            grid.appendChild(sv('line', { x1: x(i), x2: x(i), y1: m.top + ih, y2: m.top + ih + 5 }));
+            axis.appendChild(sv('text', { x: x(i), y: H - 6, 'text-anchor': i === i0 ? 'start' : 'middle' }, MONTHS[+mo.slice(5) - 1]));
+        }
+        svg.appendChild(grid); svg.appendChild(axis);
+
+        // Recessive lines first so the series carrying the finding sit on top.
+        const order = cfg.series.slice().sort((a, b) => (a.cls === 'flat' ? 0 : 1) - (b.cls === 'flat' ? 0 : 1));
+        order.forEach(s => {
+            let d = '', pen = false;
+            for (let i = i0; i <= i1; i++) {
+                const v = s.values[i];
+                if (v === null || v === undefined) { pen = false; continue; }
+                d += (pen ? 'L' : 'M') + x(i).toFixed(1) + ' ' + y(v).toFixed(1);
+                pen = true;
             }
+            if (s.cls !== 'flat') svg.appendChild(sv('path', { d: d, class: 'ln ring' }));
+            svg.appendChild(sv('path', { d: d, class: 'ln ' + s.cls }));
         });
-    }
 
-    // --- Doughnut percentage plugin ---
-    const pctPlugin = {
-        id: 'doughnutPct',
-        afterDraw(chart) {
-            const { ctx, data } = chart;
-            const total = data.datasets[0].data.reduce((a, b) => a + b, 0);
-            if (!total) return;
-            chart.getDatasetMeta(0).data.forEach((arc, i) => {
-                const val = data.datasets[0].data[i];
-                const pct = Math.round(val / total * 100);
-                if (pct < 5) return; // skip tiny slices
-                const { x, y } = arc.tooltipPosition();
-                ctx.save();
-                ctx.fillStyle = '#1e1b2e';
-                ctx.font = "600 11px 'Inter', sans-serif";
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText(pct + '%', x, y);
-                ctx.restore();
+        // Direct labels at the line ends, nudged apart so they never overlap.
+        const ends = cfg.series.map(s => {
+            let i = i1;
+            while (i > i0 && (s.values[i] === null || s.values[i] === undefined)) i--;
+            return { s: s, v: s.values[i], y: y(s.values[i] || 0) };
+        }).sort((a, b) => a.y - b.y);
+        const gap = 15;
+        for (let k = 1; k < ends.length; k++) if (ends[k].y - ends[k - 1].y < gap) ends[k].y = ends[k - 1].y + gap;
+        const floor = m.top + ih + 4;
+        if (ends.length && ends[ends.length - 1].y > floor) {
+            ends[ends.length - 1].y = floor;
+            for (let k = ends.length - 2; k >= 0; k--) if (ends[k + 1].y - ends[k].y < gap) ends[k].y = ends[k + 1].y - gap;
+        }
+        ends.forEach(e => {
+            const t = sv('text', { x: m.left + iw + 10, y: e.y + 4, class: 'endlabel' + (e.s.cls === 'flat' ? '' : ' strong') });
+            // On a phone the value would push the name off-screen; the tooltip,
+            // the rail and the table view still carry it.
+            if (!narrow) t.appendChild(sv('tspan', {}, cfg.fmt(Math.round(e.v)) + ' '));
+            t.appendChild(sv('tspan', {}, e.s.name));
+            svg.appendChild(t);
+        });
+
+        const cross = sv('line', { class: 'cross', y1: m.top, y2: m.top + ih, visibility: 'hidden' });
+        const dots = cfg.series.map(s => sv('circle', { r: 4, class: 'dot ' + s.cls, visibility: 'hidden' }));
+        svg.appendChild(cross); dots.forEach(c => svg.appendChild(c));
+        const hit = sv('rect', { x: m.left, y: m.top, width: iw, height: ih, fill: 'transparent' });
+        svg.appendChild(hit);
+
+        const tip = el('div', { class: 'tip', role: 'status' });
+        host.appendChild(svg); host.appendChild(tip);
+
+        function show(i) {
+            i = Math.max(i0, Math.min(i1, i));
+            state.idx = i;
+            cross.setAttribute('x1', x(i)); cross.setAttribute('x2', x(i)); cross.setAttribute('visibility', 'visible');
+            tip.textContent = '';
+            tip.appendChild(el('div', { class: 'tip-date' }, dayLabel(cfg.dates[i])));
+            const rows = [];
+            cfg.series.forEach((s, k) => {
+                const v = s.values[i];
+                if (v === null || v === undefined) { dots[k].setAttribute('visibility', 'hidden'); return; }
+                dots[k].setAttribute('cx', x(i)); dots[k].setAttribute('cy', y(v)); dots[k].setAttribute('visibility', 'visible');
+                rows.push({ s: s, v: v });
             });
+            rows.sort((a, b) => b.v - a.v).forEach(r => {
+                const row = el('div', { class: 'tip-row' });
+                const key = el('i', { class: 'key ' + r.s.cls });
+                if (r.s.cls === 'total') key.style.borderColor = 'currentColor';
+                row.appendChild(key);
+                row.appendChild(el('b', {}, cfg.fmt(cfg.precise ? r.v.toFixed(1) : Math.round(r.v))));
+                row.appendChild(el('span', {}, r.s.name));
+                tip.appendChild(row);
+            });
+            if (!rows.length) tip.appendChild(el('div', {}, 'No share on this day'));
+            const tw = tip.offsetWidth, px = x(i);
+            let left = px + 14;
+            // Flip at the plot edge, not the SVG edge, so the end labels stay readable.
+            if (left + tw > m.left + iw) left = px - 14 - tw;
+            tip.style.transform = 'translate(' + Math.max(0, left) + 'px,' + m.top + 'px)';
+            tip.style.visibility = 'visible';
         }
-    };
-
-    // --- Category (Doughnut) --- filter out "other"
-    const catsRaw = (DATA.latestSnapshot || {}).by_category || [];
-    const cats = catsRaw.filter(c => c.name !== 'other');
-    if (cats.length > 0) {
-        new Chart(document.getElementById('categoryChart'), {
-            type: 'doughnut',
-            data: {
-                labels: cats.map(c => fmtLabel(c.name)),
-                datasets: [{
-                    data: cats.map(c => c.count),
-                    backgroundColor: COLORS.slice(0, cats.length),
-                    borderWidth: 0,
-                    hoverOffset: 8
-                }]
-            },
-            plugins: [pctPlugin],
-            options: {
-                ...chartDefaults,
-                cutout: '55%',
-                plugins: {
-                    ...chartDefaults.plugins,
-                    legend: {
-                        ...chartDefaults.plugins.legend,
-                        position: 'right'
-                    }
-                }
-            }
+        function hide() {
+            state.idx = null;
+            cross.setAttribute('visibility', 'hidden');
+            dots.forEach(c => c.setAttribute('visibility', 'hidden'));
+            tip.style.visibility = 'hidden';
+        }
+        function fromPointer(ev) {
+            const box = svg.getBoundingClientRect();
+            const px = (ev.clientX - box.left) * (W / box.width);
+            show(Math.round(i0 + (px - m.left) / iw * (i1 - i0)));
+        }
+        hit.addEventListener('pointermove', fromPointer);
+        hit.addEventListener('pointerdown', fromPointer);
+        svg.addEventListener('pointerleave', hide);
+        svg.addEventListener('focus', () => { if (state.idx === null) show(i1); });
+        svg.addEventListener('blur', hide);
+        svg.addEventListener('keydown', ev => {
+            const cur = state.idx === null ? i1 : state.idx;
+            if (ev.key === 'ArrowLeft') { show(cur - (ev.shiftKey ? 7 : 1)); ev.preventDefault(); }
+            else if (ev.key === 'ArrowRight') { show(cur + (ev.shiftKey ? 7 : 1)); ev.preventDefault(); }
+            else if (ev.key === 'Home') { show(i0); ev.preventDefault(); }
+            else if (ev.key === 'End') { show(i1); ev.preventDefault(); }
+            else if (ev.key === 'Escape') hide();
         });
     }
 
-    // --- Seniority (Horizontal Bar) ---
-    const seniorityRaw = (DATA.latestSnapshot || {}).by_seniority || [];
-    const seniority = seniorityRaw.filter(s => s.name !== 'unknown');
-    if (seniority.length > 0) {
-        new Chart(document.getElementById('seniorityChart'), {
-            type: 'bar',
-            data: {
-                labels: seniority.map(s => fmtLabel(s.name)),
-                datasets: [{
-                    data: seniority.map(s => s.count),
-                    backgroundColor: COLORS.slice(0, seniority.length),
-                    borderRadius: 6,
-                    borderSkipped: false
-                }]
-            },
-            options: {
-                ...chartDefaults,
-                indexAxis: 'y',
-                plugins: { ...chartDefaults.plugins, legend: { display: false } },
-                scales: {
-                    x: { beginAtZero: true, ticks: { stepSize: 1, font: { size: 11 } } },
-                    y: { ticks: { font: { size: 12 } } }
-                }
-            }
+    draw();
+    let timer = null;
+    new ResizeObserver(() => { clearTimeout(timer); timer = setTimeout(draw, 80); }).observe(host);
+}
+
+// ---- Bar table: a real table, so the chart is its own accessible table view
+function barTable(host, rows, opts) {
+    host.textContent = '';
+    const total = opts.total || 0;
+    const peak = rows.reduce((a, r) => Math.max(a, r.count), 0) || 1;
+    const table = el('table', { class: 'bars' });
+    table.appendChild(el('caption', { style: 'position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)' }, opts.caption));
+    const head = el('tr');
+    head.appendChild(el('th', { scope: 'col' }, opts.first));
+    head.appendChild(el('th', { scope: 'col', 'aria-hidden': 'true' }));
+    head.appendChild(el('th', { scope: 'col' }, 'ads'));
+    if (total) head.appendChild(el('th', { scope: 'col' }, 'share'));
+    const thead = el('thead'); thead.appendChild(head); table.appendChild(thead);
+    const body = el('tbody');
+    rows.forEach(r => {
+        const tr = el('tr', r.muted ? { class: 'muted' } : {});
+        tr.appendChild(el('th', { scope: 'row', title: r.label }, r.label));
+        const track = el('td', { class: 'track', 'aria-hidden': 'true' });
+        const fill = el('div', { class: 'fill' });
+        fill.style.width = (100 * r.count / peak).toFixed(1) + '%';
+        track.appendChild(fill); tr.appendChild(track);
+        tr.appendChild(el('td', { class: 'num' }, num(r.count)));
+        if (total) tr.appendChild(el('td', { class: 'num pct' }, pctOf(r.count, total) + '%'));
+        body.appendChild(tr);
+    });
+    table.appendChild(body);
+    host.appendChild(table);
+}
+
+function monthlyTable(host, dates, seriesMap, moverByName) {
+    const months = [];
+    dates.forEach(d => { const k = d.slice(0, 7); if (months.indexOf(k) < 0) months.push(k); });
+    const table = el('table', { class: 'data' });
+    const head = el('tr');
+    head.appendChild(el('th', { scope: 'col' }, 'Skill'));
+    months.forEach(k => head.appendChild(el('th', { scope: 'col' }, MONTHS[+k.slice(5) - 1])));
+    head.appendChild(el('th', { scope: 'col' }, 'Change'));
+    const thead = el('thead'); thead.appendChild(head); table.appendChild(thead);
+    const body = el('tbody');
+    Object.keys(seriesMap).forEach(name => {
+        const tr = el('tr');
+        tr.appendChild(el('th', { scope: 'row' }, name));
+        months.forEach(k => {
+            let sum = 0, n = 0;
+            dates.forEach((d, i) => { const v = seriesMap[name][i]; if (d.slice(0, 7) === k && v !== null && v !== undefined) { sum += v; n++; } });
+            tr.appendChild(el('td', {}, n ? (sum / n).toFixed(1) + '%' : 'n/a'));
         });
+        const mv = moverByName[name];
+        tr.appendChild(el('td', {}, mv ? signed(mv.delta) + ' pts' : 'n/a'));
+        body.appendChild(tr);
+    });
+    table.appendChild(body);
+    host.appendChild(table);
+}
+
+function render() {
+    const trends = DATA.trends || {};
+    const dates = trends.dates || [];
+    const snap = DATA.latestSnapshot || {};
+    const total = snap.total || 0;
+
+    if (!dates.length) { $('figures').hidden = true; $('empty').hidden = false; return; }
+
+    // ---- Skills
+    const shares = trends.skillsPct || {};
+    const movers = (DATA.skillMovers || {}).skills || [];
+    const moverByName = {};
+    movers.forEach(mv => { moverByName[mv.name] = mv; });
+    const names = Object.keys(shares);
+    let start = dates.length - 1;
+    names.forEach(n => { const i = shares[n].findIndex(v => v !== null && v !== undefined); if (i >= 0 && i < start) start = i; });
+
+    if (names.length) {
+        const series = names.map(n => ({
+            name: n,
+            cls: (moverByName[n] || {}).status || 'flat',
+            values: trailingMean(shares[n], 7)
+        }));
+        const rising = movers.filter(mv => mv.status === 'rising');
+        const falling = movers.filter(mv => mv.status === 'falling');
+        const flat = movers.length - rising.length - falling.length;
+        const parts = [];
+        if (rising.length) parts.push(rising.length + ' gained ground');
+        if (falling.length) parts.push(falling.length + ' lost ground');
+        if (flat) parts.push(flat + ' held steady');
+        if (movers.length && (rising.length || falling.length)) {
+            $('skills-title').textContent = 'Of the ' + movers.length + ' most requested skills, ' + joinNames(parts);
+        } else if (movers.length) {
+            $('skills-title').textContent = 'None of the ' + movers.length + ' most requested skills has moved more than 3 points';
+        } else {
+            $('skills-title').textContent = 'The ' + names.length + ' most requested skills';
+            $('movers-title').parentElement.querySelector('ul').hidden = true;
+        }
+        lineChart($('skills-plot'), {
+            dates: dates, start: start, series: series, step: 10, precise: true,
+            fmt: v => v + '%',
+            describe: () => 'Line chart of the share of job ads naming each of ' + names.length + ' skills from ' + dayLabel(dates[start]) +
+                ' to ' + dayLabel(dates[dates.length - 1]) + '. ' +
+                movers.map(mv => mv.name + ' ' + signed(mv.delta) + ' points').join(', ') + '. Arrow keys step through days.'
+        });
+        monthlyTable($('skills-table'), dates, shares, moverByName);
+
+        const list = $('movers');
+        movers.forEach(mv => {
+            const li = el('li', { class: mv.status });
+            li.appendChild(el('i', { class: 'key ' + mv.status }));
+            li.appendChild(el('span', {}, mv.name));
+            li.appendChild(el('span', {}, signed(mv.delta) + ' pts'));
+            list.appendChild(li);
+        });
+        const described = (trends.describedPerRun || [])[dates.length - 1];
+        const win = (DATA.skillMovers || {}).window || 28;
+        $('movers-title').textContent = movers.length ? 'First vs last ' + win + ' days' : 'Too few days to compare yet';
+        $('skills-note').textContent = 'Shares are of ads whose full text could be retrieved' +
+            (described ? ' (' + num(described) + ' of ' + num(total) + ' on the latest run)' : '') +
+            '. An ad can name several skills, so the lines do not add up to 100%.';
+    } else {
+        $('fig-skills').hidden = true;
     }
 
-    // --- Work Arrangement (Doughnut) --- filter out "unknown"
-    const arrangementRaw = (DATA.latestSnapshot || {}).by_remote || [];
-    const arrangement = arrangementRaw.filter(r => r.name !== 'unknown');
-    if (arrangement.length > 0) {
-        new Chart(document.getElementById('arrangementChart'), {
-            type: 'doughnut',
-            data: {
-                labels: arrangement.map(r => fmtLabel(r.name)),
-                datasets: [{
-                    data: arrangement.map(r => r.count),
-                    backgroundColor: COLORS.slice(0, arrangement.length),
-                    borderWidth: 0,
-                    hoverOffset: 8
-                }]
-            },
-            plugins: [pctPlugin],
-            options: {
-                ...chartDefaults,
-                cutout: '55%',
-                plugins: {
-                    ...chartDefaults.plugins,
-                    legend: {
-                        ...chartDefaults.plugins.legend,
-                        position: 'right'
-                    }
-                }
-            }
-        });
-    }
+    // ---- Roles
+    const cats = (snap.by_category || []).filter(c => c.name !== 'other');
+    const other = (snap.by_category || []).find(c => c.name === 'other');
+    if (cats.length) {
+        const roleRows = cats.map(c => ({ label: label(c.name), count: c.count }));
+        const topRoles = leaders(roleRows);
+        $('roles-title').textContent = topRoles.length === 1
+            ? topRoles[0] + ' is the most advertised role, with ' + num(cats[0].count) + ' of ' + num(total) + ' open ads'
+            : joinNames(topRoles) + ' share first place, with ' + num(cats[0].count) + ' open ads each';
+        barTable($('roles'), roleRows, { total: total, first: 'Role', caption: 'Open ads by role type' });
+        $('roles-note').textContent = other && other.count ? num(other.count) + ' ads matched no role keyword and are left out of the bars but kept in the share base.' : '';
+    } else { $('fig-roles').hidden = true; }
 
-    // --- Top Companies (Horizontal Bar) ---
-    const companies = DATA.topCompanies || [];
-    if (companies.length > 0) {
-        new Chart(document.getElementById('companiesChart'), {
-            type: 'bar',
-            data: {
-                labels: companies.map(c => c.name),
-                datasets: [{
-                    data: companies.map(c => c.count),
-                    backgroundColor: '#6b5ce7',
-                    borderRadius: 6,
-                    borderSkipped: false
-                }]
-            },
-            options: {
-                ...chartDefaults,
-                indexAxis: 'y',
-                plugins: { ...chartDefaults.plugins, legend: { display: false } },
-                scales: {
-                    x: { beginAtZero: true, ticks: { stepSize: 1, font: { size: 11 } } },
-                    y: { ticks: { font: { size: 11 } } }
-                }
-            }
-        });
-    }
+    // ---- Seniority: ladder order, with the unstated ads kept in view
+    const ladder = ['junior', 'mid', 'senior', 'lead', 'head'];
+    const sen = snap.by_seniority || [];
+    if (sen.length) {
+        const byName = {}; sen.forEach(s => { byName[s.name] = s.count; });
+        const rows = ladder.filter(n => byName[n]).map(n => ({ label: label(n), count: byName[n] }));
+        sen.filter(s => ladder.indexOf(s.name) < 0 && s.name !== 'unknown').forEach(s => rows.push({ label: label(s.name), count: s.count }));
+        if (byName.unknown) rows.push({ label: 'Not stated', count: byName.unknown, muted: true });
+        const stated = total - (byName.unknown || 0);
+        const upper = (byName.senior || 0) + (byName.lead || 0) + (byName.head || 0);
+        $('seniority-title').textContent = stated
+            ? pctOf(upper, stated) + '% of ads that state a level want senior or above'
+            : 'No open ad states a seniority level';
+        barTable($('seniority'), rows, { total: total, first: 'Level', caption: 'Open ads by seniority' });
+        $('seniority-note').textContent = byName.unknown ? num(byName.unknown) + ' ads give no level in the title or text. Shares are of all ' + num(total) + ' open ads.' : '';
+    } else { $('fig-seniority').hidden = true; }
 
-    // --- Jobs Per Run (Bar) ---
-    const runDates = (skillsTrend.dates || []);
-    const runTotals = (skillsTrend.totalPerRun || []);
-    if (runDates.length > 0) {
-        new Chart(document.getElementById('runsChart'), {
-            type: 'bar',
-            data: {
-                labels: runDates,
-                datasets: [{
-                    label: 'Jobs found',
-                    data: runTotals,
-                    backgroundColor: '#6b5ce7',
-                    borderRadius: 8,
-                    borderSkipped: false
-                }]
-            },
-            options: {
-                ...chartDefaults,
-                plugins: { ...chartDefaults.plugins, legend: { display: false } },
-                scales: {
-                    y: { beginAtZero: true, ticks: { stepSize: 5, font: { size: 11 } } },
-                    x: { ticks: { font: { size: 11 } } }
-                }
-            }
+    // ---- Work arrangement
+    const arr = snap.by_remote || [];
+    if (arr.length) {
+        const unknown = (arr.find(r => r.name === 'unknown') || {}).count || 0;
+        const rows = arr.filter(r => r.name !== 'unknown').map(r => ({ label: label(r.name), count: r.count }));
+        if (unknown) rows.push({ label: 'Not stated', count: unknown, muted: true });
+        // The silence is the finding only while most ads are silent.
+        const silent = unknown * 2 >= total;
+        const stated = rows.filter(r => !r.muted).sort((a, b) => b.count - a.count);
+        const topStated = leaders(stated);
+        $('arrangement-title').textContent = silent || !stated.length
+            ? pctOf(unknown, total) + '% of ads do not say where the work happens'
+            : (topStated.length === 1
+                ? topStated[0] + ' is the most common arrangement, in ' + pctOf(stated[0].count, total) + '% of open ads'
+                : joinNames(topStated) + ' are equally common, each in ' + pctOf(stated[0].count, total) + '% of open ads');
+        barTable($('arrangement'), rows, { total: total, first: 'Arrangement', caption: 'Open ads by work arrangement' });
+        $('arrangement-note').textContent = silent
+            ? 'Read the blue bars as a floor. With this many ads silent, they say little about how common remote or hybrid work is.'
+            : (unknown ? num(unknown) + ' ads do not state an arrangement. Shares are of all ' + num(total) + ' open ads.' : '');
+    } else { $('fig-arrangement').hidden = true; }
+
+    // ---- Location
+    const loc = (snap.by_location || []).slice(0, 8);
+    if (loc.length) {
+        $('location-title').textContent = loc[0].name + ' accounts for ' + pctOf(loc[0].count, total) + '% of open ads';
+        barTable($('location'), loc.map(l => ({ label: l.name, count: l.count })), { total: total, first: 'Place', caption: 'Open ads by location' });
+    } else { $('fig-location').hidden = true; }
+
+    // ---- Employers
+    const employers = DATA.topEmployers || [];
+    if (employers.length) {
+        const empRows = employers.map(c => ({ label: c.name, count: c.count }));
+        const topEmp = leaders(empRows);
+        $('employers-title').textContent = topEmp.length === 1
+            ? topEmp[0] + ' has posted the most AI and ML ads, ' + num(employers[0].count) + ' so far'
+            : joinNames(topEmp) + ' have each posted ' + num(employers[0].count) + ' ads, the most of any employer';
+        barTable($('employers'), empRows, { first: 'Employer', caption: 'Distinct ads per employer' });
+        const all = DATA.topCompanies || [];
+        const agents = all.filter(c => c.intermediary);
+        $('employers-note').textContent = agents.length
+            ? agents.length + ' of the ' + all.length + ' largest advertisers are staffing agencies, talent marketplaces or job boards posting for someone else, led by ' +
+              agents[0].name + ' with ' + num(agents[0].count) + ' ads. They are left out here because the hiring employer is not named.'
+            : '';
+    } else { $('fig-employers').hidden = true; }
+
+    // ---- Volume and text coverage (method)
+    const totals = trends.totalPerRun || [];
+    if (totals.length) {
+        lineChart($('volume-plot'), {
+            dates: dates, start: 0, step: 50, precise: false,
+            height: narrow => narrow ? 220 : 250,
+            fmt: v => String(v),
+            series: [
+                { name: 'open ads', cls: 'total', values: totals.map(Number) },
+                { name: 'with full text', cls: 'rising', values: (trends.describedPerRun || []).map(Number) }
+            ],
+            describe: () => 'Line chart of ads open per day and how many had retrievable text, from ' + dayLabel(dates[0]) + ' to ' + dayLabel(dates[dates.length - 1]) + '.'
         });
     }
-    </script>
+}
+
+render();
+</script>
 </body>
 </html>
