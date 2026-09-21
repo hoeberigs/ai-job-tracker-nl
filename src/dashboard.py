@@ -1,12 +1,24 @@
-"""Generate a standalone HTML dashboard with Chart.js visualisations."""
+"""Generate a standalone HTML dashboard (hand-drawn SVG, no chart library)."""
 
 from __future__ import annotations
 
 import json
+from datetime import date
+from html import escape
 from pathlib import Path
 from typing import Any
 
 from src.database import get_dashboard_data
+
+_TEMPLATE_PATH = Path(__file__).with_name("dashboard_template.html")
+
+# A skill's share is compared between the first and the last MOVER_WINDOW runs
+# that carry a share. Daily shares rest on roughly 100 ads, so single days are
+# noisy; a four-week mean on each side is steady enough to read a direction.
+# MOVER_THRESHOLD is a display cut-off in percentage points, not a test of
+# statistical significance, and the dashboard says so.
+MOVER_WINDOW = 28
+MOVER_THRESHOLD = 3.0
 
 
 def generate_dashboard(
@@ -17,6 +29,7 @@ def generate_dashboard(
     Path(output_dir).mkdir(parents=True, exist_ok=True)
 
     data = get_dashboard_data(db_path)
+    data["skillMovers"] = _skill_movers(data.get("trends", {}))
 
     # Write data.json
     json_path = f"{output_dir}/data.json"
@@ -58,545 +71,141 @@ def _fmt_label(slug: str) -> str:
     return mapping.get(slug, slug.replace("-", " ").title())
 
 
+def _skill_movers(trends: dict[str, Any]) -> dict[str, Any]:
+    """Compare each tracked skill's share at the start and end of the panel."""
+    dates = trends.get("dates", [])
+    out: dict[str, Any] = {
+        "window": MOVER_WINDOW,
+        "threshold": MOVER_THRESHOLD,
+        "baselineDate": None,
+        "skills": [],
+    }
+
+    for name, series in (trends.get("skillsPct") or {}).items():
+        valid = [(i, v) for i, v in enumerate(series) if v is not None]
+        # Both windows must be full and must not overlap.
+        if len(valid) < 2 * MOVER_WINDOW:
+            continue
+        head, tail = valid[:MOVER_WINDOW], valid[-MOVER_WINDOW:]
+        start = sum(v for _, v in head) / MOVER_WINDOW
+        now = sum(v for _, v in tail) / MOVER_WINDOW
+        delta = now - start
+        status = "flat"
+        if delta >= MOVER_THRESHOLD:
+            status = "rising"
+        elif delta <= -MOVER_THRESHOLD:
+            status = "falling"
+        out["skills"].append({
+            "name": name,
+            "start": round(start, 1),
+            "now": round(now, 1),
+            "delta": round(delta, 1),
+            "status": status,
+        })
+        if out["baselineDate"] is None and head[MOVER_WINDOW // 2][0] < len(dates):
+            out["baselineDate"] = dates[head[MOVER_WINDOW // 2][0]]
+
+    out["skills"].sort(key=lambda s: s["delta"], reverse=True)
+    return out
+
+
+def _month_name(iso_date: str | None, latest: str | None = None) -> str:
+    """Month of the baseline; the year is added once the panel spans two years."""
+    try:
+        d = date.fromisoformat(str(iso_date))
+    except (TypeError, ValueError):
+        return ""
+    try:
+        same_year = date.fromisoformat(str(latest)).year == d.year
+    except (TypeError, ValueError):
+        same_year = True
+    return d.strftime("%B") if same_year else d.strftime("%B %Y")
+
+
+def _headline(movers: dict[str, Any], latest: str | None = None) -> tuple[str, str]:
+    """Return (headline, follow-up sentence) stating the largest moves.
+
+    Runs on every daily update, so every branch must read correctly whatever
+    the day's data looks like: no riser, no faller, or a panel too short to
+    compare all fall back to a plain descriptive headline.
+    """
+    skills = movers.get("skills", [])
+    month = _month_name(movers.get("baselineDate"), latest)
+    risers = [s for s in skills if s["status"] == "rising"]
+    fallers = [s for s in skills if s["status"] == "falling"]
+
+    if not month or not (risers or fallers):
+        return "What Dutch AI and ML job ads ask for, tracked daily.", ""
+
+    if not risers:
+        low = fallers[-1]
+        return (
+            f"{low['now']:.0f}% of Dutch AI job ads now ask for {low['name']}, "
+            f"down from {low['start']:.0f}% in {month}."
+        ), ""
+
+    top = risers[0]
+    headline = (
+        f"{top['now']:.0f}% of Dutch AI job ads now ask for {top['name']}. "
+        f"In {month} it was {top['start']:.0f}%."
+    )
+    follow = ""
+    if fallers:
+        low = fallers[-1]
+        follow = (
+            f"{low['name']} moved the other way, from {low['start']:.0f}% "
+            f"to {low['now']:.0f}% over the same period."
+        )
+    return headline, follow
+
+
+def _join_names(names: list[str]) -> str:
+    if len(names) < 2:
+        return "".join(names)
+    return ", ".join(names[:-1]) + " and " + names[-1]
+
+
+def _long_date(iso_date: str | None) -> str:
+    try:
+        d = date.fromisoformat(str(iso_date))
+    except (TypeError, ValueError):
+        return "n/a"
+    return f"{d.day} {d.strftime('%B %Y')}"
+
+
+def _json_for_script(data: dict[str, Any]) -> str:
+    # Company names and titles are scraped from third-party pages. Inside a
+    # <script> block the HTML parser ends the script at the first "</script",
+    # so escape every "<" and keep scraped text from breaking out of the JSON.
+    # U+2028 and U+2029 are legal in JSON but end a line in older JS engines.
+    text = json.dumps(data, default=str, ensure_ascii=False).replace("<", "\\u003c")
+    for codepoint in (0x2028, 0x2029):
+        text = text.replace(chr(codepoint), f"\\u{codepoint:04x}")
+    return text
+
+
 def _build_html(data: dict[str, Any]) -> str:
-    """Build the complete dashboard HTML string."""
+    """Fill the dashboard template with the headline, ledger and chart data."""
     snapshot = data.get("latestSnapshot", {})
-    trends = data.get("trends", {})
-    top_companies = data.get("topCompanies", [])
+    dates = data.get("trends", {}).get("dates", [])
+    sources = [s["name"] for s in snapshot.get("by_source", []) if isinstance(s, dict)]
 
-    # Extract summary stats
-    total_tracked = data.get("totalJobsTracked", 0)
-    total_observations = data.get("totalObservations", 0)
-    total_runs = data.get("totalRuns", 0)
-    last_updated = data.get("lastUpdated", "—")
+    headline, follow = _headline(data.get("skillMovers", {}), data.get("lastUpdated"))
 
-    top_skill = "—"
-    skills_list = snapshot.get("top_skills", [])
-    if skills_list:
-        top_skill = skills_list[0]["name"] if isinstance(skills_list[0], dict) else skills_list[0][0]
+    tokens = {
+        "__HEADLINE__": escape(headline),
+        "__FOLLOW__": escape(follow),
+        "__SOURCES__": escape(_join_names(sources) if sources else "Dutch job sites"),
+        "__UPDATED__": escape(_long_date(data.get("lastUpdated"))),
+        "__SINCE__": escape(_long_date(dates[0] if dates else None)),
+        "__OPEN_TODAY__": f"{snapshot.get('total', 0):,}",
+        "__TOTAL_POSTINGS__": f"{data.get('totalJobsTracked', 0):,}",
+        "__TOTAL_RUNS__": f"{data.get('totalRuns', 0):,}",
+        "__TOTAL_OBSERVATIONS__": f"{data.get('totalObservations', 0):,}",
+        "__DATA__": _json_for_script(data),
+    }
 
-    top_category = "—"
-    cat_list = snapshot.get("by_category", [])
-    # Skip "other" for the top category display
-    cat_list_filtered = [c for c in cat_list if (c["name"] if isinstance(c, dict) else c[0]) != "other"]
-    if cat_list_filtered:
-        raw = cat_list_filtered[0]["name"] if isinstance(cat_list_filtered[0], dict) else cat_list_filtered[0][0]
-        top_category = _fmt_label(raw)
-
-    latest_total = snapshot.get("total", 0)
-
-    # Chart data
-    chart_data = json.dumps(data, default=str)
-
-    return f"""<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Job Market Dashboard — Netherlands</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
-    <style>
-        :root {{
-            --accent: #6b5ce7;
-            --accent-light: #8b7cf0;
-            --teal: #2dd4bf;
-            --warm: #f59e0b;
-            --rose: #f43f5e;
-            --sky: #38bdf8;
-            --emerald: #34d399;
-            --violet: #a78bfa;
-            --orange: #fb923c;
-            --charcoal: #1e1b2e;
-            --dark: #2a2742;
-            --card-bg: #ffffff;
-            --bg: #f8f7fc;
-            --text: #1e1b2e;
-            --text-muted: #6b7280;
-            --border: #e5e7eb;
-            --radius: 16px;
-            --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04);
-        }}
-
-        * {{ margin: 0; padding: 0; box-sizing: border-box; }}
-
-        body {{
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
-            min-height: 100vh;
-        }}
-
-        .container {{
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem 1.5rem;
-        }}
-
-        header {{
-            text-align: center;
-            margin-bottom: 2.5rem;
-        }}
-
-        header h1 {{
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--charcoal);
-            margin-bottom: 0.25rem;
-        }}
-
-        header h1 span {{
-            background: linear-gradient(135deg, var(--accent), var(--teal));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }}
-
-        header p {{
-            color: var(--text-muted);
-            font-size: 0.95rem;
-        }}
-
-        /* Stat Cards */
-        .stats {{
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }}
-
-        .stat-card {{
-            background: var(--card-bg);
-            border-radius: var(--radius);
-            padding: 1.25rem;
-            box-shadow: var(--shadow);
-            text-align: center;
-            border: 1px solid var(--border);
-        }}
-
-        .stat-card .value {{
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--accent);
-            line-height: 1.2;
-        }}
-
-        .stat-card .label {{
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-top: 0.25rem;
-        }}
-
-        /* Chart Grid */
-        .charts {{
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1.5rem;
-        }}
-
-        .chart-card {{
-            background: var(--card-bg);
-            border-radius: var(--radius);
-            padding: 1.5rem;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border);
-        }}
-
-        .chart-card.wide {{
-            grid-column: 1 / -1;
-        }}
-
-        .chart-card h3 {{
-            font-size: 0.95rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            color: var(--charcoal);
-        }}
-
-        .chart-container {{
-            position: relative;
-            width: 100%;
-            height: 300px;
-        }}
-
-        .chart-container.short {{
-            height: 250px;
-        }}
-
-        /* Footer */
-        footer {{
-            text-align: center;
-            margin-top: 2.5rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid var(--border);
-            color: var(--text-muted);
-            font-size: 0.85rem;
-        }}
-
-        footer a {{
-            color: var(--accent);
-            text-decoration: none;
-        }}
-
-        footer a:hover {{
-            text-decoration: underline;
-        }}
-
-        /* Responsive */
-        @media (max-width: 768px) {{
-            .charts {{
-                grid-template-columns: 1fr;
-            }}
-            header h1 {{
-                font-size: 1.5rem;
-            }}
-            .stats {{
-                grid-template-columns: repeat(2, 1fr);
-            }}
-        }}
-
-        /* Empty state */
-        .empty-state {{
-            text-align: center;
-            padding: 4rem 2rem;
-            color: var(--text-muted);
-        }}
-
-        .empty-state h2 {{
-            font-size: 1.25rem;
-            margin-bottom: 0.5rem;
-            color: var(--charcoal);
-        }}
-    </style>
-</head>
-<body>
-    <div class="container">
-        <header>
-            <h1><span>AI/ML Job Market</span> — Netherlands</h1>
-            <p style="max-width:640px;margin:0.75rem auto 0;color:var(--text-muted);font-size:0.95rem;line-height:1.6;">
-                Automated tracker that scrapes Dutch job sites weekly, classifies each listing by category, seniority, skills, and remote status using keyword-based NLP, and visualises market trends over time.
-            </p>
-            <p style="margin-top:0.5rem;color:var(--text-muted);font-size:0.85rem;">Updated {last_updated} &middot; {total_runs} scrape runs</p>
-        </header>
-
-        <div class="stats">
-            <div class="stat-card">
-                <div class="value">{total_tracked}</div>
-                <div class="label">Distinct Postings</div>
-            </div>
-            <div class="stat-card">
-                <div class="value">{total_observations}</div>
-                <div class="label">Daily Observations</div>
-            </div>
-            <div class="stat-card">
-                <div class="value">{latest_total}</div>
-                <div class="label">Available This Week</div>
-            </div>
-            <div class="stat-card">
-                <div class="value" style="font-size:1.1rem;">{top_skill}</div>
-                <div class="label">Top Skill</div>
-            </div>
-            <div class="stat-card">
-                <div class="value" style="font-size:1.1rem;">{top_category}</div>
-                <div class="label">Top Category</div>
-            </div>
-        </div>
-
-        <div class="charts">
-            <div class="chart-card wide">
-                <h3>Most In-Demand Skills Over Time</h3>
-                <div class="chart-container">
-                    <canvas id="skillsTrend"></canvas>
-                </div>
-            </div>
-
-            <div class="chart-card">
-                <h3>Job Categories</h3>
-                <div class="chart-container">
-                    <canvas id="categoryChart"></canvas>
-                </div>
-            </div>
-
-            <div class="chart-card">
-                <h3>Seniority Distribution</h3>
-                <div class="chart-container">
-                    <canvas id="seniorityChart"></canvas>
-                </div>
-            </div>
-
-            <div class="chart-card">
-                <h3>Work Arrangement</h3>
-                <div class="chart-container">
-                    <canvas id="arrangementChart"></canvas>
-                </div>
-            </div>
-
-            <div class="chart-card">
-                <h3>Top Companies Hiring</h3>
-                <div class="chart-container short">
-                    <canvas id="companiesChart"></canvas>
-                </div>
-            </div>
-
-            <div class="chart-card wide">
-                <h3>Jobs Per Scrape Run</h3>
-                <div class="chart-container short">
-                    <canvas id="runsChart"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <footer>
-            <p>
-                Built by <a href="https://lindahoeberigs.com">Linda Hoeberigs</a> &middot;
-                <a href="https://github.com/hoeberigs/ai-job-tracker-nl">View on GitHub</a>
-            </p>
-        </footer>
-    </div>
-
-    <script>
-    const DATA = {chart_data};
-
-    const COLORS = [
-        '#6b5ce7', '#2dd4bf', '#f59e0b', '#f43f5e',
-        '#38bdf8', '#34d399', '#a78bfa', '#fb923c',
-        '#ec4899', '#14b8a6'
-    ];
-
-    const LABEL_MAP = {{
-        'ml-engineer': 'ML Engineer', 'ai-engineer': 'AI Engineer',
-        'ai-general': 'AI General', 'data-scientist': 'Data Scientist',
-        'ai-researcher': 'AI Researcher', 'data-general': 'Data General',
-        'ai-product': 'AI Product', 'cv-engineer': 'CV Engineer',
-        'data-analyst': 'Data Analyst', 'nlp-engineer': 'NLP Engineer',
-        'ai-manager': 'AI Manager', 'data-engineer': 'Data Engineer',
-        'remote': 'Remote', 'hybrid': 'Hybrid', 'onsite': 'Onsite',
-        'senior': 'Senior', 'junior': 'Junior', 'lead': 'Lead',
-        'mid': 'Mid', 'head': 'Head',
-    }};
-    const fmtLabel = n => LABEL_MAP[n] || n.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-
-    const chartDefaults = {{
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {{
-            legend: {{
-                labels: {{
-                    font: {{ family: "'Inter', sans-serif", size: 11 }},
-                    usePointStyle: true,
-                    pointStyle: 'circle',
-                    padding: 16
-                }}
-            }}
-        }}
-    }};
-
-    // --- Skills Trend (Line) ---
-    const skillsTrend = DATA.trends || {{}};
-    const skillNames = Object.keys(skillsTrend.skills || {{}});
-
-    if (skillNames.length > 0 && (skillsTrend.dates || []).length > 0) {{
-        new Chart(document.getElementById('skillsTrend'), {{
-            type: 'line',
-            data: {{
-                labels: skillsTrend.dates,
-                datasets: skillNames.map((name, i) => ({{
-                    label: name,
-                    // Share of postings whose text was retrieved, not raw
-                    // counts: text coverage rose from ~20% to ~70% over the
-                    // panel, and raw counts read that as a market surge.
-                    data: (skillsTrend.skillsPct || {{}})[name] || skillsTrend.skills[name],
-                    borderColor: COLORS[i % COLORS.length],
-                    backgroundColor: COLORS[i % COLORS.length] + '20',
-                    tension: 0.3,
-                    fill: false,
-                    pointRadius: 4,
-                    pointHoverRadius: 6,
-                    borderWidth: 2.5
-                }}))
-            }},
-            options: {{
-                ...chartDefaults,
-                scales: {{
-                    y: {{
-                        beginAtZero: true,
-                        title: {{ display: true, text: '% of postings with text' }},
-                        ticks: {{ font: {{ size: 11 }}, callback: v => v + '%' }}
-                    }},
-                    x: {{
-                        ticks: {{ font: {{ size: 11 }} }}
-                    }}
-                }}
-            }}
-        }});
-    }}
-
-    // --- Doughnut percentage plugin ---
-    const pctPlugin = {{
-        id: 'doughnutPct',
-        afterDraw(chart) {{
-            const {{ ctx, data }} = chart;
-            const total = data.datasets[0].data.reduce((a, b) => a + b, 0);
-            if (!total) return;
-            chart.getDatasetMeta(0).data.forEach((arc, i) => {{
-                const val = data.datasets[0].data[i];
-                const pct = Math.round(val / total * 100);
-                if (pct < 5) return; // skip tiny slices
-                const {{ x, y }} = arc.tooltipPosition();
-                ctx.save();
-                ctx.fillStyle = '#1e1b2e';
-                ctx.font = "600 11px 'Inter', sans-serif";
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText(pct + '%', x, y);
-                ctx.restore();
-            }});
-        }}
-    }};
-
-    // --- Category (Doughnut) --- filter out "other"
-    const catsRaw = (DATA.latestSnapshot || {{}}).by_category || [];
-    const cats = catsRaw.filter(c => c.name !== 'other');
-    if (cats.length > 0) {{
-        new Chart(document.getElementById('categoryChart'), {{
-            type: 'doughnut',
-            data: {{
-                labels: cats.map(c => fmtLabel(c.name)),
-                datasets: [{{
-                    data: cats.map(c => c.count),
-                    backgroundColor: COLORS.slice(0, cats.length),
-                    borderWidth: 0,
-                    hoverOffset: 8
-                }}]
-            }},
-            plugins: [pctPlugin],
-            options: {{
-                ...chartDefaults,
-                cutout: '55%',
-                plugins: {{
-                    ...chartDefaults.plugins,
-                    legend: {{
-                        ...chartDefaults.plugins.legend,
-                        position: 'right'
-                    }}
-                }}
-            }}
-        }});
-    }}
-
-    // --- Seniority (Horizontal Bar) ---
-    const seniorityRaw = (DATA.latestSnapshot || {{}}).by_seniority || [];
-    const seniority = seniorityRaw.filter(s => s.name !== 'unknown');
-    if (seniority.length > 0) {{
-        new Chart(document.getElementById('seniorityChart'), {{
-            type: 'bar',
-            data: {{
-                labels: seniority.map(s => fmtLabel(s.name)),
-                datasets: [{{
-                    data: seniority.map(s => s.count),
-                    backgroundColor: COLORS.slice(0, seniority.length),
-                    borderRadius: 6,
-                    borderSkipped: false
-                }}]
-            }},
-            options: {{
-                ...chartDefaults,
-                indexAxis: 'y',
-                plugins: {{ ...chartDefaults.plugins, legend: {{ display: false }} }},
-                scales: {{
-                    x: {{ beginAtZero: true, ticks: {{ stepSize: 1, font: {{ size: 11 }} }} }},
-                    y: {{ ticks: {{ font: {{ size: 12 }} }} }}
-                }}
-            }}
-        }});
-    }}
-
-    // --- Work Arrangement (Doughnut) --- filter out "unknown"
-    const arrangementRaw = (DATA.latestSnapshot || {{}}).by_remote || [];
-    const arrangement = arrangementRaw.filter(r => r.name !== 'unknown');
-    if (arrangement.length > 0) {{
-        new Chart(document.getElementById('arrangementChart'), {{
-            type: 'doughnut',
-            data: {{
-                labels: arrangement.map(r => fmtLabel(r.name)),
-                datasets: [{{
-                    data: arrangement.map(r => r.count),
-                    backgroundColor: COLORS.slice(0, arrangement.length),
-                    borderWidth: 0,
-                    hoverOffset: 8
-                }}]
-            }},
-            plugins: [pctPlugin],
-            options: {{
-                ...chartDefaults,
-                cutout: '55%',
-                plugins: {{
-                    ...chartDefaults.plugins,
-                    legend: {{
-                        ...chartDefaults.plugins.legend,
-                        position: 'right'
-                    }}
-                }}
-            }}
-        }});
-    }}
-
-    // --- Top Companies (Horizontal Bar) ---
-    const companies = DATA.topCompanies || [];
-    if (companies.length > 0) {{
-        new Chart(document.getElementById('companiesChart'), {{
-            type: 'bar',
-            data: {{
-                labels: companies.map(c => c.name),
-                datasets: [{{
-                    data: companies.map(c => c.count),
-                    backgroundColor: '#6b5ce7',
-                    borderRadius: 6,
-                    borderSkipped: false
-                }}]
-            }},
-            options: {{
-                ...chartDefaults,
-                indexAxis: 'y',
-                plugins: {{ ...chartDefaults.plugins, legend: {{ display: false }} }},
-                scales: {{
-                    x: {{ beginAtZero: true, ticks: {{ stepSize: 1, font: {{ size: 11 }} }} }},
-                    y: {{ ticks: {{ font: {{ size: 11 }} }} }}
-                }}
-            }}
-        }});
-    }}
-
-    // --- Jobs Per Run (Bar) ---
-    const runDates = (skillsTrend.dates || []);
-    const runTotals = (skillsTrend.totalPerRun || []);
-    if (runDates.length > 0) {{
-        new Chart(document.getElementById('runsChart'), {{
-            type: 'bar',
-            data: {{
-                labels: runDates,
-                datasets: [{{
-                    label: 'Jobs found',
-                    data: runTotals,
-                    backgroundColor: '#6b5ce7',
-                    borderRadius: 8,
-                    borderSkipped: false
-                }}]
-            }},
-            options: {{
-                ...chartDefaults,
-                plugins: {{ ...chartDefaults.plugins, legend: {{ display: false }} }},
-                scales: {{
-                    y: {{ beginAtZero: true, ticks: {{ stepSize: 5, font: {{ size: 11 }} }} }},
-                    x: {{ ticks: {{ font: {{ size: 11 }} }} }}
-                }}
-            }}
-        }});
-    }}
-    </script>
-</body>
-</html>"""
+    html = _TEMPLATE_PATH.read_text(encoding="utf-8")
+    for token, value in tokens.items():
+        html = html.replace(token, value)
+    return html

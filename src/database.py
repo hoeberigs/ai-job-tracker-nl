@@ -241,13 +241,26 @@ def get_dashboard_data(db_path: str = "data/jobs.db") -> dict[str, Any]:
     snapshot = get_latest_snapshot(conn)
     trends = get_trend_data(conn)
 
-    # Aggregate top companies across all runs
-    all_jobs_rows = conn.execute("SELECT company FROM jobs WHERE company != ''").fetchall()
-    from collections import Counter
-    company_counts = Counter(r["company"] for r in all_jobs_rows if r["company"])
-    top_companies = [
-        {"name": c, "count": n} for c, n in company_counts.most_common(10)
+    # Aggregate top companies across all runs. A posting is re-observed every
+    # day it stays open, so COUNT(*) ranks how long ads stay up rather than how
+    # many roles a company posts. Rank on distinct URLs; keep the row count as
+    # "observations" for anyone who needs the old number.
+    company_rows = conn.execute(
+        "SELECT company, COUNT(DISTINCT url) AS postings, COUNT(*) AS observations "
+        "FROM jobs WHERE company != '' AND url IS NOT NULL AND url != '' "
+        "GROUP BY company ORDER BY postings DESC, observations DESC"
+    ).fetchall()
+    ranked = [
+        {
+            "name": r["company"],
+            "count": r["postings"],
+            "observations": r["observations"],
+            "intermediary": _is_intermediary(r["company"]),
+        }
+        for r in company_rows
     ]
+    top_companies = ranked[:10]
+    top_employers = [c for c in ranked if not c["intermediary"]][:10]
 
     # One row is one posting seen on one day, so COUNT(*) counts scraping
     # effort, not jobs. The headline must be distinct postings; the row count
@@ -267,7 +280,23 @@ def get_dashboard_data(db_path: str = "data/jobs.db") -> dict[str, Any]:
         "latestSnapshot": _serialise_snapshot(snapshot),
         "trends": trends,
         "topCompanies": top_companies,
+        "topEmployers": top_employers,
     }
+
+
+# Staffing agencies, talent marketplaces and job boards post on behalf of
+# employers, often under a placeholder name ("Uitzendbureau" is Dutch for
+# "staffing agency"). Matching is by name fragment, so it is a floor: an
+# unlisted agency still shows up as an employer until it is added here.
+_INTERMEDIARY_MARKERS = (
+    "uitzendbureau", "recruit", "staffing", "detachering", "werving",
+    "studentjob", "jobgether", "harnham", "turing", "synsel", "jouwtechniekbaan",
+)
+
+
+def _is_intermediary(company: str) -> bool:
+    name = company.lower()
+    return any(marker in name for marker in _INTERMEDIARY_MARKERS)
 
 
 def _serialise_snapshot(snapshot: dict[str, Any]) -> dict[str, Any]:

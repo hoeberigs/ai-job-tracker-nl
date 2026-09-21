@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI and ML job ads in the Netherlands</title>
+<meta name="description" content="__HEADLINE__ A daily tracker of what Dutch AI and ML job ads ask for: skills, roles, seniority, location and employers.">
+<meta property="og:title" content="AI and ML job ads in the Netherlands">
+<meta property="og:description" content="__HEADLINE__">
+<meta property="og:type" content="website">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#f5f6f4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#141517" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23141517'/%3E%3Cpath d='M5 23 L12 17 L18 20 L27 8' fill='none' stroke='%233987e5' stroke-width='3'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+    color-scheme: light;
+    --surface: #f5f6f4;
+    --wash: #eceeea;
+    --ink: #111315;
+    --ink-2: #4b4f4c;
+    --ink-3: #6f736f;
+    --rule: #d3d6d0;
+    --rule-strong: #111315;
+    --rise: #2a78d6;
+    --fall: #eb6834;
+    --flat: #a2a5a0;
+    --bar: #2a78d6;
+    --bar-muted: #b9bcb6;
+    --display: 'Bricolage Grotesque', 'IBM Plex Sans', system-ui, sans-serif;
+    --sans: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+    --mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        color-scheme: dark;
+        --surface: #141517;
+        --wash: #1c1e20;
+        --ink: #ecebe6;
+        --ink-2: #b9b8b1;
+        --ink-3: #8e8f89;
+        --rule: #2e3134;
+        --rule-strong: #ecebe6;
+        --rise: #3987e5;
+        --fall: #d95926;
+        --flat: #63666a;
+        --bar: #3987e5;
+        --bar-muted: #4a4d51;
+    }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+    margin: 0;
+    background: var(--surface);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 1rem;
+    line-height: 1.55;
+}
+a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+a:hover { text-decoration-thickness: 2px; }
+:focus-visible { outline: 2px solid var(--rise); outline-offset: 3px; }
+
+.skip {
+    position: absolute; left: 1rem; top: -4rem;
+    background: var(--ink); color: var(--surface);
+    padding: 0.5rem 0.75rem; font-family: var(--mono); font-size: 0.8rem;
+}
+.skip:focus { top: 1rem; }
+
+.page { max-width: 1180px; margin: 0 auto; padding: 0 1.5rem 4rem; }
+
+/* Masthead */
+.masthead { padding: 1.5rem 0 0; }
+.kicker {
+    display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.25rem 1.5rem;
+    font-family: var(--mono); font-size: 0.78rem; color: var(--ink-2);
+    padding-bottom: 0.6rem; border-bottom: 2px solid var(--rule-strong);
+}
+h1 {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(1.9rem, 4.6vw, 3.5rem);
+    line-height: 1.04;
+    letter-spacing: -0.025em;
+    margin: 2rem 0 0;
+    max-width: 19em;
+    text-wrap: balance;
+}
+.dek { max-width: 62ch; margin: 1.25rem 0 0; color: var(--ink-2); font-size: 1.05rem; text-wrap: pretty; }
+.dek strong { color: var(--ink); font-weight: 500; }
+
+.ledger {
+    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin: 2.5rem 0 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+}
+.ledger div { padding: 0.9rem 1.25rem 0.9rem 0; }
+.ledger div + div { padding-left: 1.25rem; border-left: 1px solid var(--rule); }
+.ledger dt { font-size: 0.85rem; color: var(--ink-2); order: 2; }
+.ledger dd { margin: 0; font-family: var(--mono); font-weight: 500; font-size: clamp(1.4rem, 3vw, 2rem); line-height: 1.15; }
+.ledger div { display: flex; flex-direction: column; }
+
+/* Figures */
+figure { margin: 0; }
+.fig { margin-top: 3.5rem; }
+.fig-bar {
+    display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0.35rem 1.5rem;
+    border-top: 2px solid var(--rule-strong); padding-top: 0.55rem;
+    font-family: var(--mono); font-size: 0.78rem; color: var(--ink-2);
+}
+.fig h2 {
+    font-family: var(--display); font-weight: 600;
+    font-size: clamp(1.2rem, 2.2vw, 1.55rem); line-height: 1.15; letter-spacing: -0.015em;
+    margin: 0.7rem 0 0; max-width: 28em; text-wrap: balance;
+}
+.fig-note { color: var(--ink-2); font-size: 0.9rem; max-width: 62ch; margin: 0.9rem 0 0; text-wrap: pretty; }
+
+.with-rail { display: grid; grid-template-columns: minmax(0, 1fr) 250px; gap: 0 2.5rem; align-items: start; margin-top: 1.25rem; }
+.rail { border-left: 1px solid var(--rule); padding-left: 1.25rem; font-size: 0.88rem; color: var(--ink-2); }
+.rail h3 { font-family: var(--mono); font-weight: 500; font-size: 0.78rem; color: var(--ink); margin: 0 0 0.6rem; }
+.rail p { margin: 1.1rem 0 0; text-wrap: pretty; }
+.movers { list-style: none; margin: 0; padding: 0; font-family: var(--mono); font-size: 0.8rem; }
+.movers li { display: grid; grid-template-columns: 16px minmax(0, 1fr) auto; gap: 0.5rem; align-items: center; padding: 0.3rem 0; border-bottom: 1px solid var(--rule); color: var(--ink); }
+.movers li.flat { color: var(--ink-3); }
+.key { display: inline-block; width: 16px; height: 0; border-top: 2px solid var(--flat); }
+.key.rising { border-color: var(--rise); }
+.key.falling { border-color: var(--fall); }
+
+.legend { display: flex; flex-wrap: wrap; gap: 0.25rem 1.1rem; list-style: none; margin: 0; padding: 0; }
+.legend li { display: inline-flex; align-items: center; gap: 0.45rem; }
+
+.pair { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 0 3rem; }
+.pair.flip { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+
+/* Line chart */
+.plot { position: relative; }
+.plot svg { display: block; width: 100%; height: auto; overflow: visible; touch-action: pan-y; }
+.plot svg:focus-visible { outline-offset: 6px; }
+.grid line { stroke: var(--rule); stroke-width: 1; shape-rendering: crispEdges; }
+.axis text, .endlabel { font-family: var(--mono); font-size: 11px; fill: var(--ink-3); }
+.endlabel.strong { fill: var(--ink); }
+.ln { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.ln.flat { stroke: var(--flat); stroke-width: 1.5; }
+.ln.rising { stroke: var(--rise); }
+.ln.falling { stroke: var(--fall); }
+.ln.total { stroke: var(--ink-3); }
+.ln.ring { stroke: var(--surface); stroke-width: 5; }
+.dot { stroke: var(--surface); stroke-width: 2; }
+.dot.flat { fill: var(--flat); } .dot.rising { fill: var(--rise); } .dot.falling { fill: var(--fall); } .dot.total { fill: var(--ink-3); }
+.cross { stroke: var(--ink); stroke-width: 1; shape-rendering: crispEdges; }
+.tip {
+    position: absolute; top: 0; left: 0; pointer-events: none; z-index: 2;
+    background: var(--ink); color: var(--surface);
+    font-family: var(--mono); font-size: 0.74rem; line-height: 1.35;
+    padding: 0.55rem 0.7rem; min-width: 170px; visibility: hidden;
+}
+.tip .tip-date { opacity: 0.75; margin-bottom: 0.3rem; }
+.tip-row { display: grid; grid-template-columns: 14px auto minmax(0, 1fr); gap: 0.45rem; align-items: center; }
+.tip-row b { font-weight: 500; text-align: right; min-width: 3.2em; }
+.tip-row span:last-child { opacity: 0.8; white-space: nowrap; }
+.tip .key { width: 14px; }
+
+/* Bar tables */
+table { border-collapse: collapse; width: 100%; }
+.bars { margin-top: 1.1rem; font-size: 0.92rem; }
+.bars th, .bars td { padding: 0.42rem 0; border-bottom: 1px solid var(--rule); vertical-align: middle; }
+.bars thead th { font-family: var(--mono); font-weight: 400; font-size: 0.74rem; color: var(--ink-3); text-align: right; padding-top: 0; padding-left: 0.9rem; }
+.bars thead th:first-child { padding-left: 0; }
+.bars thead th:first-child { text-align: left; }
+.bars tbody th { font-weight: 400; text-align: left; padding-right: 0.9rem; width: 1%; white-space: nowrap; max-width: 15em; overflow: hidden; text-overflow: ellipsis; }
+.bars td.track { width: auto; }
+.bars td.num { font-family: var(--mono); font-size: 0.82rem; text-align: right; padding-left: 0.9rem; width: 1%; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.bars td.num.pct { color: var(--ink-3); }
+.bars .fill { height: 10px; min-width: 2px; background: var(--bar); border-radius: 0 2px 2px 0; }
+.bars tr.muted .fill { background: var(--bar-muted); }
+.bars tr.muted th { color: var(--ink-3); }
+.bars tbody tr { transition: background-color 120ms ease; }
+.bars tbody tr:hover { background: var(--wash); }
+
+details { margin-top: 1rem; font-size: 0.85rem; }
+summary { cursor: pointer; font-family: var(--mono); font-size: 0.78rem; color: var(--ink-2); width: fit-content; }
+summary:hover { color: var(--ink); }
+.scroll { overflow-x: auto; margin-top: 0.6rem; }
+.data { font-family: var(--mono); font-size: 0.76rem; font-variant-numeric: tabular-nums; min-width: 520px; }
+.data th, .data td { padding: 0.3rem 0.6rem 0.3rem 0; border-bottom: 1px solid var(--rule); text-align: right; font-weight: 400; }
+.data th:first-child, .data td:first-child { text-align: left; }
+.data thead th { color: var(--ink-3); }
+
+/* Method and footer */
+.method { margin-top: 5rem; border-top: 2px solid var(--rule-strong); padding-top: 0.55rem; }
+.method > .label { font-family: var(--mono); font-size: 0.78rem; color: var(--ink-2); }
+.method-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 0 3rem; margin-top: 1rem; }
+.method h2 { font-family: var(--display); font-weight: 600; font-size: 1.3rem; letter-spacing: -0.015em; margin: 0 0 0.75rem; }
+.method p { color: var(--ink-2); font-size: 0.93rem; margin: 0 0 0.85rem; max-width: 60ch; text-wrap: pretty; }
+.method figcaption { font-family: var(--mono); font-size: 0.78rem; color: var(--ink-2); margin-bottom: 0.75rem; }
+
+footer { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--rule); font-size: 0.88rem; color: var(--ink-2); display: flex; flex-wrap: wrap; gap: 0.4rem 1.5rem; justify-content: space-between; }
+
+.empty { margin-top: 3.5rem; border-top: 2px solid var(--rule-strong); padding-top: 1rem; max-width: 60ch; color: var(--ink-2); }
+.empty h2 { font-family: var(--display); font-size: 1.4rem; color: var(--ink); margin: 0 0 0.5rem; }
+
+@media (max-width: 900px) {
+    .with-rail, .pair, .pair.flip, .method-grid { grid-template-columns: minmax(0, 1fr); }
+    .rail { border-left: 0; padding-left: 0; margin-top: 1.5rem; }
+    .pair > .fig + .fig { margin-top: 3rem; }
+    .method-grid > figure { margin-top: 1.5rem; }
+}
+@media (max-width: 560px) {
+    .page { padding: 0 1rem 3rem; }
+    .ledger { grid-template-columns: minmax(0, 1fr); }
+    .ledger div, .ledger div + div { padding: 0.7rem 0; border-left: 0; }
+    .ledger div + div { border-top: 1px solid var(--rule); }
+    .fig { margin-top: 2.75rem; }
+    .bars tbody th { max-width: 9.5em; }
+}
+@media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the figures</a>
+<div class="page">
+
+<header class="masthead">
+    <div class="kicker">
+        <span>AI and ML job ads, Netherlands</span>
+        <span>Updated __UPDATED__</span>
+    </div>
+    <h1>__HEADLINE__</h1>
+    <p class="dek"><strong>__FOLLOW__</strong> A daily scrape of __SOURCES__ listings for AI, machine learning and data science roles in the Netherlands, sorted by role, seniority and skills with keyword rules.</p>
+    <dl class="ledger">
+        <div><dd>__OPEN_TODAY__</dd><dt>ads open on the latest run</dt></div>
+        <div><dd>__TOTAL_POSTINGS__</dd><dt>distinct ads since __SINCE__</dt></div>
+        <div><dd>__TOTAL_RUNS__</dd><dt>daily runs</dt></div>
+    </dl>
+</header>
+
+<main id="main">
+<noscript><p class="empty">The figures on this page are drawn in the browser and need JavaScript. The underlying numbers are in <a href="data.json">data.json</a>.</p></noscript>
+
+<div id="empty" class="empty" hidden>
+    <h2>No scrape runs recorded yet</h2>
+    <p>The first completed run fills this page. Until then there is nothing to chart.</p>
+</div>
+
+<div id="figures">
+
+<figure class="fig" id="fig-skills">
+    <div class="fig-bar">
+        <span>Share of ads naming each skill, 7-day average</span>
+        <ul class="legend" aria-label="Line colours">
+            <li><i class="key rising"></i>up 3 points or more</li>
+            <li><i class="key falling"></i>down 3 points or more</li>
+            <li><i class="key"></i>within 3 points</li>
+        </ul>
+    </div>
+    <h2 id="skills-title">The eight most requested skills</h2>
+    <div class="with-rail">
+        <div>
+            <div class="plot" id="skills-plot"></div>
+            <details>
+                <summary>Table view: monthly averages</summary>
+                <div class="scroll" id="skills-table"></div>
+            </details>
+        </div>
+        <aside class="rail" aria-label="Notes on the skills figure">
+            <h3 id="movers-title">First vs last four weeks</h3>
+            <ul class="movers" id="movers"></ul>
+            <p id="skills-note"></p>
+        </aside>
+    </div>
+</figure>
+
+<div class="pair">
+    <figure class="fig" id="fig-roles">
+        <div class="fig-bar"><span>Role type, ads open on the latest run</span></div>
+        <h2 id="roles-title">Roles</h2>
+        <div id="roles"></div>
+        <p class="fig-note" id="roles-note"></p>
+    </figure>
+    <figure class="fig" id="fig-seniority">
+        <div class="fig-bar"><span>Seniority, ads open on the latest run</span></div>
+        <h2 id="seniority-title">Seniority</h2>
+        <div id="seniority"></div>
+        <p class="fig-note" id="seniority-note"></p>
+    </figure>
+</div>
+
+<div class="pair flip">
+    <figure class="fig" id="fig-arrangement">
+        <div class="fig-bar"><span>Work arrangement, ads open on the latest run</span></div>
+        <h2 id="arrangement-title">Work arrangement</h2>
+        <div id="arrangement"></div>
+        <p class="fig-note" id="arrangement-note"></p>
+    </figure>
+    <figure class="fig" id="fig-location">
+        <div class="fig-bar"><span>Location as written in the ad, latest run</span></div>
+        <h2 id="location-title">Location</h2>
+        <div id="location"></div>
+    </figure>
+</div>
+
+<figure class="fig" id="fig-employers">
+    <div class="fig-bar"><span>Distinct ads per employer since __SINCE__</span></div>
+    <h2 id="employers-title">Employers with the most ads</h2>
+    <div id="employers"></div>
+    <p class="fig-note" id="employers-note"></p>
+</figure>
+
+<section class="method" aria-labelledby="method-title">
+    <div class="label">Method</div>
+    <div class="method-grid">
+        <div>
+            <h2 id="method-title">How the numbers are made</h2>
+            <p>A scheduled job collects listings from __SOURCES__ once a day. Each ad is matched against keyword lists for role, seniority, work arrangement and skills. No language model is involved, so an ad that phrases a skill in an unusual way is missed.</p>
+            <p>An ad that stays open is seen again every day. The __TOTAL_OBSERVATIONS__ daily sightings collapse to __TOTAL_POSTINGS__ distinct ads by URL, and employer counts use distinct ads.</p>
+            <p>Skill shares use only ads whose full text could be retrieved, because a title alone rarely names a skill. Days with fewer than 30 such ads carry no share, which is why the skills figure starts later than the first run. The headline and the change column compare four-week averages, so they differ slightly from the 7-day line ends. The 3-point cut-off that colours a line is a reading aid, not a significance test.</p>
+        </div>
+        <figure>
+            <figcaption>
+                <ul class="legend" aria-label="Line colours">
+                    <li><i class="key" style="border-color:var(--ink-3)"></i>ads open per day</li>
+                    <li><i class="key rising"></i>of which with full text</li>
+                </ul>
+            </figcaption>
+            <div class="plot" id="volume-plot"></div>
+        </figure>
+    </div>
+</section>
+
+</div>
+</main>
+
+<footer>
+    <span>Built by <a href="https://lindahoeberigs.com">Linda Hoeberigs</a></span>
+    <span><a href="https://github.com/hoeberigs/ai-job-tracker-nl">Source on GitHub</a> &nbsp; <a href="data.json">data.json</a></span>
+</footer>
+</div>
+
+<script>
+const DATA = __DATA__;
+
+const LABELS = {
+    'ml-engineer': 'ML Engineer', 'ai-engineer': 'AI Engineer', 'ai-general': 'AI General',
+    'data-scientist': 'Data Scientist', 'ai-researcher': 'AI Researcher', 'data-general': 'Data General',
+    'ai-product': 'AI Product', 'cv-engineer': 'CV Engineer', 'data-analyst': 'Data Analyst',
+    'nlp-engineer': 'NLP Engineer', 'ai-manager': 'AI Manager', 'data-engineer': 'Data Engineer',
+    'remote': 'Remote', 'hybrid': 'Hybrid', 'onsite': 'Onsite', 'senior': 'Senior', 'junior': 'Junior',
+    'lead': 'Lead', 'mid': 'Mid', 'head': 'Head', 'unknown': 'Not stated', 'other': 'Other'
+};
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const SVGNS = 'http://www.w3.org/2000/svg';
+
+const $ = id => document.getElementById(id);
+const label = n => LABELS[n] || String(n).replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+const num = n => Number(n).toLocaleString('en-GB');
+const pctOf = (n, total) => total ? Math.round(100 * n / total) : 0;
+const signed = v => (v > 0 ? '+' : '') + v.toFixed(1);
+// Names tied for first place, so a title never crowns one of two equals.
+const leaders = rows => rows.length ? rows.filter(r => r.count === rows[0].count).map(r => r.label) : [];
+const joinNames = names => names.length < 2 ? names.join('') : names.slice(0, -1).join(', ') + ' and ' + names[names.length - 1];
+const dayLabel = iso => { const p = String(iso).split('-'); return +p[2] + ' ' + MONTHS[+p[1] - 1] + ' ' + p[0]; };
+
+// Every string below may come from a scraped page: text goes in through
+// textContent only, never through innerHTML.
+function el(tag, attrs, text) {
+    const node = document.createElement(tag);
+    for (const k in (attrs || {})) node.setAttribute(k, attrs[k]);
+    if (text !== undefined) node.textContent = text;
+    return node;
+}
+function sv(tag, attrs, text) {
+    const node = document.createElementNS(SVGNS, tag);
+    for (const k in (attrs || {})) node.setAttribute(k, attrs[k]);
+    if (text !== undefined) node.textContent = text;
+    return node;
+}
+
+function trailingMean(values, span) {
+    return values.map((v, i) => {
+        if (v === null || v === undefined) return null;
+        let sum = 0, n = 0;
+        for (let j = Math.max(0, i - span + 1); j <= i; j++) {
+            if (values[j] !== null && values[j] !== undefined) { sum += values[j]; n++; }
+        }
+        return n ? sum / n : null;
+    });
+}
+
+// ---- Line chart: crosshair snaps to the nearest day, one tooltip lists every series
+function lineChart(host, cfg) {
+    const state = { width: 0, idx: null };
+
+    function draw() {
+        const W = Math.max(300, Math.floor(host.clientWidth));
+        if (W === state.width) return;
+        state.width = W;
+        state.idx = null;
+        host.textContent = '';
+
+        const narrow = W < 560;
+        const H = cfg.height ? cfg.height(narrow) : (narrow ? 300 : 390);
+        const m = { top: 10, right: narrow ? 116 : 150, bottom: 26, left: 38 };
+        const i0 = cfg.start, i1 = cfg.dates.length - 1;
+        const iw = W - m.left - m.right, ih = H - m.top - m.bottom;
+
+        let peak = 0;
+        cfg.series.forEach(s => s.values.forEach((v, i) => { if (i >= i0 && v !== null && v > peak) peak = v; }));
+        const yMax = Math.max(cfg.step, Math.ceil(peak / cfg.step) * cfg.step);
+        const x = i => m.left + (i1 === i0 ? 0 : (i - i0) / (i1 - i0) * iw);
+        const y = v => m.top + ih - (v / yMax) * ih;
+
+        const svg = sv('svg', { viewBox: '0 0 ' + W + ' ' + H, width: W, height: H, role: 'img', tabindex: '0', 'aria-label': cfg.describe() });
+
+        const grid = sv('g', { class: 'grid' }), axis = sv('g', { class: 'axis' });
+        for (let v = 0; v <= yMax; v += cfg.step) {
+            grid.appendChild(sv('line', { x1: m.left, x2: m.left + iw, y1: y(v), y2: y(v) }));
+            axis.appendChild(sv('text', { x: m.left - 8, y: y(v) + 4, 'text-anchor': 'end' }, cfg.fmt(v)));
+        }
+        // Month starts own the tick labels; the partial first month is only
+        // labelled when it has room, so a short March cannot crowd out April.
+        const ticks = [];
+        for (let i = i0 + 1; i <= i1; i++) if (cfg.dates[i - 1].slice(0, 7) !== cfg.dates[i].slice(0, 7)) ticks.push(i);
+        if (!ticks.length || x(ticks[0]) - x(i0) >= 44) ticks.unshift(i0);
+        let lastTick = -Infinity;
+        for (const i of ticks) {
+            const mo = cfg.dates[i].slice(0, 7);
+            if (x(i) - lastTick < 44) continue;
+            lastTick = x(i);
+            grid.appendChild(sv('line', { x1: x(i), x2: x(i), y1: m.top + ih, y2: m.top + ih + 5 }));
+            axis.appendChild(sv('text', { x: x(i), y: H - 6, 'text-anchor': i === i0 ? 'start' : 'middle' }, MONTHS[+mo.slice(5) - 1]));
+        }
+        svg.appendChild(grid); svg.appendChild(axis);
+
+        // Recessive lines first so the series carrying the finding sit on top.
+        const order = cfg.series.slice().sort((a, b) => (a.cls === 'flat' ? 0 : 1) - (b.cls === 'flat' ? 0 : 1));
+        order.forEach(s => {
+            let d = '', pen = false;
+            for (let i = i0; i <= i1; i++) {
+                const v = s.values[i];
+                if (v === null || v === undefined) { pen = false; continue; }
+                d += (pen ? 'L' : 'M') + x(i).toFixed(1) + ' ' + y(v).toFixed(1);
+                pen = true;
+            }
+            if (s.cls !== 'flat') svg.appendChild(sv('path', { d: d, class: 'ln ring' }));
+            svg.appendChild(sv('path', { d: d, class: 'ln ' + s.cls }));
+        });
+
+        // Direct labels at the line ends, nudged apart so they never overlap.
+        const ends = cfg.series.map(s => {
+            let i = i1;
+            while (i > i0 && (s.values[i] === null || s.values[i] === undefined)) i--;
+            return { s: s, v: s.values[i], y: y(s.values[i] || 0) };
+        }).sort((a, b) => a.y - b.y);
+        const gap = 15;
+        for (let k = 1; k < ends.length; k++) if (ends[k].y - ends[k - 1].y < gap) ends[k].y = ends[k - 1].y + gap;
+        const floor = m.top + ih + 4;
+        if (ends.length && ends[ends.length - 1].y > floor) {
+            ends[ends.length - 1].y = floor;
+            for (let k = ends.length - 2; k >= 0; k--) if (ends[k + 1].y - ends[k].y < gap) ends[k].y = ends[k + 1].y - gap;
+        }
+        ends.forEach(e => {
+            const t = sv('text', { x: m.left + iw + 10, y: e.y + 4, class: 'endlabel' + (e.s.cls === 'flat' ? '' : ' strong') });
+            // On a phone the value would push the name off-screen; the tooltip,
+            // the rail and the table view still carry it.
+            if (!narrow) t.appendChild(sv('tspan', {}, cfg.fmt(Math.round(e.v)) + ' '));
+            t.appendChild(sv('tspan', {}, e.s.name));
+            svg.appendChild(t);
+        });
+
+        const cross = sv('line', { class: 'cross', y1: m.top, y2: m.top + ih, visibility: 'hidden' });
+        const dots = cfg.series.map(s => sv('circle', { r: 4, class: 'dot ' + s.cls, visibility: 'hidden' }));
+        svg.appendChild(cross); dots.forEach(c => svg.appendChild(c));
+        const hit = sv('rect', { x: m.left, y: m.top, width: iw, height: ih, fill: 'transparent' });
+        svg.appendChild(hit);
+
+        const tip = el('div', { class: 'tip', role: 'status' });
+        host.appendChild(svg); host.appendChild(tip);
+
+        function show(i) {
+            i = Math.max(i0, Math.min(i1, i));
+            state.idx = i;
+            cross.setAttribute('x1', x(i)); cross.setAttribute('x2', x(i)); cross.setAttribute('visibility', 'visible');
+            tip.textContent = '';
+            tip.appendChild(el('div', { class: 'tip-date' }, dayLabel(cfg.dates[i])));
+            const rows = [];
+            cfg.series.forEach((s, k) => {
+                const v = s.values[i];
+                if (v === null || v === undefined) { dots[k].setAttribute('visibility', 'hidden'); return; }
+                dots[k].setAttribute('cx', x(i)); dots[k].setAttribute('cy', y(v)); dots[k].setAttribute('visibility', 'visible');
+                rows.push({ s: s, v: v });
+            });
+            rows.sort((a, b) => b.v - a.v).forEach(r => {
+                const row = el('div', { class: 'tip-row' });
+                const key = el('i', { class: 'key ' + r.s.cls });
+                if (r.s.cls === 'total') key.style.borderColor = 'currentColor';
+                row.appendChild(key);
+                row.appendChild(el('b', {}, cfg.fmt(cfg.precise ? r.v.toFixed(1) : Math.round(r.v))));
+                row.appendChild(el('span', {}, r.s.name));
+                tip.appendChild(row);
+            });
+            if (!rows.length) tip.appendChild(el('div', {}, 'No share on this day'));
+            const tw = tip.offsetWidth, px = x(i);
+            let left = px + 14;
+            // Flip at the plot edge, not the SVG edge, so the end labels stay readable.
+            if (left + tw > m.left + iw) left = px - 14 - tw;
+            tip.style.transform = 'translate(' + Math.max(0, left) + 'px,' + m.top + 'px)';
+            tip.style.visibility = 'visible';
+        }
+        function hide() {
+            state.idx = null;
+            cross.setAttribute('visibility', 'hidden');
+            dots.forEach(c => c.setAttribute('visibility', 'hidden'));
+            tip.style.visibility = 'hidden';
+        }
+        function fromPointer(ev) {
+            const box = svg.getBoundingClientRect();
+            const px = (ev.clientX - box.left) * (W / box.width);
+            show(Math.round(i0 + (px - m.left) / iw * (i1 - i0)));
+        }
+        hit.addEventListener('pointermove', fromPointer);
+        hit.addEventListener('pointerdown', fromPointer);
+        svg.addEventListener('pointerleave', hide);
+        svg.addEventListener('focus', () => { if (state.idx === null) show(i1); });
+        svg.addEventListener('blur', hide);
+        svg.addEventListener('keydown', ev => {
+            const cur = state.idx === null ? i1 : state.idx;
+            if (ev.key === 'ArrowLeft') { show(cur - (ev.shiftKey ? 7 : 1)); ev.preventDefault(); }
+            else if (ev.key === 'ArrowRight') { show(cur + (ev.shiftKey ? 7 : 1)); ev.preventDefault(); }
+            else if (ev.key === 'Home') { show(i0); ev.preventDefault(); }
+            else if (ev.key === 'End') { show(i1); ev.preventDefault(); }
+            else if (ev.key === 'Escape') hide();
+        });
+    }
+
+    draw();
+    let timer = null;
+    new ResizeObserver(() => { clearTimeout(timer); timer = setTimeout(draw, 80); }).observe(host);
+}
+
+// ---- Bar table: a real table, so the chart is its own accessible table view
+function barTable(host, rows, opts) {
+    host.textContent = '';
+    const total = opts.total || 0;
+    const peak = rows.reduce((a, r) => Math.max(a, r.count), 0) || 1;
+    const table = el('table', { class: 'bars' });
+    table.appendChild(el('caption', { style: 'position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)' }, opts.caption));
+    const head = el('tr');
+    head.appendChild(el('th', { scope: 'col' }, opts.first));
+    head.appendChild(el('th', { scope: 'col', 'aria-hidden': 'true' }));
+    head.appendChild(el('th', { scope: 'col' }, 'ads'));
+    if (total) head.appendChild(el('th', { scope: 'col' }, 'share'));
+    const thead = el('thead'); thead.appendChild(head); table.appendChild(thead);
+    const body = el('tbody');
+    rows.forEach(r => {
+        const tr = el('tr', r.muted ? { class: 'muted' } : {});
+        tr.appendChild(el('th', { scope: 'row', title: r.label }, r.label));
+        const track = el('td', { class: 'track', 'aria-hidden': 'true' });
+        const fill = el('div', { class: 'fill' });
+        fill.style.width = (100 * r.count / peak).toFixed(1) + '%';
+        track.appendChild(fill); tr.appendChild(track);
+        tr.appendChild(el('td', { class: 'num' }, num(r.count)));
+        if (total) tr.appendChild(el('td', { class: 'num pct' }, pctOf(r.count, total) + '%'));
+        body.appendChild(tr);
+    });
+    table.appendChild(body);
+    host.appendChild(table);
+}
+
+function monthlyTable(host, dates, seriesMap, moverByName) {
+    const months = [];
+    dates.forEach(d => { const k = d.slice(0, 7); if (months.indexOf(k) < 0) months.push(k); });
+    const table = el('table', { class: 'data' });
+    const head = el('tr');
+    head.appendChild(el('th', { scope: 'col' }, 'Skill'));
+    months.forEach(k => head.appendChild(el('th', { scope: 'col' }, MONTHS[+k.slice(5) - 1])));
+    head.appendChild(el('th', { scope: 'col' }, 'Change'));
+    const thead = el('thead'); thead.appendChild(head); table.appendChild(thead);
+    const body = el('tbody');
+    Object.keys(seriesMap).forEach(name => {
+        const tr = el('tr');
+        tr.appendChild(el('th', { scope: 'row' }, name));
+        months.forEach(k => {
+            let sum = 0, n = 0;
+            dates.forEach((d, i) => { const v = seriesMap[name][i]; if (d.slice(0, 7) === k && v !== null && v !== undefined) { sum += v; n++; } });
+            tr.appendChild(el('td', {}, n ? (sum / n).toFixed(1) + '%' : 'n/a'));
+        });
+        const mv = moverByName[name];
+        tr.appendChild(el('td', {}, mv ? signed(mv.delta) + ' pts' : 'n/a'));
+        body.appendChild(tr);
+    });
+    table.appendChild(body);
+    host.appendChild(table);
+}
+
+function render() {
+    const trends = DATA.trends || {};
+    const dates = trends.dates || [];
+    const snap = DATA.latestSnapshot || {};
+    const total = snap.total || 0;
+
+    if (!dates.length) { $('figures').hidden = true; $('empty').hidden = false; return; }
+
+    // ---- Skills
+    const shares = trends.skillsPct || {};
+    const movers = (DATA.skillMovers || {}).skills || [];
+    const moverByName = {};
+    movers.forEach(mv => { moverByName[mv.name] = mv; });
+    const names = Object.keys(shares);
+    let start = dates.length - 1;
+    names.forEach(n => { const i = shares[n].findIndex(v => v !== null && v !== undefined); if (i >= 0 && i < start) start = i; });
+
+    if (names.length) {
+        const series = names.map(n => ({
+            name: n,
+            cls: (moverByName[n] || {}).status || 'flat',
+            values: trailingMean(shares[n], 7)
+        }));
+        const rising = movers.filter(mv => mv.status === 'rising');
+        const falling = movers.filter(mv => mv.status === 'falling');
+        const flat = movers.length - rising.length - falling.length;
+        const parts = [];
+        if (rising.length) parts.push(rising.length + ' gained ground');
+        if (falling.length) parts.push(falling.length + ' lost ground');
+        if (flat) parts.push(flat + ' held steady');
+        if (movers.length && (rising.length || falling.length)) {
+            $('skills-title').textContent = 'Of the ' + movers.length + ' most requested skills, ' + joinNames(parts);
+        } else if (movers.length) {
+            $('skills-title').textContent = 'None of the ' + movers.length + ' most requested skills has moved more than 3 points';
+        } else {
+            $('skills-title').textContent = 'The ' + names.length + ' most requested skills';
+            $('movers-title').parentElement.querySelector('ul').hidden = true;
+        }
+        lineChart($('skills-plot'), {
+            dates: dates, start: start, series: series, step: 10, precise: true,
+            fmt: v => v + '%',
+            describe: () => 'Line chart of the share of job ads naming each of ' + names.length + ' skills from ' + dayLabel(dates[start]) +
+                ' to ' + dayLabel(dates[dates.length - 1]) + '. ' +
+                movers.map(mv => mv.name + ' ' + signed(mv.delta) + ' points').join(', ') + '. Arrow keys step through days.'
+        });
+        monthlyTable($('skills-table'), dates, shares, moverByName);
+
+        const list = $('movers');
+        movers.forEach(mv => {
+            const li = el('li', { class: mv.status });
+            li.appendChild(el('i', { class: 'key ' + mv.status }));
+            li.appendChild(el('span', {}, mv.name));
+            li.appendChild(el('span', {}, signed(mv.delta) + ' pts'));
+            list.appendChild(li);
+        });
+        const described = (trends.describedPerRun || [])[dates.length - 1];
+        const win = (DATA.skillMovers || {}).window || 28;
+        $('movers-title').textContent = movers.length ? 'First vs last ' + win + ' days' : 'Too few days to compare yet';
+        $('skills-note').textContent = 'Shares are of ads whose full text could be retrieved' +
+            (described ? ' (' + num(described) + ' of ' + num(total) + ' on the latest run)' : '') +
+            '. An ad can name several skills, so the lines do not add up to 100%.';
+    } else {
+        $('fig-skills').hidden = true;
+    }
+
+    // ---- Roles
+    const cats = (snap.by_category || []).filter(c => c.name !== 'other');
+    const other = (snap.by_category || []).find(c => c.name === 'other');
+    if (cats.length) {
+        const roleRows = cats.map(c => ({ label: label(c.name), count: c.count }));
+        const topRoles = leaders(roleRows);
+        $('roles-title').textContent = topRoles.length === 1
+            ? topRoles[0] + ' is the most advertised role, with ' + num(cats[0].count) + ' of ' + num(total) + ' open ads'
+            : joinNames(topRoles) + ' share first place, with ' + num(cats[0].count) + ' open ads each';
+        barTable($('roles'), roleRows, { total: total, first: 'Role', caption: 'Open ads by role type' });
+        $('roles-note').textContent = other && other.count ? num(other.count) + ' ads matched no role keyword and are left out of the bars but kept in the share base.' : '';
+    } else { $('fig-roles').hidden = true; }
+
+    // ---- Seniority: ladder order, with the unstated ads kept in view
+    const ladder = ['junior', 'mid', 'senior', 'lead', 'head'];
+    const sen = snap.by_seniority || [];
+    if (sen.length) {
+        const byName = {}; sen.forEach(s => { byName[s.name] = s.count; });
+        const rows = ladder.filter(n => byName[n]).map(n => ({ label: label(n), count: byName[n] }));
+        sen.filter(s => ladder.indexOf(s.name) < 0 && s.name !== 'unknown').forEach(s => rows.push({ label: label(s.name), count: s.count }));
+        if (byName.unknown) rows.push({ label: 'Not stated', count: byName.unknown, muted: true });
+        const stated = total - (byName.unknown || 0);
+        const upper = (byName.senior || 0) + (byName.lead || 0) + (byName.head || 0);
+        $('seniority-title').textContent = stated
+            ? pctOf(upper, stated) + '% of ads that state a level want senior or above'
+            : 'No open ad states a seniority level';
+        barTable($('seniority'), rows, { total: total, first: 'Level', caption: 'Open ads by seniority' });
+        $('seniority-note').textContent = byName.unknown ? num(byName.unknown) + ' ads give no level in the title or text. Shares are of all ' + num(total) + ' open ads.' : '';
+    } else { $('fig-seniority').hidden = true; }
+
+    // ---- Work arrangement
+    const arr = snap.by_remote || [];
+    if (arr.length) {
+        const unknown = (arr.find(r => r.name === 'unknown') || {}).count || 0;
+        const rows = arr.filter(r => r.name !== 'unknown').map(r => ({ label: label(r.name), count: r.count }));
+        if (unknown) rows.push({ label: 'Not stated', count: unknown, muted: true });
+        // The silence is the finding only while most ads are silent.
+        const silent = unknown * 2 >= total;
+        const stated = rows.filter(r => !r.muted).sort((a, b) => b.count - a.count);
+        const topStated = leaders(stated);
+        $('arrangement-title').textContent = silent || !stated.length
+            ? pctOf(unknown, total) + '% of ads do not say where the work happens'
+            : (topStated.length === 1
+                ? topStated[0] + ' is the most common arrangement, in ' + pctOf(stated[0].count, total) + '% of open ads'
+                : joinNames(topStated) + ' are equally common, each in ' + pctOf(stated[0].count, total) + '% of open ads');
+        barTable($('arrangement'), rows, { total: total, first: 'Arrangement', caption: 'Open ads by work arrangement' });
+        $('arrangement-note').textContent = silent
+            ? 'Read the blue bars as a floor. With this many ads silent, they say little about how common remote or hybrid work is.'
+            : (unknown ? num(unknown) + ' ads do not state an arrangement. Shares are of all ' + num(total) + ' open ads.' : '');
+    } else { $('fig-arrangement').hidden = true; }
+
+    // ---- Location
+    const loc = (snap.by_location || []).slice(0, 8);
+    if (loc.length) {
+        $('location-title').textContent = loc[0].name + ' accounts for ' + pctOf(loc[0].count, total) + '% of open ads';
+        barTable($('location'), loc.map(l => ({ label: l.name, count: l.count })), { total: total, first: 'Place', caption: 'Open ads by location' });
+    } else { $('fig-location').hidden = true; }
+
+    // ---- Employers
+    const employers = DATA.topEmployers || [];
+    if (employers.length) {
+        const empRows = employers.map(c => ({ label: c.name, count: c.count }));
+        const topEmp = leaders(empRows);
+        $('employers-title').textContent = topEmp.length === 1
+            ? topEmp[0] + ' has posted the most AI and ML ads, ' + num(employers[0].count) + ' so far'
+            : joinNames(topEmp) + ' have each posted ' + num(employers[0].count) + ' ads, the most of any employer';
+        barTable($('employers'), empRows, { first: 'Employer', caption: 'Distinct ads per employer' });
+        const all = DATA.topCompanies || [];
+        const agents = all.filter(c => c.intermediary);
+        $('employers-note').textContent = agents.length
+            ? agents.length + ' of the ' + all.length + ' largest advertisers are staffing agencies, talent marketplaces or job boards posting for someone else, led by ' +
+              agents[0].name + ' with ' + num(agents[0].count) + ' ads. They are left out here because the hiring employer is not named.'
+            : '';
+    } else { $('fig-employers').hidden = true; }
+
+    // ---- Volume and text coverage (method)
+    const totals = trends.totalPerRun || [];
+    if (totals.length) {
+        lineChart($('volume-plot'), {
+            dates: dates, start: 0, step: 50, precise: false,
+            height: narrow => narrow ? 220 : 250,
+            fmt: v => String(v),
+            series: [
+                { name: 'open ads', cls: 'total', values: totals.map(Number) },
+                { name: 'with full text', cls: 'rising', values: (trends.describedPerRun || []).map(Number) }
+            ],
+            describe: () => 'Line chart of ads open per day and how many had retrievable text, from ' + dayLabel(dates[0]) + ' to ' + dayLabel(dates[dates.length - 1]) + '.'
+        });
+    }
+}
+
+render();
+</script>
+</body>
+</html>

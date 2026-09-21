@@ -1,6 +1,6 @@
-# AI Job Market Tracker — Netherlands
+# AI Job Market Tracker: Netherlands
 
-Scrapes, classifies, and tracks AI/ML/Data Science job listings from Dutch job sites over time. Stores data in SQLite, generates a Chart.js dashboard, and updates automatically every week via GitHub Actions.
+Scrapes, classifies, and tracks AI/ML/Data Science job listings from Dutch job sites over time. Stores data in SQLite, generates a standalone HTML dashboard, and updates automatically every day via GitHub Actions.
 
 **[Live Dashboard](https://hoeberigs.github.io/ai-job-tracker-nl/dashboard.html)**
 
@@ -8,14 +8,14 @@ Scrapes, classifies, and tracks AI/ML/Data Science job listings from Dutch job s
 
 1. **Scrapes** job listings from Indeed.nl and Werkenbijdeoverheid.nl
 2. **Classifies** each listing using keyword-based NLP:
-   - **Category** — ML Engineer, Data Scientist, AI Engineer, NLP, Computer Vision, etc.
-   - **Seniority** — Junior, Mid, Senior, Lead, Head
-   - **Sector** — Tech, Finance, Healthcare, Consulting, Government, etc.
-   - **Skills** — Python, PyTorch, LLM, RAG, Kubernetes, and 25+ more
-   - **Remote status** — Remote, Hybrid, Onsite
+   - **Category**: ML Engineer, Data Scientist, AI Engineer, NLP, Computer Vision, etc.
+   - **Seniority**: Junior, Mid, Senior, Lead, Head
+   - **Sector**: Tech, Finance, Healthcare, Consulting, Government, etc.
+   - **Skills**: Python, PyTorch, LLM, RAG, Kubernetes, and 25+ more
+   - **Remote status**: Remote, Hybrid, Onsite
 3. **Stores** every scrape run in a SQLite database for historical tracking
-4. **Visualises** trends with a Chart.js dashboard (6 interactive charts)
-5. **Updates automatically** every Monday via GitHub Actions
+4. **Visualises** trends in a dashboard whose headline and figure titles are recomputed from the data on every run
+5. **Updates automatically** every day via GitHub Actions
 6. **Exports** to CSV and JSON for further analysis
 
 ## Quick Start
@@ -33,7 +33,7 @@ pip install requests beautifulsoup4 rich
 python -m src.main --demo
 ```
 
-### Full pipeline — scrape, classify, save to DB, generate dashboard
+### Full pipeline: scrape, classify, save to DB, generate dashboard
 
 ```bash
 python -m src.main --update
@@ -53,14 +53,17 @@ python -m src.main --update -q "generative AI" "LLM engineer" "data scientist" -
 
 ## Dashboard
 
-The dashboard is a standalone HTML page at `docs/dashboard.html` with 6 charts:
+The dashboard is a standalone HTML page at `docs/dashboard.html`. It uses no chart library: the figures are SVG and HTML tables drawn by a small script in `src/dashboard_template.html`, and they follow the reader's light or dark setting.
 
-1. **Skills Trends Over Time** — line chart tracking the top 8 skills across scrape runs
-2. **Job Categories** — doughnut chart of the latest category distribution
-3. **Seniority Distribution** — horizontal bar chart
-4. **Work Arrangement** — remote vs hybrid vs onsite breakdown
-5. **Top Companies Hiring** — aggregated across all runs
-6. **Jobs Per Run** — bar chart showing volume over time
+Every sentence that states a number is recomputed on each run, so the page stays true as the market moves:
+
+- **Headline** names the skill whose share of ads changed most between the first and the last 28 days of the panel. It falls back to a plain description while the panel is too short to compare, or when nothing has moved 3 points.
+- **Skills over time** shows the 8 most requested skills as 7-day averages. Skills up 3 points or more are blue, down 3 or more orange, the rest grey.
+- **Roles, seniority, work arrangement, location** describe the ads open on the latest run. Ads that do not state a seniority or an arrangement stay in the figure as "Not stated" instead of being dropped.
+- **Employers** counts distinct ads per employer across all runs. Staffing agencies, talent marketplaces and job boards are flagged by name (`_INTERMEDIARY_MARKERS` in `src/database.py`) and left out of this figure.
+- **Method** sits at the bottom, with daily volume and how many ads had retrievable text.
+
+`docs/data.json` carries the same numbers for the website embed. `skillMovers` and `topEmployers` were added in September 2026; `topCompanies[].count` now holds distinct ads, with the previous row count kept as `observations`.
 
 ## CLI Options
 
@@ -68,13 +71,13 @@ The dashboard is a standalone HTML page at `docs/dashboard.html` with 6 charts:
 |---|---|---|
 | `-q` / `--queries` | Custom search queries | Built-in AI/ML terms |
 | `-n` / `--max-per-query` | Max results per query per source | 15 |
-| `--update` | Full pipeline: scrape + DB + dashboard | — |
-| `--dashboard` | Regenerate dashboard from DB (no scraping) | — |
+| `--update` | Full pipeline: scrape + DB + dashboard |: |
+| `--dashboard` | Regenerate dashboard from DB (no scraping) |: |
 | `--db` | SQLite database path | `data/jobs.db` |
 | `--csv` | CSV export path | `data/jobs.csv` |
 | `--json` | JSON export path | `data/results.json` |
-| `--no-export` | Skip file export | — |
-| `--demo` | Use sample data (no scraping) | — |
+| `--no-export` | Skip file export |: |
+| `--demo` | Use sample data (no scraping) |: |
 
 ## Architecture
 
@@ -85,7 +88,8 @@ src/
 ├── classifier.py    # NLP keyword classifier
 ├── analyzer.py      # Trend analysis and aggregation
 ├── database.py      # SQLite persistence layer
-├── dashboard.py     # Chart.js HTML dashboard generator
+├── dashboard.py     # Dashboard generator: computes the headline, fills the template
+├── dashboard_template.html  # Page template: CSS plus the hand-drawn SVG chart code
 ├── display.py       # Rich terminal output
 ├── export.py        # CSV and JSON export
 └── models.py        # Job data model
@@ -95,7 +99,7 @@ docs/
 └── data.json        # Dashboard data (consumed by website embed)
 
 .github/workflows/
-└── update.yml       # Weekly cron — scrape, save, regenerate, push
+└── update.yml       # Daily cron: scrape, save, regenerate, push
 ```
 
 ## Automation
@@ -112,18 +116,18 @@ You can also trigger it manually from the GitHub Actions tab.
 
 ## Data Sources
 
-- **Indeed.nl** — Largest job aggregator in the Netherlands
-- **Werkenbijdeoverheid.nl** — Dutch government job portal (CC-0 license)
+- **Indeed.nl**: Largest job aggregator in the Netherlands
+- **Werkenbijdeoverheid.nl**: Dutch government job portal (CC-0 license)
 
 ## Tech Stack
 
 - Python 3.9+
-- SQLite (standard library — zero config)
-- [Chart.js](https://www.chartjs.org/) — Interactive charts (CDN, no build step)
-- [Requests](https://docs.python-requests.org/) — HTTP client
-- [BeautifulSoup4](https://www.crummy.com/software/BeautifulSoup/) — HTML parsing
-- [Rich](https://github.com/Textualize/rich) — Terminal formatting
-- GitHub Actions — Automated weekly updates
+- SQLite (standard library: zero config)
+- [Chart.js](https://www.chartjs.org/): Interactive charts (CDN, no build step)
+- [Requests](https://docs.python-requests.org/): HTTP client
+- [BeautifulSoup4](https://www.crummy.com/software/BeautifulSoup/): HTML parsing
+- [Rich](https://github.com/Textualize/rich): Terminal formatting
+- GitHub Actions: Automated weekly updates
 
 ## License
 
