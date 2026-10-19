@@ -233,6 +233,44 @@ def get_trend_data(conn: sqlite3.Connection) -> dict[str, Any]:
     }
 
 
+TITLE_LEVELS = ("junior", "intern", "mid", "senior", "lead", "head")
+
+
+def get_seniority_by_month(conn: sqlite3.Connection) -> dict[str, Any]:
+    """Level in the title of each distinct ad, by the month it was first seen.
+
+    An ad is counted once, in its first month, so a long-lived ad does not
+    weigh more than a short one. The level is read from the title only (see
+    classify_title_level); "unknown" ads stay in newAds but not in stated.
+    """
+    from src.classifier import classify_title_level
+
+    rows = conn.execute(
+        "SELECT j.url, MIN(r.run_date) AS first_seen, "
+        "(SELECT title FROM jobs WHERE url = j.url ORDER BY run_id LIMIT 1) AS title "
+        "FROM jobs j JOIN scrape_runs r ON r.id = j.run_id "
+        "WHERE j.url IS NOT NULL AND j.url != '' "
+        "GROUP BY j.url ORDER BY first_seen"
+    ).fetchall()
+
+    months: list[str] = []
+    counts: dict[str, dict[str, int]] = {}
+    for row in rows:
+        month = str(row["first_seen"])[:7]
+        if month not in counts:
+            months.append(month)
+            counts[month] = {lvl: 0 for lvl in TITLE_LEVELS}
+            counts[month]["unknown"] = 0
+        counts[month][classify_title_level(row["title"] or "")] += 1
+
+    return {
+        "months": months,
+        "newAds": [sum(counts[m].values()) for m in months],
+        "stated": [sum(counts[m][lvl] for lvl in TITLE_LEVELS) for m in months],
+        "levels": {lvl: [counts[m][lvl] for m in months] for lvl in TITLE_LEVELS},
+    }
+
+
 def get_dashboard_data(db_path: str = "data/jobs.db") -> dict[str, Any]:
     """Get all data needed for the dashboard in a single call."""
     conn = init_db(db_path)
@@ -240,6 +278,7 @@ def get_dashboard_data(db_path: str = "data/jobs.db") -> dict[str, Any]:
     runs = get_all_runs(conn)
     snapshot = get_latest_snapshot(conn)
     trends = get_trend_data(conn)
+    seniority_by_month = get_seniority_by_month(conn)
 
     # Aggregate top companies across all runs. A posting is re-observed every
     # day it stays open, so COUNT(*) ranks how long ads stay up rather than how
@@ -279,6 +318,7 @@ def get_dashboard_data(db_path: str = "data/jobs.db") -> dict[str, Any]:
         "totalRuns": len(runs),
         "latestSnapshot": _serialise_snapshot(snapshot),
         "trends": trends,
+        "seniorityByMonth": seniority_by_month,
         "topCompanies": top_companies,
         "topEmployers": top_employers,
     }

@@ -44,6 +44,35 @@ def classify_seniority(title: str, description: str = "") -> str:
     return "unknown"
 
 
+# Level read from the title alone, for the month-by-month figure. The
+# title+description classifier above lets phrases in the ad text such as
+# "experienced team" or "lead by example" set the level, which hides junior
+# ads. Titles are terse and deliberate, so they carry the cleaner signal.
+# Internships, traineeships and graduate schemes are kept apart from junior
+# because they follow the academic calendar and would otherwise dominate the
+# junior line twice a year.
+TITLE_LEVEL_PATTERNS = {
+    "head": [r"\bhead of\b", r"\bvp\b", r"\bdirector\b", r"\bchief\b", r"\bc[a-z]o\b", r"\bvice president\b"],
+    "lead": [r"\blead\b", r"\bprincipal\b", r"\bstaff\b", r"\barchitect\b"],
+    "senior": [r"\bsenior\b", r"\bsr\.?\b"],
+    "mid": [r"\bmid[\s-]?level\b", r"\bmedior\b"],
+    "intern": [
+        r"\bintern(ship)?\b", r"\bstage\b", r"\bstagiair", r"\bafstudeer",
+        r"\bwerkstudent\b", r"\btrainee(ship)?\b", r"\bgraduate\b",
+    ],
+    "junior": [r"\bjunior\b", r"\bjr\.?\b", r"\bentry[\s-]?level\b", r"\bstarter\b"],
+}
+
+
+def classify_title_level(title: str) -> str:
+    text = (title or "").lower()
+    for level, patterns in TITLE_LEVEL_PATTERNS.items():
+        for pattern in patterns:
+            if re.search(pattern, text):
+                return level
+    return "unknown"
+
+
 # ── Job Category Classification ───────────────────────────────────────
 
 CATEGORY_PATTERNS = {

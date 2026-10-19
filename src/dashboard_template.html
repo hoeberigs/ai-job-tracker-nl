@@ -314,6 +314,32 @@ footer { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--rule);
     </figure>
 </div>
 
+<figure class="fig" id="fig-levels">
+    <div class="fig-bar">
+        <span>Level in the job title, share of new ads that state one, by month first seen</span>
+        <ul class="legend" aria-label="Line colours">
+            <li><i class="key falling"></i>junior</li>
+            <li><i class="key rising"></i>senior and above</li>
+            <li><i class="key"></i>internship or graduate</li>
+        </ul>
+    </div>
+    <h2 id="levels-title">Seniority over time</h2>
+    <div class="with-rail">
+        <div>
+            <div class="plot" id="levels-plot"></div>
+            <details>
+                <summary>Table view: monthly counts</summary>
+                <div class="scroll" id="levels-table"></div>
+            </details>
+        </div>
+        <aside class="rail" aria-label="Notes on the seniority trend">
+            <h3 id="levels-rail-title">First vs last three months</h3>
+            <ul class="movers" id="levels-movers"></ul>
+            <p id="levels-note"></p>
+        </aside>
+    </div>
+</figure>
+
 <div class="pair flip">
     <figure class="fig" id="fig-arrangement">
         <div class="fig-bar"><span>Work arrangement, ads open on the latest run</span></div>
@@ -341,8 +367,9 @@ footer { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--rule);
         <div>
             <h2 id="method-title">How the numbers are made</h2>
             <p>A scheduled job collects listings from __SOURCES__ once a day. Each ad is matched against keyword lists for role, seniority, work arrangement and skills. No language model is involved, so an ad that phrases a skill in an unusual way is missed.</p>
+            <p>The seniority-over-time figure reads the level from the job title only, because ad text such as "experienced team" would otherwise set it. Internships, traineeships and graduate schemes are a separate line, not part of junior, because they follow the academic calendar.</p>
             <p>An ad that stays open is seen again every day. The __TOTAL_OBSERVATIONS__ daily sightings collapse to __TOTAL_POSTINGS__ distinct ads by URL, and employer counts use distinct ads.</p>
-            <p>Skill shares use only ads whose full text could be retrieved, because a title alone rarely names a skill. Days with fewer than 30 such ads carry no share, which is why the skills figure starts later than the first run. The headline and the change column compare four-week averages, so they differ slightly from the 7-day line ends. The 3-point cut-off that colours a line is a reading aid, not a significance test.</p>
+            <p>Skill shares use only ads whose full text could be retrieved, because a title alone rarely names a skill. Days with fewer than 30 such ads carry no share, which is why the skills figure starts later than the first run. After that, the line is drawn straight across any such day. The headline and the change column compare four-week averages, so they differ slightly from the 7-day line ends. The 3-point cut-off that colours a line is a reading aid, not a significance test.</p>
         </div>
         <figure>
             <figcaption>
@@ -413,6 +440,22 @@ function trailingMean(values, span) {
         }
         return n ? sum / n : null;
     });
+}
+
+// Days with too little retrieved text carry no share. Between two real values
+// the line is bridged with a straight segment so it reads as one series; the
+// table view and the change column still use only the measured days.
+function bridgeGaps(values) {
+    const out = values.slice();
+    let prev = -1;
+    for (let i = 0; i < out.length; i++) {
+        if (out[i] === null || out[i] === undefined) continue;
+        if (prev >= 0 && i - prev > 1) {
+            for (let j = prev + 1; j < i; j++) out[j] = out[prev] + (out[i] - out[prev]) * (j - prev) / (i - prev);
+        }
+        prev = i;
+    }
+    return out;
 }
 
 // ---- Line chart: crosshair snaps to the nearest day, one tooltip lists every series
@@ -510,7 +553,7 @@ function lineChart(host, cfg) {
             state.idx = i;
             cross.setAttribute('x1', x(i)); cross.setAttribute('x2', x(i)); cross.setAttribute('visibility', 'visible');
             tip.textContent = '';
-            tip.appendChild(el('div', { class: 'tip-date' }, dayLabel(cfg.dates[i])));
+            tip.appendChild(el('div', { class: 'tip-date' }, (cfg.tipLabel || dayLabel)(cfg.dates[i])));
             const rows = [];
             cfg.series.forEach((s, k) => {
                 const v = s.values[i];
@@ -642,7 +685,7 @@ function render() {
         const series = names.map(n => ({
             name: n,
             cls: (moverByName[n] || {}).status || 'flat',
-            values: trailingMean(shares[n], 7)
+            values: trailingMean(bridgeGaps(shares[n]), 7)
         }));
         const rising = movers.filter(mv => mv.status === 'rising');
         const falling = movers.filter(mv => mv.status === 'falling');
@@ -706,15 +749,91 @@ function render() {
         const byName = {}; sen.forEach(s => { byName[s.name] = s.count; });
         const rows = ladder.filter(n => byName[n]).map(n => ({ label: label(n), count: byName[n] }));
         sen.filter(s => ladder.indexOf(s.name) < 0 && s.name !== 'unknown').forEach(s => rows.push({ label: label(s.name), count: s.count }));
-        if (byName.unknown) rows.push({ label: 'Not stated', count: byName.unknown, muted: true });
         const stated = total - (byName.unknown || 0);
         const upper = (byName.senior || 0) + (byName.lead || 0) + (byName.head || 0);
         $('seniority-title').textContent = stated
             ? pctOf(upper, stated) + '% of ads that state a level want senior or above'
             : 'No open ad states a seniority level';
-        barTable($('seniority'), rows, { total: total, first: 'Level', caption: 'Open ads by seniority' });
-        $('seniority-note').textContent = byName.unknown ? num(byName.unknown) + ' ads give no level in the title or text. Shares are of all ' + num(total) + ' open ads.' : '';
+        barTable($('seniority'), rows, { total: stated, first: 'Level', caption: 'Open ads by seniority' });
+        $('seniority-note').textContent = byName.unknown ? 'Shares are of the ' + num(stated) + ' open ads that state a level.' : '';
     } else { $('fig-seniority').hidden = true; }
+
+    // ---- Seniority over time: title level of new ads, by month first seen
+    const sbm = DATA.seniorityByMonth || {};
+    const MIN_STATED = 40;
+    const keep = (sbm.months || []).map((m, i) => i).filter(i => (sbm.stated || [])[i] >= MIN_STATED);
+    if (keep.length >= 3) {
+        const lv = sbm.levels;
+        const groups = [
+            { key: 'junior', name: 'Junior', cls: 'falling', parts: ['junior'] },
+            { key: 'senior', name: 'Senior+', cls: 'rising', parts: ['senior', 'lead', 'head'] },
+            { key: 'intern', name: 'Intern/grad', cls: 'flat', parts: ['intern'] }
+        ];
+        const countOf = (g, i) => g.parts.reduce((a, k) => a + lv[k][i], 0);
+        const months = keep.map(i => sbm.months[i]);
+        const latestMonth = (DATA.lastUpdated || '').slice(0, 7);
+        const monthName = m => MONTHS[+m.slice(5) - 1] + (m === latestMonth ? ' (so far)' : '');
+        const series = groups.map(g => ({ name: g.name, cls: g.cls, values: keep.map(i => 100 * countOf(g, i) / sbm.stated[i]) }));
+
+        const pool = idx => {
+            const stated = idx.reduce((a, i) => a + sbm.stated[i], 0);
+            const out = { stated: stated };
+            groups.forEach(g => { out[g.key] = stated ? 100 * idx.reduce((a, i) => a + countOf(g, i), 0) / stated : 0; });
+            return out;
+        };
+        const span = Math.min(3, Math.floor(keep.length / 2));
+        const first = pool(keep.slice(0, span)), last = pool(keep.slice(-span));
+        const label3 = idx => MONTHS[+sbm.months[idx[0]].slice(5) - 1] + ' to ' + MONTHS[+sbm.months[idx[idx.length - 1]].slice(5) - 1];
+        const firstLbl = label3(keep.slice(0, span)), lastLbl = label3(keep.slice(-span));
+
+        const dj = last.junior - first.junior;
+        $('levels-title').textContent = Math.abs(dj) >= 3
+            ? 'Junior titles ' + (dj < 0 ? 'fell' : 'rose') + ' from ' + Math.round(first.junior) + '% to ' + Math.round(last.junior) + '% of ads that state a level'
+            : 'Junior titles hold at about ' + Math.round(last.junior) + '% of ads that state a level';
+
+        lineChart($('levels-plot'), {
+            dates: months.map(m => m + '-01'), start: 0, series: series, step: 20, precise: true,
+            height: narrow => narrow ? 260 : 320,
+            fmt: v => v + '%',
+            tipLabel: d => monthName(d.slice(0, 7)) + ' ' + d.slice(0, 4),
+            describe: () => 'Line chart of the share of new ads by title level per month, ' + monthName(months[0]) + ' to ' + monthName(months[months.length - 1]) + '. ' +
+                groups.map(g => g.name + ' ' + Math.round(first[g.key]) + '% to ' + Math.round(last[g.key]) + '%').join(', ') + '. Arrow keys step through months.'
+        });
+
+        const table = el('table', { class: 'data' });
+        const head = el('tr');
+        ['Month', 'New ads', 'Level stated', 'Junior', 'Intern/grad', 'Mid', 'Senior+'].forEach(h => head.appendChild(el('th', { scope: 'col' }, h)));
+        const thead = el('thead'); thead.appendChild(head); table.appendChild(thead);
+        const body = el('tbody');
+        (sbm.months || []).forEach((m, i) => {
+            const tr = el('tr');
+            tr.appendChild(el('th', { scope: 'row' }, monthName(m) + ' ' + m.slice(0, 4)));
+            tr.appendChild(el('td', {}, num(sbm.newAds[i])));
+            tr.appendChild(el('td', {}, num(sbm.stated[i])));
+            const share = n => sbm.stated[i] >= MIN_STATED ? Math.round(100 * n / sbm.stated[i]) + '%' : num(n);
+            tr.appendChild(el('td', {}, share(lv.junior[i])));
+            tr.appendChild(el('td', {}, share(lv.intern[i])));
+            tr.appendChild(el('td', {}, share(lv.mid[i])));
+            tr.appendChild(el('td', {}, share(lv.senior[i] + lv.lead[i] + lv.head[i])));
+            body.appendChild(tr);
+        });
+        table.appendChild(body);
+        $('levels-table').appendChild(table);
+
+        $('levels-rail-title').textContent = firstLbl + ' vs ' + lastLbl;
+        const list = $('levels-movers');
+        groups.forEach(g => {
+            const li = el('li', { class: g.cls });
+            li.appendChild(el('i', { class: 'key ' + g.cls }));
+            li.appendChild(el('span', {}, g.name + ' ' + Math.round(first[g.key]) + '% to ' + Math.round(last[g.key]) + '%'));
+            li.appendChild(el('span', {}, signed(last[g.key] - first[g.key]) + ' pts'));
+            list.appendChild(li);
+        });
+        $('levels-note').textContent = 'Each ad counts once, in the month it was first seen. The level is read from the title only; ' +
+            pctOf(last.stated, keep.slice(-span).reduce((a, i) => a + sbm.newAds[i], 0)) + '% of recent ads state one, so the base is ' +
+            num(first.stated) + ' and ' + num(last.stated) + ' ads. Internships and graduate schemes are a separate line because they follow the academic calendar. Months with fewer than ' +
+            MIN_STATED + ' stated levels are left out of the lines but kept in the table.';
+    } else { $('fig-levels').hidden = true; }
 
     // ---- Work arrangement
     const arr = snap.by_remote || [];
